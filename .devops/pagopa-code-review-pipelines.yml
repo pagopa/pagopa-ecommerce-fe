@@ -1,0 +1,120 @@
+# Azure DevOps pipeline to build, check source codes and run tests.
+#
+# To make Danger JS run on a pull request you need to add the following pipeline
+# variable and set it with a GitHub access token (scope public_repo); otherwise
+# set its value to 'skip' without marking it secret:
+# - DANGER_GITHUB_API_TOKEN
+#
+
+variables:
+  NODE_VERSION: '18.17.1'
+  YARN_CACHE_FOLDER: $(Pipeline.Workspace)/.yarn
+
+# Automatically triggered on PR
+# https://docs.microsoft.com/en-us/azure/devops/pipelines/yaml-schema?view=azure-devops&tabs=schema%2Cparameter-schema#pr-trigger
+trigger:
+  branches:
+    include:
+    - main
+    - develop
+
+# Execute agents (jobs) on latest Ubuntu version.
+# To change OS for a specific, ovverride "pool" attribute inside the job definition
+pool:
+  vmImage: 'ubuntu-latest'
+
+resources:
+  repositories:
+    - repository: pagopaCommons
+      type: github
+      name: pagopa/azure-pipeline-templates
+      ref: refs/tags/v19
+      endpoint: 'io-azure-devops-github-ro'
+
+    - repository: checkout-be-mock
+      type: github
+      name: pagopa/pagopa-checkout-be-mock
+      ref: master
+      endpoint: 'io-azure-devops-github-ro'
+
+stages:
+  - stage: Build
+    dependsOn: []
+    jobs:
+      - job: make_build
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+        - template: templates/node-job-setup/template.yaml@pagopaCommons
+
+        - template: azure-templates/setup-env.yml
+          parameters:
+            pagopa_apim_host: $CHECKOUT_API_HOST_DEV
+            polling_activation_interval: 6000
+            polling_activation_attempts: 16
+            env: 'DEV'
+            recaptcha_site_key: $CHECKOUT_CAPTCHA_ID_DEV
+            api_payment_transactions_basepath: '/api/checkout/payment-transactions/v1'
+            api_timeout: 10000
+            api_payment_activations_basepath: '/checkout/payments/v1'
+            pm_host: 'https://acardste.vaservices.eu'
+            pm_api_basepath: '/pp-restapi/v4'
+            checkout_webview_pm: 'https://api.dev.platform.pagopa.it'
+            checkout_transaction_basepath: '/ecommerce/io/v1/transactions'
+            checkout_transaction_io_basepath: '/ecommerce/io/v1'
+
+        - script: |
+            yarn build
+          displayName: 'Build'
+
+  - stage: Static_Analysis
+    dependsOn: []
+    jobs:
+      - job: lint
+        steps:
+        - template: templates/node-job-setup/template.yaml@pagopaCommons
+        - script: yarn lint
+          displayName: 'Lint'
+      - job: danger
+        condition:
+          and(
+            succeeded(),
+            ne(variables['DANGER_GITHUB_API_TOKEN'], 'skip')
+          )
+        steps:
+          - template: templates/node-job-setup/template.yaml@pagopaCommons
+
+          - bash: yarn danger ci
+            env:
+              DANGER_GITHUB_API_TOKEN: '$(DANGER_GITHUB_API_TOKEN)'
+            displayName: 'Danger CI'
+
+  # B) Run unit tests if there is a push or pull request on any branch.
+  - stage: Unit_Tests
+    pool:
+      vmImage: 'ubuntu-latest'
+    dependsOn: []
+    jobs:
+      - job: run_unit_tests
+        steps:
+        - template: templates/node-job-setup/template.yaml@pagopaCommons
+
+        - script: yarn generate
+          displayName: 'Generate definitions'
+
+        - script: yarn test:coverage
+          displayName: 'Unit tests exec'
+
+        - task: PublishTestResults@2
+          displayName: 'Publish test results from Jest tests'
+          inputs:
+            testResultsFormat: 'JUnit'
+            testResultsFiles: '**/*TEST.xml'
+            searchFolder: '$(System.DefaultWorkingDirectory)'
+            failTaskOnFailedTests: true
+
+        - task: PublishCodeCoverageResults@1
+          displayName: 'Publish code coverage from Jest tests'
+          inputs:
+            codeCoverageTool: Cobertura
+            summaryFileLocation: 'coverage/clover.xml'
