@@ -1,34 +1,10 @@
 import { Bundle } from "../../../generated/definitions/payment-ecommerce/Bundle";
 import { NewTransactionResponse } from "../../../generated/definitions/payment-ecommerce/NewTransactionResponse";
 import { SessionPaymentMethodResponse } from "../../../generated/definitions/payment-ecommerce/SessionPaymentMethodResponse";
-import {
-  Cart,
-  PaymentFormFields,
-  PaymentInfo,
-  PaymentId,
-  PaymentEmailFormFields,
-  PaymentMethod,
-} from "../../features/payment/models/paymentModel";
-import { getConfigOrThrow } from "../config/config";
 
 export enum SessionItems {
-  paymentInfo = "paymentInfo",
-  noticeInfo = "rptId",
-  useremail = "useremail",
-  paymentMethod = "paymentMethod",
-  pspSelected = "pspSelected",
   sessionToken = "sessionToken",
-  cart = "cart",
-  transaction = "transaction",
-  sessionPaymentMethod = "sessionPayment",
-  orderId = "orderId",
 }
-const isParsable = (item: SessionItems) =>
-  !(
-    item === SessionItems.sessionToken ||
-    item === SessionItems.useremail ||
-    item === SessionItems.orderId
-  );
 
 export const getSessionItem = (item: SessionItems) => {
   try {
@@ -38,17 +14,7 @@ export const getSessionItem = (item: SessionItems) => {
       return undefined;
     }
 
-    return isParsable(item)
-      ? (JSON.parse(serializedState) as
-          | PaymentInfo
-          | PaymentFormFields
-          | PaymentEmailFormFields
-          | PaymentId
-          | NewTransactionResponse
-          | Cart
-          | Bundle
-          | SessionPaymentMethodResponse)
-      : serializedState;
+    return serializedState;
   } catch (e) {
     return undefined;
   }
@@ -56,17 +22,7 @@ export const getSessionItem = (item: SessionItems) => {
 
 export function setSessionItem(
   name: SessionItems,
-  item:
-    | string
-    | PaymentInfo
-    | PaymentFormFields
-    | PaymentEmailFormFields
-    | PaymentMethod
-    | PaymentId
-    | NewTransactionResponse
-    | Cart
-    | Bundle
-    | SessionPaymentMethodResponse
+  item: string | NewTransactionResponse | Bundle | SessionPaymentMethodResponse
 ) {
   sessionStorage.setItem(
     name,
@@ -74,12 +30,6 @@ export function setSessionItem(
   );
 }
 
-export const isStateEmpty = (item: SessionItems) => !getSessionItem(item);
-
 export const clearStorage = () => {
   sessionStorage.clear();
 };
-
-export function getReCaptchaKey() {
-  return getConfigOrThrow().CHECKOUT_RECAPTCHA_SITE_KEY;
-}

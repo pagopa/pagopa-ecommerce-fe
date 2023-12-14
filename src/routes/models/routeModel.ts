@@ -1,8 +1,7 @@
-export enum CheckoutRoutes {
+export enum EcommerceRoutes {
   ROOT = "",
   GDI_CHECK = "gdi-check",
   ESITO = "esito",
-  ERRORE = "errore",
 }
 
 export enum ROUTE_FRAGMENT {
