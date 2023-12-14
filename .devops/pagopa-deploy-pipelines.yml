@@ -266,7 +266,7 @@ stages:
               azureSubscription: 'UAT-PAGOPA-SERVICE-CONN'
               scriptLocation: inlineScript
               inlineScript: |
-                call az storage blob sync --container $web --account-name pagopaucheckoutsa -s "$(Pipeline.Workspace)\Bundle_UAT" -d ecommerce-fe
+                call az storage blob sync --container $web --account-name pagopaucheckoutsa -s "$(Pipeline.Workspace)\Bundle_UAT" -d "\ecommerce-fe"
 
           - task: AzureCLI@1
             displayName: 'Purge CDN endpoint on UAT'
