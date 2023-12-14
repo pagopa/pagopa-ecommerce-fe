@@ -92,7 +92,7 @@ export function App() {
       <BrowserRouter>
         <Layout fixedFooterPages={fixedFooterPages}>
           <Routes>
-            <Route path="/" element={<PaymentOutlet />}>
+            <Route path="/ecommerce-fe" element={<PaymentOutlet />}>
               <Route path={CheckoutRoutes.ROOT} element={<IndexPage />} />
               <Route
                 path={CheckoutRoutes.GDI_CHECK}

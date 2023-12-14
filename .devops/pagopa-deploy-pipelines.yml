@@ -40,7 +40,7 @@ pr: none
 # runtime, the pipeline is currently configured to use a Windows hosted image for
 # the build and deploy.
 pool:
-  vmImage: 'windows-2019'
+  vmImage: 'ubuntu-latest'
 
 resources:
   repositories:
@@ -123,7 +123,7 @@ stages:
               azureSubscription: 'DEV-PAGOPA-SERVICE-CONN'
               scriptLocation: inlineScript
               inlineScript: |
-                call az storage blob sync --container $web --account-name pagopadcheckoutsa -s "$(Pipeline.Workspace)\Bundle_DEV" -d ecommerce-fe
+                az storage blob sync --container '$web' --account-name pagopadcheckoutsa -s '$(Pipeline.Workspace)/Bundle_DEV' -d 'ecommerce-fe'
 
           - task: AzureCLI@1
             displayName: 'Purge CDN endpoint on DEV'
@@ -131,7 +131,7 @@ stages:
               azureSubscription: 'DEV-PAGOPA-SERVICE-CONN'
               scriptLocation: inlineScript
               inlineScript: |
-                call az cdn endpoint purge -g pagopa-d-checkout-fe-rg -n pagopa-d-checkout-cdn-endpoint --profile-name pagopa-d-checkout-cdn-profile --content-paths "/*"
+                az cdn endpoint purge -g pagopa-d-checkout-fe-rg -n pagopa-d-checkout-cdn-endpoint --profile-name pagopa-d-checkout-cdn-profile --content-paths "/*"
 
   # - stage: End_to_End_Tests_DEV
   #   dependsOn:
@@ -266,7 +266,7 @@ stages:
               azureSubscription: 'UAT-PAGOPA-SERVICE-CONN'
               scriptLocation: inlineScript
               inlineScript: |
-                call az storage blob sync --container $web --account-name pagopaucheckoutsa -s "$(Pipeline.Workspace)\Bundle_UAT" -d ecommerce-fe
+                call az storage blob sync --container $web --account-name pagopaucheckoutsa -s "$(Pipeline.Workspace)\Bundle_UAT" -d "\ecommerce-fe"
 
           - task: AzureCLI@1
             displayName: 'Purge CDN endpoint on UAT'
