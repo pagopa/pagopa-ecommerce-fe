@@ -3,9 +3,9 @@ import { Millisecond } from "@pagopa/ts-commons/lib/units";
 import * as E from "fp-ts/Either";
 import { pipe } from "fp-ts/function";
 import { createClient as createIOClient } from "../../../generated/definitions/payment-ecommerce-IO/client";
-import { TransactionInfo } from "../../../generated/definitions/payment-ecommerce/TransactionInfo";
 import { getConfigOrThrow } from "../config/config";
 import { constantPollingWithPromisePredicateFetch } from "../config/fetch";
+import { TransactionInfo } from "../../../generated/definitions/payment-ecommerce-IO/TransactionInfo";
 import { EcommerceFinalStatusCodeEnumType } from "./transactions/TransactionResultUtil";
 
 const config = getConfigOrThrow();
