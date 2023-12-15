@@ -1,8 +1,9 @@
-export enum CheckoutRoutes {
-  ROOT = "",
+import { getConfigOrThrow } from "../../utils/config/config";
+
+export enum EcommerceRoutes {
+  ROOT = "ecommerce-fe",
   GDI_CHECK = "gdi-check",
   ESITO = "esito",
-  ERRORE = "errore",
 }
 
 export enum ROUTE_FRAGMENT {
@@ -15,3 +16,8 @@ export enum ROUTE_FRAGMENT {
 export enum CLIENT_TYPE {
   IO = "IO",
 }
+
+const { CHECKOUT_TRANSACTION_BASEPATH, CHECKOUT_CONFIG_WEBVIEW_PM_HOST } =
+  getConfigOrThrow();
+
+export const CLIENT_REDIRECT_PATH = `${CHECKOUT_CONFIG_WEBVIEW_PM_HOST}${CHECKOUT_TRANSACTION_BASEPATH}`;

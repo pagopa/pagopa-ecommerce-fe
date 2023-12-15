@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FieldId, FieldStatus } from "features/payment/models/npgModel";
+import { FieldId, FieldStatus } from "models/npgModel";
 import { getConfigOrThrow } from "../utils/config/config";
 import createBuildConfig from "../utils/buildConfig";
 

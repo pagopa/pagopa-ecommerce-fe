@@ -1,59 +1,56 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import CheckoutLoader from "../components/CheckoutLoader";
+import PageContainer from "../components/PageContainer";
 import { useNpgSdk } from "../hooks/useNpgSdk";
+import { ViewOutcomeEnum } from "../utils/api/transactions/TransactionResultUtil";
 import { SessionItems, setSessionItem } from "../utils/storage/sessionStorage";
-import { getBase64Fragment, getFragments } from "../utils/regex/urlUtilities";
-import PageContainer from "../components/PageContent/PageContainer";
-import CheckoutLoader from "../components/PageContent/CheckoutLoader";
 import {
-  onBrowserUnload,
-  onBrowserBackEvent,
-  clearNavigationEvents,
-} from "../utils/eventListeners";
+  getBase64Fragment,
+  getFragments,
+  redirectToClient,
+} from "../utils/urlUtilities";
 import {
   CLIENT_TYPE,
-  CheckoutRoutes,
+  EcommerceRoutes,
   ROUTE_FRAGMENT,
 } from "./models/routeModel";
 
 const GdiCheckPage = () => {
   const navigate = useNavigate();
 
+  // Constants
   const gdiCheckTimeout =
     Number(process.env.CHECKOUT_GDI_CHECK_TIMEOUT) || 12000;
 
-  const decodedGdiIframeUrl = getBase64Fragment(
-    window.location.href,
-    ROUTE_FRAGMENT.GDI_IFRAME_URL
-  );
-
+  // Fragment Parameters
   const { sessionToken, clientId, transactionId } = getFragments(
     ROUTE_FRAGMENT.SESSION_TOKEN,
     ROUTE_FRAGMENT.CLIENT_ID,
     ROUTE_FRAGMENT.TRANSACTION_ID
   );
 
-  const esitoPath =
-    clientId === CLIENT_TYPE.IO
-      ? `/${CheckoutRoutes.ESITO}#${ROUTE_FRAGMENT.CLIENT_ID}=${clientId}&${ROUTE_FRAGMENT.TRANSACTION_ID}=${transactionId}`
-      : `/${CheckoutRoutes.ESITO}`;
+  const decodedGdiIframeUrl = getBase64Fragment(
+    window.location.href,
+    ROUTE_FRAGMENT.GDI_IFRAME_URL
+  );
 
-  const onPaymentComplete = () => {
-    clearNavigationEvents();
-    window.location.replace(esitoPath);
-  };
+  // Outcome Paths
+  const outcomePath = `/${EcommerceRoutes.ROOT}/${EcommerceRoutes.ESITO}#${ROUTE_FRAGMENT.CLIENT_ID}=${clientId}&${ROUTE_FRAGMENT.TRANSACTION_ID}=${transactionId}`;
+  const navigateToOutcome = () => navigate(outcomePath, { replace: true });
 
+  // Sdk Callbacks
   const onBuildError = () => {
-    window.location.replace(`/${CheckoutRoutes.ERRORE}`);
+    redirectToClient({ outcome: ViewOutcomeEnum.GENERIC_ERROR, transactionId });
   };
 
   const onPaymentRedirect = (urlredirect: string) => {
-    clearNavigationEvents();
     window.location.replace(urlredirect);
   };
 
+  // Npg sdk loading
   const { buildSdk, sdkReady } = useNpgSdk({
-    onPaymentComplete,
+    onPaymentComplete: navigateToOutcome,
     onBuildError,
     onPaymentRedirect,
   });
@@ -71,22 +68,10 @@ const GdiCheckPage = () => {
     }
   }, [clientId, sdkReady, decodedGdiIframeUrl, transactionId, sessionToken]);
 
+  // Navigate to outcome on timeout
   useEffect(() => {
-    const timeoutId = setTimeout(
-      () => navigate(esitoPath, { replace: true }),
-      gdiCheckTimeout
-    );
-    if (!clientId || clientId !== CLIENT_TYPE.IO) {
-      window.addEventListener("beforeunload", onBrowserUnload);
-      window.history.pushState(null, "", window.location.pathname);
-      window.addEventListener("popstate", onBrowserBackEvent);
+    const timeoutId = setTimeout(navigateToOutcome, gdiCheckTimeout);
 
-      return () => {
-        window.removeEventListener("popstate", onBrowserBackEvent);
-        clearTimeout(timeoutId);
-        window.removeEventListener("beforeunload", onBrowserUnload);
-      };
-    }
     return () => {
       clearTimeout(timeoutId);
     };
@@ -101,4 +86,5 @@ const GdiCheckPage = () => {
     </PageContainer>
   );
 };
+
 export default GdiCheckPage;
