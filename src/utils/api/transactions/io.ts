@@ -2,8 +2,8 @@ import * as E from "fp-ts/Either";
 import * as O from "fp-ts/Option";
 import * as TE from "fp-ts/TaskEither";
 import { flow, pipe } from "fp-ts/function";
-import { TransactionInfo } from "../../../../generated/definitions/payment-ecommerce-IO/TransactionInfo";
-import { Client as IOClient } from "../../../../generated/definitions/payment-ecommerce-IO/client";
+import { TransactionInfo } from "../../../../generated/definitions/payment-ecommerce-webview/TransactionInfo";
+import { Client as IOClient } from "../../../../generated/definitions/payment-ecommerce-webview/client";
 
 export const ecommerceIOTransaction = (
   transactionId: string,

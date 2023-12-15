@@ -4,7 +4,7 @@
   "scripts": {
     "type-check": "tsc",
     "generate": "npm-run-all generate:*",
-    "generate:payment-ecommerce-IO": "rimraf generated/definitions/payment-ecommerce-IO && shx mkdir -p generated/definitions/payment-ecommerce-IO && gen-api-models --api-spec https://raw.githubusercontent.com/pagopa/pagopa-infra/main/src/domains/ecommerce-app/api/ecommerce-io/v1/_openapi.json.tpl --no-strict --out-dir ./generated/definitions/payment-ecommerce-IO --request-types --response-decoders --client",
+    "generate:payment-ecommerce-webviw": "rimraf generated/definitions/payment-ecommerce-webview && shx mkdir -p generated/definitions/payment-ecommerce-webview && gen-api-models --api-spec https://raw.githubusercontent.com/pagopa/pagopa-infra/ab4efcc024663f779253ee7b388f6dd2197d2931/src/domains/ecommerce-app/api/ecommerce-webview/v1/_openapi.json.tpl --no-strict --out-dir ./generated/definitions/payment-ecommerce-webview --request-types --response-decoders --client",
     "lint": "eslint . -c .eslintrc.js --ext .ts,.tsx",
     "lint-autofix": "eslint . -c .eslintrc.js --ext .ts,.tsx --fix",
     "prebuild": "npm-run-all generate type-check lint",

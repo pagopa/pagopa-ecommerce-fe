@@ -2,10 +2,10 @@ import { DeferredPromise } from "@pagopa/ts-commons//lib/promises";
 import { Millisecond } from "@pagopa/ts-commons/lib/units";
 import * as E from "fp-ts/Either";
 import { pipe } from "fp-ts/function";
-import { createClient as createIOClient } from "../../../generated/definitions/payment-ecommerce-IO/client";
+import { createClient as createIOClient } from "../../../generated/definitions/payment-ecommerce-webview/client";
 import { getConfigOrThrow } from "../config/config";
 import { constantPollingWithPromisePredicateFetch } from "../config/fetch";
-import { TransactionInfo } from "../../../generated/definitions/payment-ecommerce-IO/TransactionInfo";
+import { TransactionInfo } from "../../../generated/definitions/payment-ecommerce-webview/TransactionInfo";
 import { EcommerceFinalStatusCodeEnumType } from "./transactions/TransactionResultUtil";
 
 const config = getConfigOrThrow();
