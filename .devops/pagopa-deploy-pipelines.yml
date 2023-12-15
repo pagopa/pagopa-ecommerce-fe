@@ -95,9 +95,9 @@ stages:
               survey_show: 0
               checkout_npg_sdk_url: 'https://stg-ta.nexigroup.com/monetaweb/resources/hfsdk.js'
               checkout_webview_pm: 'https://api.dev.platform.pagopa.it'
-              checkout_transaction_basepath: '/ecommerce/io/v1/transactions'
+              checkout_transaction_basepath: '/ecommerce/webview/v1/transactions'
               checkout_gdi_check_timeout: 60000
-              checkout_transaction_io_basepath: '/ecommerce/io/v1'
+              checkout_transaction_io_basepath: '/ecommerce/webview/v1'
 
           - script: |
               yarn build
@@ -225,8 +225,8 @@ stages:
               survey_show: 0
               checkout_npg_sdk_url: 'https://stg-ta.nexigroup.com/monetaweb/resources/hfsdk.js'
               checkout_webview_pm: 'https://api.uat.platform.pagopa.it'
-              checkout_transaction_basepath: '/ecommerce/io/v1/transactions'
-              checkout_transaction_io_basepath: '/ecommerce/io/v1'
+              checkout_transaction_basepath: '/ecommerce/webview/v1/transactions'
+              checkout_transaction_io_basepath: '/ecommerce/webview/v1'
 
           - script: |
               yarn build
@@ -328,8 +328,8 @@ stages:
               survey_show: 0
               checkout_npg_sdk_url: 'https://xpay.nexigroup.com/monetaweb/resources/hfsdk.js'
               checkout_webview_pm: 'https://api.platform.pagopa.it'
-              checkout_transaction_basepath: '/ecommerce/io/v1/transactions'
-              checkout_transaction_io_basepath: '/ecommerce/io/v1'
+              checkout_transaction_basepath: '/ecommerce/webview/v1/transactions'
+              checkout_transaction_io_basepath: '/ecommerce/webview/v1'
 
           - script: |
               yarn build
