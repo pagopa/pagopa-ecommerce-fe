@@ -1,4 +1,8 @@
-import { ROUTE_FRAGMENT } from "routes/models/routeModel";
+import {
+  CLIENT_REDIRECT_PATH,
+  ROUTE_FRAGMENT,
+} from "../routes/models/routeModel";
+import type { ViewOutcomeEnum } from "./api/transactions/TransactionResultUtil";
 
 export function getUrlParameter(name: string) {
   const myname = name.replace(/[[]/, "\\[").replace(/[\]]/, "\\]");
@@ -62,3 +66,18 @@ export function getFragments(
     {}
   );
 }
+
+export const redirectToClient = ({
+  transactionId,
+  outcome,
+}: {
+  transactionId?: string;
+  outcome: ViewOutcomeEnum;
+}) =>
+  window.location.replace(
+    `${CLIENT_REDIRECT_PATH}${
+      transactionId
+        ? `/${transactionId}/outcomes?outcome=${outcome}`
+        : `/outcomes?outcome=${outcome}`
+    }`
+  );

@@ -4,7 +4,6 @@ import { theme } from "@pagopa/mui-italia";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import PaymentOutlet from "./routes/PaymentOutlet";
 import { EcommerceRoutes } from "./routes/models/routeModel";
 import PaymentResponsePage from "./routes/PaymentResponsePage";
 import GdiCheckPage from "./routes/GdiCheckPage";
@@ -51,7 +50,9 @@ export function App() {
       <CssBaseline />
       <BrowserRouter>
         <Routes>
-          <Route path={EcommerceRoutes.ROOT} element={<PaymentOutlet />}>
+          <Route path="*" element={<Navigate to={EcommerceRoutes.ROOT} />} />
+          <Route path={EcommerceRoutes.ROOT}>
+            <Route path="" element={<Navigate to={EcommerceRoutes.ESITO} />} />
             <Route
               path={EcommerceRoutes.GDI_CHECK}
               element={<GdiCheckPage />}
@@ -60,9 +61,7 @@ export function App() {
               path={EcommerceRoutes.ESITO}
               element={<PaymentResponsePage />}
             />
-            <Route path="*" element={<Navigate replace to="/" />} />
           </Route>
-          <Route path="*" element={<Navigate replace to="/" />} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>

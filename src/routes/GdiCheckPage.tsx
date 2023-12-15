@@ -4,9 +4,12 @@ import CheckoutLoader from "../components/CheckoutLoader";
 import PageContainer from "../components/PageContainer";
 import { useNpgSdk } from "../hooks/useNpgSdk";
 import { ViewOutcomeEnum } from "../utils/api/transactions/TransactionResultUtil";
-import { getConfigOrThrow } from "../utils/config/config";
 import { SessionItems, setSessionItem } from "../utils/storage/sessionStorage";
-import { getBase64Fragment, getFragments } from "../utils/urlUtilities";
+import {
+  getBase64Fragment,
+  getFragments,
+  redirectToClient,
+} from "../utils/urlUtilities";
 import {
   CLIENT_TYPE,
   EcommerceRoutes,
@@ -19,9 +22,6 @@ const GdiCheckPage = () => {
   // Constants
   const gdiCheckTimeout =
     Number(process.env.CHECKOUT_GDI_CHECK_TIMEOUT) || 12000;
-
-  const { CHECKOUT_TRANSACTION_BASEPATH, CHECKOUT_CONFIG_WEBVIEW_PM_HOST } =
-    getConfigOrThrow();
 
   // Fragment Parameters
   const { sessionToken, clientId, transactionId } = getFragments(
@@ -36,25 +36,21 @@ const GdiCheckPage = () => {
   );
 
   // Outcome Paths
-  const outcomePath = `/${EcommerceRoutes.ESITO}#${ROUTE_FRAGMENT.CLIENT_ID}=${clientId}&${ROUTE_FRAGMENT.TRANSACTION_ID}=${transactionId}`;
-  const errorPath = `${CHECKOUT_CONFIG_WEBVIEW_PM_HOST}${CHECKOUT_TRANSACTION_BASEPATH}/${transactionId}/outcomes?outcome=${ViewOutcomeEnum.GENERIC_ERROR}`;
-
-  const onPaymentComplete = () => {
-    navigate(outcomePath);
-  };
+  const outcomePath = `/${EcommerceRoutes.ROOT}/${EcommerceRoutes.ESITO}#${ROUTE_FRAGMENT.CLIENT_ID}=${clientId}&${ROUTE_FRAGMENT.TRANSACTION_ID}=${transactionId}`;
+  const navigateToOutcome = () => navigate(outcomePath, { replace: true });
 
   // Sdk Callbacks
   const onBuildError = () => {
-    window.location.replace(errorPath);
+    redirectToClient({ outcome: ViewOutcomeEnum.GENERIC_ERROR, transactionId });
   };
 
   const onPaymentRedirect = (urlredirect: string) => {
-    navigate(urlredirect);
+    window.location.replace(urlredirect);
   };
 
   // Npg sdk loading
   const { buildSdk, sdkReady } = useNpgSdk({
-    onPaymentComplete,
+    onPaymentComplete: navigateToOutcome,
     onBuildError,
     onPaymentRedirect,
   });
@@ -74,10 +70,7 @@ const GdiCheckPage = () => {
 
   // Navigate to outcome on timeout
   useEffect(() => {
-    const timeoutId = setTimeout(
-      () => navigate(outcomePath, { replace: true }),
-      gdiCheckTimeout
-    );
+    const timeoutId = setTimeout(navigateToOutcome, gdiCheckTimeout);
 
     return () => {
       clearTimeout(timeoutId);
