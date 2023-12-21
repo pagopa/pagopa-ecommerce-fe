@@ -1,5 +1,4 @@
-import { Bundle } from "../../../generated/definitions/payment-ecommerce-IO/Bundle";
-import { NewTransactionResponse } from "../../../generated/definitions/payment-ecommerce-IO/NewTransactionResponse";
+import { NewTransactionResponse } from "../../../generated/definitions/payment-ecommerce-webview/NewTransactionResponse";
 
 export enum SessionItems {
   sessionToken = "sessionToken",
@@ -21,7 +20,7 @@ export const getSessionItem = (item: SessionItems) => {
 
 export function setSessionItem(
   name: SessionItems,
-  item: string | NewTransactionResponse | Bundle
+  item: string | NewTransactionResponse
 ) {
   sessionStorage.setItem(
     name,

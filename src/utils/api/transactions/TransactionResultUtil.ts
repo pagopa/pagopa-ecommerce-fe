@@ -1,6 +1,7 @@
 import * as t from "io-ts";
 import { enumType } from "@pagopa/ts-commons/lib/types";
-import { TransactionStatusEnum } from "../../../../generated/definitions/payment-ecommerce-IO/TransactionStatus";
+import { TransactionStatusEnum } from "../../../../generated/definitions/payment-ecommerce-webview/TransactionStatus";
+import { SendPaymentResultOutcomeEnum } from "../../../../generated/definitions/payment-ecommerce-webview/NewTransactionResponse";
 
 export enum ViewOutcomeEnum {
   SUCCESS = "0",
@@ -41,13 +42,17 @@ export const EcommerceFinalStatusCodeEnumType =
   );
 
 export const getOnboardingPaymentOutcome = (
-  transactionStatus?: TransactionStatusEnum
+  transactionStatus?: TransactionStatusEnum,
+  sendPaymentResultOutcome?: SendPaymentResultOutcomeEnum
 ): ViewOutcomeEnum => {
   switch (transactionStatus) {
     case TransactionStatusEnum.NOTIFIED_OK:
       return ViewOutcomeEnum.SUCCESS;
     case TransactionStatusEnum.NOTIFICATION_REQUESTED:
     case TransactionStatusEnum.NOTIFICATION_ERROR:
+      return sendPaymentResultOutcome === SendPaymentResultOutcomeEnum.OK
+        ? ViewOutcomeEnum.SUCCESS
+        : ViewOutcomeEnum.GENERIC_ERROR;
     case TransactionStatusEnum.NOTIFIED_KO:
     case TransactionStatusEnum.REFUNDED:
     case TransactionStatusEnum.REFUND_REQUESTED:

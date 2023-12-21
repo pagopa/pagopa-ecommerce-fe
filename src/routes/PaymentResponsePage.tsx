@@ -37,7 +37,10 @@ export default function PaymentResponsePage() {
               outcome: ViewOutcomeEnum.GENERIC_ERROR,
             }),
           (transactionInfo) => {
-            const outcome = getOnboardingPaymentOutcome(transactionInfo.status);
+            const outcome = getOnboardingPaymentOutcome(
+              transactionInfo.status,
+              transactionInfo.sendPaymentResultOutcome
+            );
             redirectToClient({ transactionId, outcome });
           }
         )
