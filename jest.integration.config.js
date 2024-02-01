@@ -5,7 +5,8 @@ module.exports = {
       'default',
       [ 'jest-junit', {
         outputDirectory: './test_reports',
-        outputName: 'checkout-integration-TEST.xml',
+        outputName: 'ecommerce-integration-TEST.xml',
       } ]
     ]
   };
+
