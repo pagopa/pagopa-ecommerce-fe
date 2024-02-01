@@ -1,11 +1,11 @@
-import { TransactionStatusEnum } from "../../../../generated/definitions/payment-ecommerce-webview/TransactionStatus";
 import { SendPaymentResultOutcomeEnum } from "../../../../generated/definitions/payment-ecommerce-webview/NewTransactionResponse";
-import { TransactionInfo } from "../../../../generated/definitions/payment-ecommerce-webview/TransactionInfo";
+import { TransactionStatusEnum } from "../../../../generated/definitions/payment-ecommerce-webview/TransactionStatus";
 import {
   gatewayAuthorizationStatusType,
   ViewOutcomeEnum,
   PaymentGateway,
   NpgResultCodeEnum,
+  transactionInfoStatus,
 } from "./types";
 
 export const gatewayAuthorizationStatusMap = new Map<
@@ -36,7 +36,7 @@ export const gatewayAuthorizationStatusMap = new Map<
 ]);
 
 export const getOnboardingPaymentOutcome = (
-  transactionInfo: TransactionInfo
+  transactionInfo: transactionInfoStatus
 ): ViewOutcomeEnum => {
   const {
     status,
