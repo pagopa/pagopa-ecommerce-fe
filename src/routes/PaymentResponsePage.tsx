@@ -14,7 +14,8 @@ import { getFragments, redirectToClient } from "../utils/urlUtilities";
 import { CLIENT_TYPE, ROUTE_FRAGMENT } from "./models/routeModel";
 
 export default function PaymentResponsePage() {
-  const { clientId, transactionId } = getFragments(
+  const { clientId, transactionId, sessionToken } = getFragments(
+    ROUTE_FRAGMENT.SESSION_TOKEN,
     ROUTE_FRAGMENT.CLIENT_ID,
     ROUTE_FRAGMENT.TRANSACTION_ID
   );
@@ -44,15 +45,18 @@ export default function PaymentResponsePage() {
   };
 
   useEffect(() => {
-    const sessionToken = getSessionItem(SessionItems.sessionToken) as
+    const sessionStorageToken = getSessionItem(SessionItems.sessionToken) as
       | string
       | undefined;
-    if (sessionToken && clientId === CLIENT_TYPE.IO && transactionId) {
-      void appClientPolling(sessionToken);
+
+    const validSessionToken =
+      sessionStorageToken !== undefined ? sessionStorageToken : sessionToken;
+    if (validSessionToken && clientId === CLIENT_TYPE.IO && transactionId) {
+      void appClientPolling(validSessionToken);
     } else {
       redirectToClient({ outcome: ViewOutcomeEnum.GENERIC_ERROR });
     }
-  }, [clientId, transactionId]);
+  }, [clientId, transactionId, sessionToken]);
 
   return (
     <PageContainer>
