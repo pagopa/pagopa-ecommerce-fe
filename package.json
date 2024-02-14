@@ -122,10 +122,7 @@
     "coveragePathIgnorePatterns": [
       "generated"
     ],
-    "coverageDirectory": "<rootDir>/coverage/",
-    "setupFiles": [
-      "<rootDir>/src/env-config.js"
-    ]
+    "coverageDirectory": "<rootDir>/coverage/"
   },
   "jestSonar": {
     "sonar56x": true,

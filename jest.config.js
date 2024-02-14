@@ -12,6 +12,5 @@ module.exports = {
       outputName: 'sonar-report.xml',
     } ]
   ],
-  testResultsProcessor: "jest-sonar-reporter",
-  setupFiles: ['<rootDir>/src/env-config.js'],
+  testResultsProcessor: "jest-sonar-reporter"
 };
