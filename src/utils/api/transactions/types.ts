@@ -70,7 +70,26 @@ export type gatewayAuthorizationStatusType =
   | "123"
   | "124"
   | "125"
-  | "126";
+  | "126"
+  | "129"
+  | "200"
+  | "202"
+  | "204"
+  | "208"
+  | "209"
+  | "210"
+  | "413"
+  | "888"
+  | "902"
+  | "903"
+  | "904"
+  | "906"
+  | "907"
+  | "908"
+  | "909"
+  | "911"
+  | "913"
+  | "999";
 
 export type EcommerceFinalStatusCodeEnumType = t.TypeOf<
   typeof EcommerceFinalStatusCodeEnumType
