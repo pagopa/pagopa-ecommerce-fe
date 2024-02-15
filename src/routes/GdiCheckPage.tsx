@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { ViewOutcomeEnum } from "../utils/api/transactions/types";
 import CheckoutLoader from "../components/CheckoutLoader";
 import PageContainer from "../components/PageContainer";
 import { useNpgSdk } from "../hooks/useNpgSdk";
-import { ViewOutcomeEnum } from "../utils/api/transactions/TransactionResultUtil";
 import { SessionItems, setSessionItem } from "../utils/storage/sessionStorage";
 import {
   getBase64Fragment,

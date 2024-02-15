@@ -6,7 +6,7 @@ import { createClient as createIOClient } from "../../../generated/definitions/p
 import { getConfigOrThrow } from "../config/config";
 import { constantPollingWithPromisePredicateFetch } from "../config/fetch";
 import { TransactionInfo } from "../../../generated/definitions/payment-ecommerce-webview/TransactionInfo";
-import { EcommerceFinalStatusCodeEnumType } from "./transactions/TransactionResultUtil";
+import { EcommerceFinalStatusCodeEnumType } from "./transactions/types";
 
 const config = getConfigOrThrow();
 

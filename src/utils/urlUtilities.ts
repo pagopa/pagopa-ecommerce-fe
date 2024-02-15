@@ -2,7 +2,7 @@ import {
   CLIENT_REDIRECT_PATH,
   ROUTE_FRAGMENT,
 } from "../routes/models/routeModel";
-import type { ViewOutcomeEnum } from "./api/transactions/TransactionResultUtil";
+import { ViewOutcomeEnum } from "./api/transactions/types";
 
 export function getUrlParameter(name: string) {
   const myname = name.replace(/[[]/, "\\[").replace(/[\]]/, "\\]");
@@ -14,9 +14,9 @@ export function getUrlParameter(name: string) {
 }
 
 /**
- * This function requires a valid base64-encoded URI with a querystrings as the fragment URI
+ * This function requires a valid base64-encoded URI with a query strings as the fragment URI
  * example: http://dev.checkout.it/gdi-check#param1=value1&param2=value2.
- * The function return an ampty string if the uri parameter is not valid
+ * The function return an empty string if the uri parameter is not valid
  * or the param can't be found
  */
 export function getBase64Fragment(uri: string, name: string): string {
@@ -29,7 +29,7 @@ export function getBase64Fragment(uri: string, name: string): string {
 }
 
 /**
- * This function requires a valid URI with a querystrings as the fragment URI
+ * This function requires a valid URI with a query strings as the fragment URI
  * example: http://dev.checkout.it/gdi-check#param1=value1&param2=value2.
  * The function return an empty string if the uri parameter is not valid
  * or the parameter can't be found
