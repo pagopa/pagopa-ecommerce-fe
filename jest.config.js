@@ -1,15 +1,16 @@
 module.exports = {
-  preset: "ts-jest",
   testEnvironment: "jsdom",
-  testPathIgnorePatterns: ["dist", "/node_modules"],
-  testRegex: "./*test\\.ts$",
+  preset: "ts-jest",
   reporters: [
     'default',
     [ 'jest-junit', {
       outputDirectory: './test_reports',
-      outputName: 'checkout-unit-TEST.xml',
+      outputName: 'ecommerce-unit-TEST.xml',
+    } ],
+    [ 'jest-junit', {
+      outputDirectory: './test_reports',
+      outputName: 'sonar-report.xml',
     } ]
   ],
-  coverageReporters: ["cobertura"],
-  modulePathIgnorePatterns: ["__integration_tests__"]
+  testResultsProcessor: "jest-sonar-reporter"
 };

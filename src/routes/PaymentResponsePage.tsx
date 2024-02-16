@@ -1,13 +1,11 @@
 import * as O from "fp-ts/Option";
 import { pipe } from "fp-ts/function";
 import React, { useEffect } from "react";
+import { ViewOutcomeEnum } from "../utils/api/transactions/types";
 import CheckoutLoader from "../components/CheckoutLoader";
 import PageContainer from "../components/PageContainer";
 import { ecommerceIOClientWithPolling } from "../utils/api/client";
-import {
-  ViewOutcomeEnum,
-  getOnboardingPaymentOutcome,
-} from "../utils/api/transactions/TransactionResultUtil";
+import { getOnboardingPaymentOutcome } from "../utils/api/transactions/TransactionResultUtil";
 import { ecommerceIOTransaction } from "../utils/api/transactions/io";
 import { SessionItems, getSessionItem } from "../utils/storage/sessionStorage";
 import { getFragments, redirectToClient } from "../utils/urlUtilities";
@@ -38,10 +36,7 @@ export default function PaymentResponsePage() {
             outcome: ViewOutcomeEnum.GENERIC_ERROR,
           }),
         (transactionInfo) => {
-          const outcome = getOnboardingPaymentOutcome(
-            transactionInfo.status,
-            transactionInfo.sendPaymentResultOutcome
-          );
+          const outcome = getOnboardingPaymentOutcome(transactionInfo);
           redirectToClient({ transactionId, outcome });
         }
       )
