@@ -34,10 +34,11 @@ export default function PaymentResponsePage() {
           redirectToClient({
             transactionId,
             outcome: ViewOutcomeEnum.GENERIC_ERROR,
+            clientId,
           }),
         (transactionInfo) => {
           const outcome = getOnboardingPaymentOutcome(transactionInfo);
-          redirectToClient({ transactionId, outcome });
+          redirectToClient({ transactionId, outcome, clientId });
         }
       )
     );
@@ -48,14 +49,15 @@ export default function PaymentResponsePage() {
       | string
       | undefined;
 
-    const validSessionToken =
-      sessionStorageToken !== undefined
-        ? sessionStorageToken
-        : fragmentSessionToken;
-    if (validSessionToken && clientId === CLIENT_TYPE.IO && transactionId) {
+    const validSessionToken = sessionStorageToken ?? fragmentSessionToken;
+    if (
+      validSessionToken &&
+      (clientId === CLIENT_TYPE.IO || CLIENT_TYPE.CHECKOUT) &&
+      transactionId
+    ) {
       void appClientPolling(validSessionToken);
     } else {
-      redirectToClient({ outcome: ViewOutcomeEnum.GENERIC_ERROR });
+      redirectToClient({ outcome: ViewOutcomeEnum.GENERIC_ERROR, clientId });
     }
   }, [clientId, transactionId, fragmentSessionToken]);
 

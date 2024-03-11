@@ -1,6 +1,7 @@
 import {
   CLIENT_REDIRECT_PATH,
   ROUTE_FRAGMENT,
+  CLIENT_TYPE,
 } from "../routes/models/routeModel";
 import { ViewOutcomeEnum } from "./api/transactions/types";
 
@@ -70,14 +71,24 @@ export function getFragments(
 export const redirectToClient = ({
   transactionId,
   outcome,
+  clientId,
 }: {
   transactionId?: string;
   outcome: ViewOutcomeEnum;
-}) =>
-  window.location.replace(
-    `${CLIENT_REDIRECT_PATH}${
-      transactionId
-        ? `/${transactionId}/outcomes?outcome=${outcome}`
-        : `/outcomes?outcome=${outcome}`
-    }`
-  );
+  clientId: string;
+}) => {
+  switch (clientId) {
+    case CLIENT_TYPE.IO:
+      return window.location.replace(
+        `${CLIENT_REDIRECT_PATH}${
+          transactionId
+            ? `/${transactionId}/outcomes?outcome=${outcome}`
+            : `/outcomes?outcome=${outcome}`
+        }`
+      );
+    case CLIENT_TYPE.CHECKOUT:
+      return window.location.replace(`v2/esito#outcome=${outcome}`);
+    default:
+      return window.location.replace(`v2/esito#outcome=${outcome}`);
+  }
+};

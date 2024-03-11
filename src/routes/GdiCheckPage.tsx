@@ -41,7 +41,11 @@ const GdiCheckPage = () => {
 
   // Sdk Callbacks
   const onBuildError = () => {
-    redirectToClient({ outcome: ViewOutcomeEnum.GENERIC_ERROR, transactionId });
+    redirectToClient({
+      outcome: ViewOutcomeEnum.GENERIC_ERROR,
+      transactionId,
+      clientId,
+    });
   };
 
   const onPaymentRedirect = (urlredirect: string) => {
