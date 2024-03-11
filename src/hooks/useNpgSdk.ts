@@ -42,7 +42,7 @@ export const useNpgSdk = ({
 
   useEffect(() => {
     const npgScriptEl = document.createElement("script");
-    const npgDomainScript = getConfigOrThrow().CHECKOUT_NPG_SDK_URL;
+    const npgDomainScript = getConfigOrThrow().ECOMMERCE_NPG_SDK_URL;
     npgScriptEl.setAttribute("src", npgDomainScript);
     npgScriptEl.setAttribute("type", "text/javascript");
     npgScriptEl.setAttribute("charset", "UTF-8");

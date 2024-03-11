@@ -50,18 +50,15 @@ stages:
         - template: azure-templates/setup-env.yml
           parameters:
             pagopa_apim_host: $CHECKOUT_API_HOST_DEV
-            polling_activation_interval: 6000
-            polling_activation_attempts: 16
             env: 'DEV'
-            recaptcha_site_key: $CHECKOUT_CAPTCHA_ID_DEV
             api_payment_transactions_basepath: '/api/checkout/payment-transactions/v1'
             api_timeout: 10000
             api_payment_activations_basepath: '/checkout/payments/v1'
             pm_host: 'https://acardste.vaservices.eu'
             pm_api_basepath: '/pp-restapi/v4'
             checkout_webview_pm: 'https://api.dev.platform.pagopa.it'
-            checkout_transaction_basepath: '/ecommerce/io/v1/transactions'
             checkout_transaction_io_basepath: '/ecommerce/io/v1'
+            checkout_transaction_basepath: '/ecommerce/io/v1/transactions'
 
         - script: |
             yarn build

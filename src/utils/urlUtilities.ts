@@ -1,5 +1,5 @@
 import {
-  CLIENT_REDIRECT_PATH,
+  IO_CLIENT_REDIRECT_PATH,
   ROUTE_FRAGMENT,
   CLIENT_TYPE,
 } from "../routes/models/routeModel";
@@ -80,7 +80,7 @@ export const redirectToClient = ({
   switch (clientId) {
     case CLIENT_TYPE.IO:
       return window.location.replace(
-        `${CLIENT_REDIRECT_PATH}${
+        `${IO_CLIENT_REDIRECT_PATH}${
           transactionId
             ? `/${transactionId}/outcomes?outcome=${outcome}`
             : `/outcomes?outcome=${outcome}`
