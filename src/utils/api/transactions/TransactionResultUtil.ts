@@ -1,3 +1,5 @@
+import { enumType } from "@pagopa/ts-commons/lib/types";
+import * as t from "io-ts";
 import { SendPaymentResultOutcomeEnum } from "../../../../generated/definitions/payment-ecommerce-webview/NewTransactionResponse";
 import { TransactionStatusEnum } from "../../../../generated/definitions/payment-ecommerce-webview/TransactionStatus";
 import {
@@ -153,3 +155,41 @@ function evaluateUnauthorizedStatus(
       return ViewOutcomeEnum.GENERIC_ERROR;
   }
 }
+
+//* ecommerce states which interrupts polling */
+export enum EcommerceInterruptStatusCodeEnum {
+  NOTIFICATION_REQUESTED,
+  NOTIFICATION_ERROR,
+  NOTIFIED_OK,
+  NOTIFIED_KO,
+  EXPIRED,
+  REFUND_REQUESTED,
+  REFUND_ERROR,
+  REFUNDED,
+  UNAUTHORIZED,
+}
+
+//* ecommerce states which maybe interrupts polling */
+export enum EcommerceMaybeInterruptStatusCodeEnum {
+  AUTHORIZATION_COMPLETED,
+  CLOSURE_REQUESTED,
+  CLOSURE_ERROR,
+}
+
+export type EcommerceInterruptStatusCodeEnumType = t.TypeOf<
+  typeof EcommerceInterruptStatusCodeEnumType
+>;
+export const EcommerceInterruptStatusCodeEnumType =
+  enumType<EcommerceInterruptStatusCodeEnum>(
+    EcommerceInterruptStatusCodeEnum,
+    "EcommerceInterruptStatusCodeEnumType"
+  );
+
+export type EcommerceMaybeInterruptStatusCodeEnumType = t.TypeOf<
+  typeof EcommerceMaybeInterruptStatusCodeEnumType
+>;
+export const EcommerceMaybeInterruptStatusCodeEnumType =
+  enumType<EcommerceMaybeInterruptStatusCodeEnum>(
+    EcommerceMaybeInterruptStatusCodeEnum,
+    "EcommerceMaybeInterruptStatusCodeEnumType"
+  );
