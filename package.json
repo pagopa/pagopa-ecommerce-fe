@@ -108,6 +108,7 @@
     "transform": {
       "^.+\\.(ts|tsx)$": "ts-jest"
     },
+    "testRegex": "./*unit.test\\.ts$",
     "testEnvironment": "jsdom",
     "testPathIgnorePatterns": [
       "/dist",
