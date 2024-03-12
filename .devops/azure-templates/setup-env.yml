@@ -12,7 +12,11 @@ parameters:
     type: string
     default: ''
 
-  - name: 'api_base_path'
+  - name: 'checkout_api_path'
+    type: string
+    default: ''
+
+  - name: 'io_api_path'
     type: string
     default: ''
 
@@ -24,13 +28,13 @@ parameters:
     type: number
     default: 12000
 
-  - name: 'webview_pm'
+  - name: 'io_client_redirect_outcome_path'
     type: string
     default: ''
 
-  - name: 'transaction_basepath'
+  - name: 'checkout_client_redirect_outcome_path'
     type: string
-    default: '/ecommerce/io/v1/transactions'
+    default: ' '
 
 steps:
 - bash: |
@@ -38,12 +42,13 @@ steps:
     env -i \
       ECOMMERCE_ENV=${{ parameters.env }} \
       ECOMMERCE_API_TIMEOUT=${{ parameters.api_timeout }} \
-      ECOMMERCE_API_BASE_HOST=${{ parameters.api_host }} \
-      ECOMMERCE_API_BASE_PATH=${{ parameters.api_base_path }} \
+      ECOMMERCE_API_HOST=${{ parameters.api_host }} \
+      ECOMMERCE_CHECKOUT_API_PATH=${{ parameters.checkout_api_path }} \
+      ECOMMERCE_IO_API_PATH=${{ parameters.io_api_path }} \
       ECOMMERCE_GDI_CHECK_TIMEOUT=${{ parameters.gdi_check_timeout }} \
       ECOMMERCE_NPG_SDK_URL=${{ parameters.npg_sdk_url }} \
-      ECOMMERCE_CONFIG_WEBVIEW_PM_HOST=${{ parameters.webview_pm }} \
-      ECOMMERCE_TRANSACTION_BASEPATH=${{ parameters.transaction_basepath }} \
+      ECOMMERCE_IO_CLIENT_REDIRECT_OUTCOME_PATH=${{ parameters.io_client_redirect_outcome_path }} \
+      ECOMMERCE_CHECKOUT_CLIENT_REDIRECT_OUTCOME_PATH=${{ parameters.checkout_client_redirect_outcome_path }} \
       bash env.sh
 
   displayName: 'Populate environment file'

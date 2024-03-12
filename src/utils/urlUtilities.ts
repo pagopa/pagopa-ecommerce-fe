@@ -1,5 +1,6 @@
 import {
   IO_CLIENT_REDIRECT_PATH,
+  CHECKOUT_CLIENT_REDIRECT_OUTCOME_PATH,
   ROUTE_FRAGMENT,
   CLIENT_TYPE,
 } from "../routes/models/routeModel";
@@ -87,8 +88,13 @@ export const redirectToClient = ({
         }`
       );
     case CLIENT_TYPE.CHECKOUT:
-      return window.location.replace(`v2/esito#outcome=${outcome}`);
+      return window.location.replace(
+        `${CHECKOUT_CLIENT_REDIRECT_OUTCOME_PATH}#outcome=${outcome}`
+      );
+    // eslint-disable-next-line sonarjs/no-duplicated-branches
     default:
-      return window.location.replace(`v2/esito#outcome=${outcome}`);
+      return window.location.replace(
+        `${CHECKOUT_CLIENT_REDIRECT_OUTCOME_PATH}#outcome=${outcome}`
+      );
   }
 };

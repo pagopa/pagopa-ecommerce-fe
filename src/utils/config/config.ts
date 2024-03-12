@@ -15,11 +15,13 @@ export type IConfig = t.TypeOf<typeof IConfig>;
 export const IConfig = t.interface({
   ECOMMERCE_ENV: NonEmptyString,
   ECOMMERCE_API_TIMEOUT: t.number,
-  ECOMMERCE_API_BASE_HOST: NonEmptyString,
-  ECOMMERCE_API_BASE_PATH: NonEmptyString,
+  ECOMMERCE_API_HOST: NonEmptyString,
+  ECOMMERCE_CHECKOUT_API_PATH: NonEmptyString,
+  ECOMMERCE_IO_API_PATH: NonEmptyString,
   ECOMMERCE_GDI_CHECK_TIMEOUT: t.number,
   ECOMMERCE_NPG_SDK_URL: NonEmptyString,
-  ECOMMERCE_IO_CLIENT_REDIRECT_OUTOCME_PATH: NonEmptyString,
+  ECOMMERCE_IO_CLIENT_REDIRECT_OUTCOME_PATH: NonEmptyString,
+  ECOMMERCE_CHECKOUT_CLIENT_REDIRECT_OUTCOME_PATH: NonEmptyString,
 });
 
 // No need to re-evaluate this object for each call
