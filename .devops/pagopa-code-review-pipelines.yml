@@ -161,7 +161,7 @@ stages:
 
         - script: while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' http://localhost:1234)" != "200" ]]; do sleep 5; done
           displayName: 'Wait for backend to be up and running'
-          workingDirectory: pagopa-checkout-fe
+          workingDirectory: pagopa-ecommerce-fe
 
         - script: yarn test:integration
           displayName: 'Integration tests exec'
