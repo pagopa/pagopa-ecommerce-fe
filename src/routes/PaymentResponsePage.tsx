@@ -3,7 +3,7 @@ import { pipe } from "fp-ts/function";
 import React, { useEffect } from "react";
 import {
   ecommerceIOGetTransactionInfo,
-  ecommerceCHECKOUGetTransaction,
+  ecommerceCHECKOUTGetTransaction,
 } from "../utils/api/transactions/getTransactionInfo";
 import {
   ViewOutcomeEnum,
@@ -51,7 +51,7 @@ export default function PaymentResponsePage() {
       }
       if (clientId === CLIENT_TYPE.CHECKOUT) {
         return pipe(
-          await ecommerceCHECKOUGetTransaction(transactionId, token),
+          await ecommerceCHECKOUTGetTransaction(transactionId, token),
           manageResp
         );
       }
@@ -63,7 +63,7 @@ export default function PaymentResponsePage() {
     const token =
       getSessionItem(SessionItems.sessionToken) ?? fragmentSessionToken;
     if (token && clientId && transactionId) {
-      GetTransaction(token);
+      return GetTransaction(token);
     }
     redirectWithError();
   }, [clientId, transactionId, fragmentSessionToken]);

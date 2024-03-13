@@ -40,7 +40,7 @@ export const ecommerceIOGetTransactionInfo = (
     )
   )();
 
-export const ecommerceCHECKOUGetTransaction = (
+export const ecommerceCHECKOUTGetTransaction = (
   transactionId: string,
   token: string
 ): Promise<O.Option<CHECKOUTTransactionInfo>> =>
