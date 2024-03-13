@@ -27,55 +27,45 @@ export default function PaymentResponsePage() {
     ROUTE_FRAGMENT.TRANSACTION_ID
   );
 
-  const manageResp = O.match(
-    () =>
-      redirectToClient({
-        transactionId,
-        outcome: ViewOutcomeEnum.GENERIC_ERROR,
-        clientId,
-      }),
-    (transactionInfo) => {
+  const redirectWithError = () =>
+    redirectToClient({
+      transactionId,
+      outcome: ViewOutcomeEnum.GENERIC_ERROR,
+      clientId,
+    });
+
+  const GetTransaction = (token: string) => {
+    const manageResp = O.match(redirectWithError, (transactionInfo) => {
       const outcome = getOnboardingPaymentOutcome(
         transactionInfo as transactionInfoStatus
       );
       redirectToClient({ transactionId, outcome, clientId });
-    }
-  );
-  const IOGetTransaction = async (sessionToken: string) => {
-    const token = sessionToken;
-    pipe(await ecommerceIOGetTransactionInfo(transactionId, token), manageResp);
-  };
+    });
 
-  const CHECKOUTGetTransaction = async (sessionToken: string) => {
-    const token = sessionToken;
-    pipe(
-      await ecommerceCHECKOUGetTransaction(transactionId, token),
-      manageResp
-    );
+    void (async () => {
+      if (clientId === CLIENT_TYPE.IO) {
+        return pipe(
+          await ecommerceIOGetTransactionInfo(transactionId, token),
+          manageResp
+        );
+      }
+      if (clientId === CLIENT_TYPE.CHECKOUT) {
+        return pipe(
+          await ecommerceCHECKOUGetTransaction(transactionId, token),
+          manageResp
+        );
+      }
+      redirectWithError();
+    })();
   };
 
   useEffect(() => {
-    const sessionStorageToken = getSessionItem(SessionItems.sessionToken) as
-      | string
-      | undefined;
-
-    const validSessionToken = sessionStorageToken ?? fragmentSessionToken;
-    if (
-      validSessionToken &&
-      (clientId === CLIENT_TYPE.IO || CLIENT_TYPE.CHECKOUT) &&
-      transactionId
-    ) {
-      if (clientId === CLIENT_TYPE.IO) {
-        void IOGetTransaction(validSessionToken);
-      } else {
-        void CHECKOUTGetTransaction(validSessionToken);
-      }
-    } else {
-      void redirectToClient({
-        outcome: ViewOutcomeEnum.GENERIC_ERROR,
-        clientId,
-      });
+    const token =
+      getSessionItem(SessionItems.sessionToken) ?? fragmentSessionToken;
+    if (token && clientId && transactionId) {
+      GetTransaction(token);
     }
+    redirectWithError();
   }, [clientId, transactionId, fragmentSessionToken]);
 
   return (
