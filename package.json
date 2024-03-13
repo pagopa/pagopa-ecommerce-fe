@@ -5,6 +5,7 @@
     "type-check": "tsc",
     "generate": "npm-run-all generate:*",
     "generate:payment-ecommerce-webview": "rimraf generated/definitions/payment-ecommerce-webview && shx mkdir -p generated/definitions/payment-ecommerce-webview && gen-api-models --api-spec https://raw.githubusercontent.com/pagopa/pagopa-infra/main/src/domains/ecommerce-app/api/ecommerce-webview/v1/_openapi.json.tpl --no-strict --out-dir ./generated/definitions/payment-ecommerce-webview --request-types --response-decoders --client",
+    "generate:payment-ecommerce": "rimraf generated/definitions/payment-ecommerce && shx mkdir -p generated/definitions/payment-ecommerce && gen-api-models --api-spec https://raw.githubusercontent.com/pagopa/pagopa-infra/main/src/domains/ecommerce-app/api/ecommerce-checkout/v1/_openapi.json.tpl --no-strict --out-dir ./generated/definitions/payment-ecommerce --request-types --response-decoders --client",
     "lint": "eslint . -c .eslintrc.js --ext .ts,.tsx",
     "lint-autofix": "eslint . -c .eslintrc.js --ext .ts,.tsx --fix",
     "prebuild": "npm-run-all generate type-check lint",
@@ -107,6 +108,7 @@
     "transform": {
       "^.+\\.(ts|tsx)$": "ts-jest"
     },
+    "testRegex": "./*unit.test\\.ts$",
     "testEnvironment": "jsdom",
     "testPathIgnorePatterns": [
       "/dist",

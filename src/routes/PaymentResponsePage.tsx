@@ -1,12 +1,17 @@
 import * as O from "fp-ts/Option";
 import { pipe } from "fp-ts/function";
 import React, { useEffect } from "react";
-import { ViewOutcomeEnum } from "../utils/api/transactions/types";
+import {
+  ecommerceIOGetTransactionInfo,
+  ecommerceCHECKOUTGetTransaction,
+} from "../utils/api/transactions/getTransactionInfo";
+import {
+  ViewOutcomeEnum,
+  transactionInfoStatus,
+} from "../utils/api/transactions/types";
 import CheckoutLoader from "../components/CheckoutLoader";
 import PageContainer from "../components/PageContainer";
-import { ecommerceIOClientWithPolling } from "../utils/api/client";
 import { getOnboardingPaymentOutcome } from "../utils/api/transactions/TransactionResultUtil";
-import { ecommerceIOTransaction } from "../utils/api/transactions/io";
 import { SessionItems, getSessionItem } from "../utils/storage/sessionStorage";
 import { getFragments, redirectToClient } from "../utils/urlUtilities";
 import { CLIENT_TYPE, ROUTE_FRAGMENT } from "./models/routeModel";
@@ -22,41 +27,45 @@ export default function PaymentResponsePage() {
     ROUTE_FRAGMENT.TRANSACTION_ID
   );
 
-  const appClientPolling = async (sessionToken: string) => {
-    pipe(
-      await ecommerceIOTransaction(
-        transactionId,
-        sessionToken,
-        ecommerceIOClientWithPolling
-      ),
-      O.match(
-        () =>
-          redirectToClient({
-            transactionId,
-            outcome: ViewOutcomeEnum.GENERIC_ERROR,
-          }),
-        (transactionInfo) => {
-          const outcome = getOnboardingPaymentOutcome(transactionInfo);
-          redirectToClient({ transactionId, outcome });
-        }
-      )
-    );
+  const redirectWithError = () =>
+    redirectToClient({
+      transactionId,
+      outcome: ViewOutcomeEnum.GENERIC_ERROR,
+      clientId,
+    });
+
+  const GetTransaction = (token: string) => {
+    const manageResp = O.match(redirectWithError, (transactionInfo) => {
+      const outcome = getOnboardingPaymentOutcome(
+        transactionInfo as transactionInfoStatus
+      );
+      redirectToClient({ transactionId, outcome, clientId });
+    });
+
+    void (async () => {
+      if (clientId === CLIENT_TYPE.IO) {
+        return pipe(
+          await ecommerceIOGetTransactionInfo(transactionId, token),
+          manageResp
+        );
+      }
+      if (clientId === CLIENT_TYPE.CHECKOUT) {
+        return pipe(
+          await ecommerceCHECKOUTGetTransaction(transactionId, token),
+          manageResp
+        );
+      }
+      redirectWithError();
+    })();
   };
 
   useEffect(() => {
-    const sessionStorageToken = getSessionItem(SessionItems.sessionToken) as
-      | string
-      | undefined;
-
-    const validSessionToken =
-      sessionStorageToken !== undefined
-        ? sessionStorageToken
-        : fragmentSessionToken;
-    if (validSessionToken && clientId === CLIENT_TYPE.IO && transactionId) {
-      void appClientPolling(validSessionToken);
-    } else {
-      redirectToClient({ outcome: ViewOutcomeEnum.GENERIC_ERROR });
+    const token =
+      getSessionItem(SessionItems.sessionToken) ?? fragmentSessionToken;
+    if (token && clientId && transactionId) {
+      return GetTransaction(token);
     }
+    redirectWithError();
   }, [clientId, transactionId, fragmentSessionToken]);
 
   return (

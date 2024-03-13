@@ -50,7 +50,6 @@ export function App() {
       <CssBaseline />
       <BrowserRouter>
         <Routes>
-          <Route path="*" element={<Navigate to={EcommerceRoutes.ROOT} />} />
           <Route path={EcommerceRoutes.ROOT}>
             <Route path="" element={<Navigate to={EcommerceRoutes.ESITO} />} />
             <Route

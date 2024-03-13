@@ -1,6 +1,8 @@
 import {
-  CLIENT_REDIRECT_PATH,
+  IO_CLIENT_REDIRECT_PATH,
+  CHECKOUT_CLIENT_REDIRECT_OUTCOME_PATH,
   ROUTE_FRAGMENT,
+  CLIENT_TYPE,
 } from "../routes/models/routeModel";
 import { ViewOutcomeEnum } from "./api/transactions/types";
 
@@ -70,14 +72,29 @@ export function getFragments(
 export const redirectToClient = ({
   transactionId,
   outcome,
+  clientId,
 }: {
   transactionId?: string;
   outcome: ViewOutcomeEnum;
-}) =>
-  window.location.replace(
-    `${CLIENT_REDIRECT_PATH}${
-      transactionId
-        ? `/${transactionId}/outcomes?outcome=${outcome}`
-        : `/outcomes?outcome=${outcome}`
-    }`
-  );
+  clientId: string;
+}) => {
+  switch (clientId) {
+    case CLIENT_TYPE.IO:
+      return window.location.replace(
+        `${IO_CLIENT_REDIRECT_PATH}${
+          transactionId
+            ? `/${transactionId}/outcomes?outcome=${outcome}`
+            : `/outcomes?outcome=${outcome}`
+        }`
+      );
+    case CLIENT_TYPE.CHECKOUT:
+      return window.location.replace(
+        `${CHECKOUT_CLIENT_REDIRECT_OUTCOME_PATH}#outcome=${outcome}`
+      );
+    // eslint-disable-next-line sonarjs/no-duplicated-branches
+    default:
+      return window.location.replace(
+        `${CHECKOUT_CLIENT_REDIRECT_OUTCOME_PATH}#outcome=${outcome}`
+      );
+  }
+};
