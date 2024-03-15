@@ -49,19 +49,15 @@ stages:
 
         - template: azure-templates/setup-env.yml
           parameters:
-            pagopa_apim_host: $CHECKOUT_API_HOST_DEV
-            polling_activation_interval: 6000
-            polling_activation_attempts: 16
             env: 'DEV'
-            recaptcha_site_key: $CHECKOUT_CAPTCHA_ID_DEV
-            api_payment_transactions_basepath: '/api/checkout/payment-transactions/v1'
             api_timeout: 10000
-            api_payment_activations_basepath: '/checkout/payments/v1'
-            pm_host: 'https://acardste.vaservices.eu'
-            pm_api_basepath: '/pp-restapi/v4'
-            checkout_webview_pm: 'https://api.dev.platform.pagopa.it'
-            checkout_transaction_basepath: '/ecommerce/io/v1/transactions'
-            checkout_transaction_io_basepath: '/ecommerce/io/v1'
+            api_host: 'http://localhost:1234'
+            checkout_api_path: '/ecommerce/checkout/v1'
+            io_api_path: '/ecommerce/webview/v1'
+            npg_sdk_url: 'https://stg-ta.nexigroup.com/monetaweb/resources/hfsdk.js'
+            gdi_check_timeout: 12000
+            io_client_redirect_outcome_path: '/pp-restapi/v4'
+            checkout_client_redirect_outcome_path: 'https://dev.checkout.pagopa.it/v2/esito'
 
         - script: |
             yarn build
@@ -118,3 +114,63 @@ stages:
           inputs:
             codeCoverageTool: Cobertura
             summaryFileLocation: 'coverage/clover.xml'
+
+# B) Run integration tests if there is a push or pull request on any branch.
+  - stage: Integration_Tests
+    pool:
+      vmImage: 'ubuntu-latest'
+    dependsOn: []
+    jobs:
+      - job: run_integration_tests
+        timeoutInMinutes: 30
+        steps:
+
+        - checkout: checkout-be-mock
+
+        - script: |
+            cp env.example .env
+            sed -i "s/^NPG_API_KEY=.*$/NPG_API_KEY=$(CHECKOUT-TEST-NPG-API-KEY)/" .env
+            sed -i "s/^PSP_API_KEY=.*$/PSP_API_KEY=$(CHECKOUT-TEST-NPG-API-KEY)/" .env
+          workingDirectory: pagopa-checkout-be-mock
+          displayName: 'Setup env for mock'
+
+        - script: yarn global add node-gyp && yarn install && yarn build
+          workingDirectory: pagopa-checkout-be-mock
+          displayName: 'Setup deps for mock'
+
+        - script: |
+            nohup yarn start &
+          displayName: 'Start backend mock'
+          workingDirectory: pagopa-checkout-be-mock
+
+        - checkout: self
+
+        - template: templates/node-job-setup/template.yaml@pagopaCommons
+          parameters:
+           projectDir: pagopa-ecommerce-fe
+
+        - script: |
+            export $(grep -v '^#' .env.development | xargs)
+          displayName: 'export envs from .env.development'
+          workingDirectory: pagopa-ecommerce-fe
+
+        - script: |
+            yarn dev &
+          displayName: 'Start ecommerce fe'
+          workingDirectory: pagopa-ecommerce-fe
+
+        - script: while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' http://localhost:1234)" != "200" ]]; do sleep 5; done
+          displayName: 'Wait for backend to be up and running'
+          workingDirectory: pagopa-ecommerce-fe
+
+        - script: yarn test:integration
+          displayName: 'Integration tests exec'
+          workingDirectory: pagopa-ecommerce-fe
+
+        - task: PublishTestResults@2
+          displayName: 'Publish integration tests results from Jest tests'
+          inputs:
+            testResultsFormat: 'JUnit'
+            testResultsFiles: '**/*TEST.xml'
+            searchFolder: '$(System.DefaultWorkingDirectory)'
+            failTaskOnFailedTests: true

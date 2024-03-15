@@ -22,7 +22,7 @@ import { getConfigOrThrow } from "./config";
 //
 // Returns a fetch wrapped with timeout and retry logic
 //
-const API_TIMEOUT = getConfigOrThrow().CHECKOUT_API_TIMEOUT as Millisecond;
+const API_TIMEOUT = getConfigOrThrow().ECOMMERCE_API_TIMEOUT as Millisecond;
 
 //
 // Given predicate that return a boolean promise, fetch with transient error handling.

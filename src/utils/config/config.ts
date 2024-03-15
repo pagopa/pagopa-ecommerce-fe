@@ -13,50 +13,30 @@ import { readableReport } from "@pagopa/ts-commons/lib/reporters";
 
 export type IConfig = t.TypeOf<typeof IConfig>;
 export const IConfig = t.interface({
-  CHECKOUT_PM_HOST: NonEmptyString,
-  CHECKOUT_ECOMMERCE_HOST: NonEmptyString,
-  CHECKOUT_PM_API_BASEPATH: NonEmptyString,
-  CHECKOUT_API_ECOMMERCE_BASEPATH: NonEmptyString,
-  CHECKOUT_API_ECOMMERCE_BASEPATH_V2: NonEmptyString,
-  CHECKOUT_API_TIMEOUT: t.number,
-  CHECKOUT_ENV: NonEmptyString,
-  CHECKOUT_PAGOPA_ASSETS_CDN: NonEmptyString,
-  CHECKOUT_PAGOPA_LOGOS_CDN: NonEmptyString,
-  CHECKOUT_API_PAYMENT_ACTIVATIONS_BASEPATH: NonEmptyString,
-  CHECKOUT_API_PAYMENT_TRANSACTIONS_BASEPATH: NonEmptyString,
-  CHECKOUT_POLLING_ACTIVATION_INTERVAL: t.number,
-  CHECKOUT_POLLING_ACTIVATION_ATTEMPTS: t.number,
-  CHECKOUT_DONATIONS_URL: NonEmptyString,
-  CHECKOUT_SURVEY_SHOW: t.boolean,
-  CHECKOUT_NPG_SDK_URL: NonEmptyString,
-  CHECKOUT_CONFIG_WEBVIEW_PM_HOST: NonEmptyString,
-  CHECKOUT_TRANSACTION_BASEPATH: NonEmptyString,
-  CHECKOUT_TRANSACTION_IO_BASEPATH: NonEmptyString,
+  ECOMMERCE_ENV: NonEmptyString,
+  ECOMMERCE_API_TIMEOUT: t.number,
+  ECOMMERCE_API_HOST: NonEmptyString,
+  ECOMMERCE_CHECKOUT_API_PATH: NonEmptyString,
+  ECOMMERCE_IO_API_PATH: NonEmptyString,
+  ECOMMERCE_GDI_CHECK_TIMEOUT: t.number,
+  ECOMMERCE_NPG_SDK_URL: NonEmptyString,
+  ECOMMERCE_IO_CLIENT_REDIRECT_OUTCOME_PATH: NonEmptyString,
+  ECOMMERCE_CHECKOUT_CLIENT_REDIRECT_OUTCOME_PATH: NonEmptyString,
 });
 
 // No need to re-evaluate this object for each call
 const errorOrConfig: t.Validation<IConfig> = IConfig.decode({
   // eslint-disable-next-line no-underscore-dangle
   ...(window as any)._env_,
-  CHECKOUT_API_TIMEOUT: parseInt(
+  ECOMMERCE_API_TIMEOUT: parseInt(
     // eslint-disable-next-line no-underscore-dangle
-    (window as any)._env_.CHECKOUT_API_TIMEOUT,
+    (window as any)._env_.ECOMMERCE_API_TIMEOUT,
     10
   ),
-  CHECKOUT_POLLING_ACTIVATION_INTERVAL: parseInt(
+  ECOMMERCE_GDI_CHECK_TIMEOUT: parseInt(
     // eslint-disable-next-line no-underscore-dangle
-    (window as any)._env_.CHECKOUT_POLLING_ACTIVATION_INTERVAL,
+    (window as any)._env_.ECOMMERCE_GDI_CHECK_TIMEOUT,
     10
-  ),
-  CHECKOUT_POLLING_ACTIVATION_ATTEMPTS: parseInt(
-    // eslint-disable-next-line no-underscore-dangle
-    (window as any)._env_.CHECKOUT_POLLING_ACTIVATION_ATTEMPTS,
-    10
-  ),
-  CHECKOUT_SURVEY_SHOW: !!parseInt(
-    // eslint-disable-next-line no-underscore-dangle
-    (window as any)._env_.CHECKOUT_SURVEY_SHOW,
-    2
   ),
 });
 

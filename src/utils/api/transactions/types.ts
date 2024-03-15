@@ -87,6 +87,7 @@ export type gatewayAuthorizationStatusType =
   | "907"
   | "908"
   | "909"
+  | "904"
   | "911"
   | "913"
   | "999";

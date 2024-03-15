@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { Millisecond } from "@pagopa/ts-commons/lib/units";
 import { ViewOutcomeEnum } from "../utils/api/transactions/types";
 import CheckoutLoader from "../components/CheckoutLoader";
 import PageContainer from "../components/PageContainer";
@@ -10,18 +11,21 @@ import {
   getFragments,
   redirectToClient,
 } from "../utils/urlUtilities";
+import { getConfigOrThrow } from "../utils/config/config";
 import {
   CLIENT_TYPE,
   EcommerceRoutes,
   ROUTE_FRAGMENT,
 } from "./models/routeModel";
 
+//
+// Returns a fetch wrapped with timeout and retry logic
+//
+const gdiCheckTimeout = getConfigOrThrow()
+  .ECOMMERCE_GDI_CHECK_TIMEOUT as Millisecond;
+
 const GdiCheckPage = () => {
   const navigate = useNavigate();
-
-  // Constants
-  const gdiCheckTimeout =
-    Number(process.env.CHECKOUT_GDI_CHECK_TIMEOUT) || 12000;
 
   // Fragment Parameters
   const { sessionToken, clientId, transactionId } = getFragments(
@@ -41,7 +45,11 @@ const GdiCheckPage = () => {
 
   // Sdk Callbacks
   const onBuildError = () => {
-    redirectToClient({ outcome: ViewOutcomeEnum.GENERIC_ERROR, transactionId });
+    redirectToClient({
+      outcome: ViewOutcomeEnum.GENERIC_ERROR,
+      transactionId,
+      clientId,
+    });
   };
 
   const onPaymentRedirect = (urlredirect: string) => {
