@@ -662,7 +662,7 @@ describe("Unauthorized npg final status mapping tests", () => {
     ],
     [
       "CLOSED_WITH_NPG_AUTH_STATUS_EXECUTED_SEND_PAYMENT_RESULT_NOT_RECEIVED",
-      "15"
+      "17"
     ],
     [
       "UNAUTHORIZED_WITH_NPG_AUTH_STATUS_AUTHORIZED",
