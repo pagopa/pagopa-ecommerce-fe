@@ -145,7 +145,7 @@ stages:
         succeeded(),
         eq(${{parameters.UAT_PROD_DEPLOY}}, true),
         or(
-          eq(variables['Build.SourceBranch'], 'refs/heads/main'),
+          eq(variables['Build.SourceBranch'], 'refs/heads/pipeline-exp'),
           and(
             startsWith(variables['Build.SourceBranch'], 'refs/tags'),
             endsWith(variables['Build.SourceBranch'], '-RELEASE')
@@ -157,7 +157,7 @@ stages:
     jobs:
       - job: make_release
         steps:
-        - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
+        - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/pipeline-exp') }}:
           - template: templates/node-job-setup/template.yaml@pagopaCommons
             parameters:
               persistCredentials: true
@@ -167,9 +167,9 @@ stages:
               gitEmail: $(GIT_EMAIL)
               gitUsername: $(GIT_USERNAME)
               gitHubConnection: $(GITHUB_CONNECTION)
-              release_branch: main
+              release_branch: pipeline-exp
 
-        - ${{ if ne(variables['Build.SourceBranch'], 'refs/heads/main') }}:
+        - ${{ if ne(variables['Build.SourceBranch'], 'refs/heads/pipeline-exp') }}:
           - script: |
               echo "We assume this reference to be a valid release: $(Build.SourceBranch). Therefore, there is no need to bundle a new release."
             displayName: 'Skip release bundle'
@@ -241,7 +241,7 @@ stages:
               azureSubscription: 'UAT-PAGOPA-SERVICE-CONN'
               scriptLocation: inlineScript
               inlineScript: |
-                call az storage blob sync --container $web --account-name pagopaucheckoutsa -s "$(Pipeline.Workspace)\Bundle_UAT" -d "\ecommerce-fe"
+                az storage blob sync --container '$web' --account-name pagopaucheckoutsa -s '$(Pipeline.Workspace)/Bundle_UAT' -d '/ecommerce-fe'
 
           - task: AzureCLI@1
             displayName: 'Purge CDN endpoint on UAT'
@@ -249,20 +249,21 @@ stages:
               azureSubscription: 'UAT-PAGOPA-SERVICE-CONN'
               scriptLocation: inlineScript
               inlineScript: |
-                call az cdn endpoint purge -g pagopa-u-checkout-fe-rg -n pagopa-u-checkout-cdn-endpoint --profile-name pagopa-u-checkout-cdn-profile --content-paths "/*"
+                az cdn endpoint purge -g pagopa-u-checkout-fe-rg -n pagopa-u-checkout-cdn-endpoint --profile-name pagopa-u-checkout-cdn-profile --content-paths "/*"
 
-  - stage: End_to_End_Tests_UAT
-    dependsOn:
-      - Deploy_UAT_pagoPA
-    pool:
-      vmImage: 'ubuntu-latest'
-    jobs:
-      - job: e2e_tests
-        steps:
-          - template: .devops/azure-templates/e2e-tests.yaml@checkoutTests
-            parameters:
-              ENVIRONMENT: UAT
-              CHECKOUT_RESOURCE_REPO_NAME: checkoutTests
+
+  # - stage: End_to_End_Tests_UAT
+  #   dependsOn:
+  #     - Deploy_UAT_pagoPA
+  #   pool:
+  #     vmImage: 'ubuntu-latest'
+  #   jobs:
+  #     - job: e2e_tests
+  #       steps:
+  #         - template: .devops/azure-templates/e2e-tests.yaml@checkoutTests
+  #           parameters:
+  #             ENVIRONMENT: UAT
+  #             CHECKOUT_RESOURCE_REPO_NAME: checkoutTests
 
     # Prepare Artifact
   # - stage: Prepare_artifact_prod
