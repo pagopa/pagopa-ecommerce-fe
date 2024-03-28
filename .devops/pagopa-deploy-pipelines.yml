@@ -138,7 +138,7 @@ stages:
   # - is on branch main
   # - is a tag in the form v{version}-RELEASE
 
-  - stage: Release\
+  - stage: Release
     dependsOn: []
     condition:
       and(
