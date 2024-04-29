@@ -4,6 +4,7 @@ import { TransactionInfo } from "../../../../generated/definitions/payment-ecomm
 
 export enum PaymentGateway {
   NPG = "NPG",
+  REDIRECT = "REDIRECT",
 }
 
 export enum ViewOutcomeEnum {
@@ -47,6 +48,14 @@ export enum NpgResultCodeEnum {
   VOIDED = "VOIDED",
   REFUNDED = "REFUNDED",
   FAILED = "FAILED",
+}
+
+export enum RedirectResultCodeEnum {
+  OK = "OK",
+  KO = "KO",
+  CANCELED = "CANCELED",
+  EXPIRED = "EXPIRED",
+  ERROR = "ERROR",
 }
 
 export type gatewayAuthorizationStatusType =
