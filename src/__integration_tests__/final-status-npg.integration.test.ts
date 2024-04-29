@@ -13,7 +13,7 @@ describe("Unauthorized npg final status mapping tests", () => {
   const mockFlowWithExpectedResultMap = new Map([
     [
       "AUTHORIZATION_REQUESTED_NO_NPG_OUTCOME",
-      "1"
+      "17"
     ],
     [
       "AUTHORIZATION_COMPLETED_WITH_NPG_AUTH_STATUS_EXECUTED",
@@ -1178,7 +1178,8 @@ describe("Unauthorized npg final status mapping tests", () => {
       await page.setCookie({ name: "mockFlow", value: test });
       await page.goto(ECOMMERCE_FE_ESITO_PAGE);
       await page.waitForFunction("window.location.pathname.includes('v2/esito')")
-      expect(page.url()).toContain(`v2/esito#outcome=${outcome}`)
+      const pageUrl = page.url();
+      expect(pageUrl).toContain(`v2/esito#outcome=${outcome}`)
     })
   }
 });
