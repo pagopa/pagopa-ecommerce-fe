@@ -1154,6 +1154,186 @@ describe("Unauthorized npg final status mapping tests", () => {
     [
       "REFUNDED_TRANSACTION_WITH_NPG_AUTH_STATUS_EXECUTED",
       "1"
+    ],
+    [
+      "AUTHORIZATION_COMPLETED_WITH_REDIRECT_AUTH_STATUS_OK",
+      "1"
+    ],
+    [
+      "AUTHORIZATION_COMPLETED_WITH_REDIRECT_AUTH_STATUS_KO",
+      "2"
+    ],
+    [
+      "AUTHORIZATION_COMPLETED_WITH_REDIRECT_AUTH_STATUS_CANCELED",
+      "8"
+    ],
+    [
+      "AUTHORIZATION_COMPLETED_WITH_REDIRECT_AUTH_STATUS_ERROR",
+      "1"
+    ],
+    [
+      "AUTHORIZATION_COMPLETED_WITH_REDIRECT_AUTH_STATUS_EXPIRED",
+     "4"
+    ],
+    [
+      "CLOSURE_REQUESTED_WITH_REDIRECT_AUTH_STATUS_OK",
+      "1"
+    ],
+    [
+      "CLOSURE_REQUESTED_WITH_REDIRECT_AUTH_STATUS_KO",
+      "2"
+    ],
+    [
+      "CLOSURE_REQUESTED_WITH_REDIRECT_AUTH_STATUS_CANCELED",
+      "8"
+    ],
+    [
+      "CLOSURE_REQUESTED_WITH_REDIRECT_AUTH_STATUS_ERROR",
+      "1"
+    ],
+    [
+      "CLOSURE_REQUESTED_WITH_REDIRECT_AUTH_STATUS_EXPIRED",
+     "4"
+    ],
+    [
+      "CLOSURE_ERROR_WITH_REDIRECT_AUTH_STATUS_OK",
+      "1"
+    ],
+    [
+      "CLOSURE_ERROR_WITH_REDIRECT_AUTH_STATUS_KO",
+      "2"
+    ],
+    [
+      "CLOSURE_ERROR_WITH_REDIRECT_AUTH_STATUS_CANCELED",
+      "8"
+    ],
+    [
+      "CLOSURE_ERROR_WITH_REDIRECT_AUTH_STATUS_ERROR",
+      "1"
+    ],
+    [
+      "CLOSURE_ERROR_WITH_REDIRECT_AUTH_STATUS_EXPIRED",
+     "4"
+    ],
+    [
+      "UNAUTHORIZED_WITH_REDIRECT_AUTH_STATUS_OK",
+      "1"
+    ],
+    [
+      "UNAUTHORIZED_WITH_REDIRECT_AUTH_STATUS_KO",
+      "2"
+    ],
+    [
+      "UNAUTHORIZED_WITH_REDIRECT_AUTH_STATUS_CANCELED",
+      "8"
+    ],
+    [
+      "UNAUTHORIZED_WITH_REDIRECT_AUTH_STATUS_ERROR",
+      "1"
+    ],
+    [
+      "UNAUTHORIZED_WITH_REDIRECT_AUTH_STATUS_EXPIRED",
+     "4"
+    ],
+    [
+      "UNAUTHORIZED_WITH_REDIRECT_AUTH_STATUS_OK",
+      "1"
+    ],
+    [
+      "UNAUTHORIZED_WITH_REDIRECT_AUTH_STATUS_KO",
+      "2"
+    ],
+    [
+      "UNAUTHORIZED_WITH_REDIRECT_AUTH_STATUS_CANCELED",
+      "8"
+    ],
+    [
+      "UNAUTHORIZED_WITH_REDIRECT_AUTH_STATUS_ERROR",
+      "1"
+    ],
+    [
+      "UNAUTHORIZED_WITH_REDIRECT_AUTH_STATUS_EXPIRED",
+     "4"
+    ],
+    [
+      "NOTIFICATION_REQUESTED_WITH_REDIRECT_AUTH_STATUS_OK_AND_SEND_PAYMENT_RESULT_OK",
+      "0"
+    ],
+    [
+      "NOTIFICATION_REQUESTED_WITH_REDIRECT_AUTH_STATUS_OK_AND_SEND_PAYMENT_RESULT_KO",
+      "1"
+    ],
+    [
+      "NOTIFICATION_ERROR_WITH_REDIRECT_AUTH_STATUS_OK_AND_SEND_PAYMENT_RESULT_OK",
+      "0"
+    ],
+    [
+      "NOTIFICATION_ERROR_WITH_REDIRECT_AUTH_STATUS_OK_AND_SEND_PAYMENT_RESULT_KO",
+      "1"
+    ],
+    [
+      "NOTIFIED_OK_WITH_REDIRECT_AUTH_STATUS_OK_AND_SEND_PAYMENT_RESULT_OK",
+      "0"
+    ],
+    [
+      "NOTIFIED_KO_WITH_REDIRECT_AUTH_STATUS_OK_AND_SEND_PAYMENT_RESULT_KO",
+      "1"
+    ],
+    [
+      "EXPIRED_TRANSACTION_WITH_REDIRECT_FOR_AUTHORIZATION_COMPLETED_AUTH_STATUS_OK",
+      "1"
+    ],
+    [
+      "EXPIRED_TRANSACTION_WITH_REDIRECT_FOR_AUTHORIZATION_COMPLETED_AUTH_STATUS_KO",
+      "2"
+    ],
+    [
+      "EXPIRED_TRANSACTION_WITH_REDIRECT_FOR_AUTHORIZATION_COMPLETED_AUTH_STATUS_CANCELED",
+      "8"
+    ],
+    [
+      "EXPIRED_TRANSACTION_WITH_REDIRECT_FOR_AUTHORIZATION_COMPLETED_AUTH_STATUS_EXPIRED",
+      "4"
+    ],
+    [
+      "EXPIRED_TRANSACTION_WITH_REDIRECT_FOR_AUTHORIZATION_COMPLETED_AUTH_STATUS_ERROR",
+      "1"
+    ],    
+    [
+      "EXPIRED_TRANSACTION_WITH_REDIRECT_FOR_CLOSURE_REQUESTED_AUTH_STATUS_OK_AND_SEND_PAYMENT_RESULT_NOT_RECEIVED",
+      "1"
+    ],
+    [
+      "EXPIRED_TRANSACTION_WITH_REDIRECT_FOR_CLOSURE_ERROR_AUTH_STATUS_OK_AND_SEND_PAYMENT_RESULT_NOT_RECEIVED",
+      "1"
+    ],
+    [
+      "EXPIRED_TRANSACTION_WITH_REDIRECT_FOR_NOTIFICATION_REQUESTED_AUTH_STATUS_OK_AND_SEND_PAYMENT_RESULT_OK",
+      "0"
+    ],
+    [
+      "EXPIRED_TRANSACTION_WITH_REDIRECT_FOR_NOTIFICATION_ERROR_AUTH_STATUS_OK_AND_SEND_PAYMENT_RESULT_OK",
+      "0"
+    ],
+    [
+      "EXPIRED_TRANSACTION_WITH_REDIRECT_FOR_NOTIFICATION_REQUESTED_AUTH_STATUS_OK_AND_SEND_PAYMENT_RESULT_KO",
+      "1"
+    ],
+    [
+      "EXPIRED_TRANSACTION_WITH_REDIRECT_FOR_NOTIFICATION_ERROR_AUTH_STATUS_OK_AND_SEND_PAYMENT_RESULT_KO",
+      "1"
+    ],
+    [
+      "REFUND_REQUESTED_TRANSACTION_WITH_REDIRECT_AUTH_STATUS_OK",
+      "1"
+    ],
+    [
+      "REFUND_ERROR_TRANSACTION_WITH_REDIRECT_AUTH_STATUS_OK",
+      "1"
+    ],
+    [
+      "REFUNDED_TRANSACTION_WITH_REDIRECT_AUTH_STATUS_OK",
+      "1"
     ]
   ]);
 
@@ -1173,13 +1353,14 @@ describe("Unauthorized npg final status mapping tests", () => {
   })
 
 
-  for (const [test, outcome] of mockFlowWithExpectedResultMap) {
-    it(test, async() => {
+  for (const [test, expectedOutcome] of mockFlowWithExpectedResultMap) {
+    it(`${test} with expected outcome: ${expectedOutcome}`, async() => {
+      console.log(`Executing test: [${test}]. expected outcome: [${expectedOutcome}]`);
       await page.setCookie({ name: "mockFlow", value: test });
       await page.goto(ECOMMERCE_FE_ESITO_PAGE);
       await page.waitForFunction("window.location.pathname.includes('v2/esito')")
-      const pageUrl = page.url();
-      expect(pageUrl).toContain(`v2/esito#outcome=${outcome}`)
+      const pollingOutcome = Number.parseInt(page.url().split("outcome=")[1]);
+      expect(pollingOutcome).toBe(Number.parseInt(expectedOutcome));
     })
   }
 });

@@ -17,8 +17,8 @@ import {
 const config = getConfigOrThrow();
 
 const pollingConfig = {
-  retries: 20,
-  delay: 3000,
+  retries: config.ECOMMERCE_GET_TRANSACTION_POLLING_RETRIES,
+  delay: config.ECOMMERCE_GET_TRANSACTION_POLLING_DELAY_MILLIS,
   timeout: config.ECOMMERCE_API_TIMEOUT as Millisecond,
   counter: createCounter(),
 };
