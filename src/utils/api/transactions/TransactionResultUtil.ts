@@ -117,15 +117,17 @@ export const getOnboardingPaymentOutcome = (
       }
       return ViewOutcomeEnum.GENERIC_ERROR;
     }
+    case TransactionStatusEnum.AUTHORIZATION_REQUESTED:
+      return ViewOutcomeEnum.TAKING_CHARGE;
     default:
       return ViewOutcomeEnum.GENERIC_ERROR;
   }
 };
 
-function wasAuthorizedByGateway(
+export const wasAuthorizedByGateway = (
   gateway?: string,
   gatewayAuthorizationStatus?: string
-): boolean {
+): boolean => {
   switch (gateway) {
     case PaymentGateway.NPG:
       return gatewayAuthorizationStatus === NpgResultCodeEnum.EXECUTED;
@@ -134,7 +136,7 @@ function wasAuthorizedByGateway(
     default:
       return false;
   }
-}
+};
 
 function evaluateUnauthorizedStatus(
   gateway?: string,

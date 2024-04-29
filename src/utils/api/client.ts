@@ -8,10 +8,10 @@ import { createClient as createCHECKOUTClient } from "../../../generated/definit
 import { getConfigOrThrow } from "../config/config";
 import { constantPollingWithPromisePredicateFetch } from "../config/fetch";
 import { TransactionInfo } from "../../../generated/definitions/payment-ecommerce-webview/TransactionInfo";
-import { NpgResultCodeEnum } from "./transactions/types";
 import {
   EcommerceInterruptStatusCodeEnumType,
   EcommerceMaybeInterruptStatusCodeEnumType,
+  wasAuthorizedByGateway,
 } from "./transactions/TransactionResultUtil";
 
 const config = getConfigOrThrow();
@@ -25,18 +25,19 @@ const pollingConfig = {
 
 /** This function return true when polling on GET transaction must be interrupted */
 const interruptTransactionPolling = (
-  transactionStaus: TransactionInfo["status"],
-  gatewayStaus: TransactionInfo["gatewayAuthorizationStatus"]
+  transactionStatus: TransactionInfo["status"],
+  gatewayStatus: TransactionInfo["gatewayAuthorizationStatus"],
+  gateway: TransactionInfo["gateway"]
 ) =>
   pipe(
-    EcommerceInterruptStatusCodeEnumType.decode(transactionStaus),
+    EcommerceInterruptStatusCodeEnumType.decode(transactionStatus),
     E.isRight
   ) ||
   (pipe(
-    EcommerceMaybeInterruptStatusCodeEnumType.decode(transactionStaus),
+    EcommerceMaybeInterruptStatusCodeEnumType.decode(transactionStatus),
     E.isRight
   ) &&
-    gatewayStaus !== NpgResultCodeEnum.EXECUTED);
+    !wasAuthorizedByGateway(gateway, gatewayStatus));
 
 const decodeFinalStatusResult = async (r: Response): Promise<boolean> => {
   pollingConfig.counter.increment();
@@ -44,12 +45,12 @@ const decodeFinalStatusResult = async (r: Response): Promise<boolean> => {
     pollingConfig.counter.reset();
     return false;
   }
-  const { status, gatewayAuthorizationStatus } = (await r
+  const { status, gatewayAuthorizationStatus, gateway } = (await r
     .clone()
     .json()) as TransactionInfo;
   return !(
     r.status === 200 &&
-    interruptTransactionPolling(status, gatewayAuthorizationStatus)
+    interruptTransactionPolling(status, gatewayAuthorizationStatus, gateway)
   );
 };
 
