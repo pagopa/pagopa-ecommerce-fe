@@ -2,6 +2,7 @@ import { getOnboardingPaymentOutcome } from "../api/transactions/TransactionResu
 import {
   NpgResultCodeEnum,
   PaymentGateway,
+  RedirectResultCodeEnum,
   ViewOutcomeEnum,
 } from "../api/transactions/types";
 import { TransactionStatusEnum } from "../../../generated/definitions/payment-ecommerce-webview/TransactionStatus";
@@ -47,13 +48,6 @@ describe("Onboarding Payment Outcome mapping", () => {
   });
 
   it("returns GENERIC_ERROR", () => {
-    expect(
-      getOnboardingPaymentOutcome({
-        status: TransactionStatusEnum.AUTHORIZATION_REQUESTED,
-        gateway: PaymentGateway.NPG,
-      })
-    ).toBe(ViewOutcomeEnum.GENERIC_ERROR);
-
     expect(
       getOnboardingPaymentOutcome({
         status: TransactionStatusEnum.AUTHORIZATION_COMPLETED,
@@ -153,5 +147,46 @@ describe("Onboarding Payment Outcome mapping", () => {
         gateway: PaymentGateway.NPG,
       })
     ).toBe(ViewOutcomeEnum.GENERIC_ERROR);
+  });
+
+  it.each([
+    {
+      gatewayOutcome: RedirectResultCodeEnum.OK,
+      expectedOutcome: "1",
+    },
+    {
+      gatewayOutcome: RedirectResultCodeEnum.KO,
+      expectedOutcome: "2",
+    },
+    {
+      gatewayOutcome: RedirectResultCodeEnum.CANCELED,
+      expectedOutcome: "8",
+    },
+    {
+      gatewayOutcome: RedirectResultCodeEnum.EXPIRED,
+      expectedOutcome: "4",
+    },
+    {
+      gatewayOutcome: RedirectResultCodeEnum.ERROR,
+      expectedOutcome: "1",
+    },
+  ])("maps REDIRECT outcome properly for test data: %s", (testData) => {
+    expect(
+      getOnboardingPaymentOutcome({
+        status: TransactionStatusEnum.UNAUTHORIZED,
+        sendPaymentResultOutcome: undefined,
+        gatewayAuthorizationStatus: testData.gatewayOutcome,
+        gateway: PaymentGateway.REDIRECT,
+      })
+    ).toBe(testData.expectedOutcome);
+  });
+
+  it("returns TAKE_IN_CHARGE for transaction locked in AUTHORIZATION_REQUESTED", () => {
+    expect(
+      getOnboardingPaymentOutcome({
+        status: TransactionStatusEnum.AUTHORIZATION_REQUESTED,
+        gateway: PaymentGateway.NPG,
+      })
+    ).toBe(ViewOutcomeEnum.TAKING_CHARGE);
   });
 });

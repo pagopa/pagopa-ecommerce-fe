@@ -22,6 +22,8 @@ export const IConfig = t.interface({
   ECOMMERCE_NPG_SDK_URL: NonEmptyString,
   ECOMMERCE_IO_CLIENT_REDIRECT_OUTCOME_PATH: NonEmptyString,
   ECOMMERCE_CHECKOUT_CLIENT_REDIRECT_OUTCOME_PATH: NonEmptyString,
+  ECOMMERCE_GET_TRANSACTION_POLLING_RETRIES: t.number,
+  ECOMMERCE_GET_TRANSACTION_POLLING_DELAY_MILLIS: t.number,
 });
 
 // No need to re-evaluate this object for each call
@@ -38,6 +40,24 @@ const errorOrConfig: t.Validation<IConfig> = IConfig.decode({
     (window as any)._env_.ECOMMERCE_GDI_CHECK_TIMEOUT,
     10
   ),
+  // eslint-disable-next-line no-underscore-dangle
+  ECOMMERCE_GET_TRANSACTION_POLLING_RETRIES: (window as any)._env_
+    .ECOMMERCE_GET_TRANSACTION_POLLING_RETRIES
+    ? parseInt(
+        // eslint-disable-next-line no-underscore-dangle
+        (window as any)._env_.ECOMMERCE_GET_TRANSACTION_POLLING_RETRIES,
+        10
+      )
+    : 20,
+  // eslint-disable-next-line no-underscore-dangle
+  ECOMMERCE_GET_TRANSACTION_POLLING_DELAY_MILLIS: (window as any)._env_
+    .ECOMMERCE_GET_TRANSACTION_POLLING_DELAY_MILLIS
+    ? parseInt(
+        // eslint-disable-next-line no-underscore-dangle
+        (window as any)._env_.ECOMMERCE_GET_TRANSACTION_POLLING_DELAY_MILLIS,
+        10
+      )
+    : 3000,
 });
 
 /**

@@ -8,6 +8,7 @@ import {
   PaymentGateway,
   NpgResultCodeEnum,
   transactionInfoStatus,
+  RedirectResultCodeEnum,
 } from "./types";
 
 export const gatewayAuthorizationStatusMap = new Map<
@@ -88,7 +89,7 @@ export const getOnboardingPaymentOutcome = (
     case TransactionStatusEnum.CLOSURE_REQUESTED:
     case TransactionStatusEnum.AUTHORIZATION_COMPLETED:
     case TransactionStatusEnum.UNAUTHORIZED:
-      return gatewayAuthorizationStatus !== NpgResultCodeEnum.EXECUTED
+      return !wasAuthorizedByGateway(gateway, gatewayAuthorizationStatus)
         ? evaluateUnauthorizedStatus(
             gateway,
             errorCode,
@@ -101,7 +102,7 @@ export const getOnboardingPaymentOutcome = (
         ? ViewOutcomeEnum.TAKING_CHARGE
         : ViewOutcomeEnum.GENERIC_ERROR;
     case TransactionStatusEnum.EXPIRED: {
-      if (gatewayAuthorizationStatus !== NpgResultCodeEnum.EXECUTED) {
+      if (!wasAuthorizedByGateway(gateway, gatewayAuthorizationStatus)) {
         return evaluateUnauthorizedStatus(
           gateway,
           errorCode,
@@ -110,14 +111,30 @@ export const getOnboardingPaymentOutcome = (
       }
       if (
         sendPaymentResultOutcome === SendPaymentResultOutcomeEnum.OK &&
-        gatewayAuthorizationStatus === NpgResultCodeEnum.EXECUTED
+        wasAuthorizedByGateway(gateway, gatewayAuthorizationStatus)
       ) {
         return ViewOutcomeEnum.SUCCESS;
       }
       return ViewOutcomeEnum.GENERIC_ERROR;
     }
+    case TransactionStatusEnum.AUTHORIZATION_REQUESTED:
+      return ViewOutcomeEnum.TAKING_CHARGE;
     default:
       return ViewOutcomeEnum.GENERIC_ERROR;
+  }
+};
+
+export const wasAuthorizedByGateway = (
+  gateway?: string,
+  gatewayAuthorizationStatus?: string
+): boolean => {
+  switch (gateway) {
+    case PaymentGateway.NPG:
+      return gatewayAuthorizationStatus === NpgResultCodeEnum.EXECUTED;
+    case PaymentGateway.REDIRECT:
+      return gatewayAuthorizationStatus === RedirectResultCodeEnum.OK;
+    default:
+      return false;
   }
 };
 
@@ -148,6 +165,19 @@ function evaluateUnauthorizedStatus(
               errorCode as gatewayAuthorizationStatusType
             ) || ViewOutcomeEnum.GENERIC_ERROR
           );
+        default:
+          return ViewOutcomeEnum.GENERIC_ERROR;
+      }
+    case PaymentGateway.REDIRECT:
+      switch (gatewayAuthorizationStatus) {
+        case RedirectResultCodeEnum.KO:
+          return ViewOutcomeEnum.AUTH_ERROR;
+        case RedirectResultCodeEnum.CANCELED:
+          return ViewOutcomeEnum.CANCELED_BY_USER;
+        case RedirectResultCodeEnum.ERROR:
+          return ViewOutcomeEnum.GENERIC_ERROR;
+        case RedirectResultCodeEnum.EXPIRED:
+          return ViewOutcomeEnum.TIMEOUT;
         default:
           return ViewOutcomeEnum.GENERIC_ERROR;
       }
