@@ -11,6 +11,7 @@ export enum ROUTE_FRAGMENT {
   CLIENT_ID = "clientId",
   SESSION_TOKEN = "sessionToken",
   TRANSACTION_ID = "transactionId",
+  OUTCOME = "outcome",
 }
 
 export enum CLIENT_TYPE {

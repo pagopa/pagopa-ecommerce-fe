@@ -36,6 +36,10 @@ parameters:
     type: string
     default: ' '
 
+  - name: 'survey_show'
+    type: number
+    default: 0
+
 steps:
 - bash: |
     chmod +x env.sh
@@ -49,6 +53,7 @@ steps:
       ECOMMERCE_NPG_SDK_URL=${{ parameters.npg_sdk_url }} \
       ECOMMERCE_IO_CLIENT_REDIRECT_OUTCOME_PATH=${{ parameters.io_client_redirect_outcome_path }} \
       ECOMMERCE_CHECKOUT_CLIENT_REDIRECT_OUTCOME_PATH=${{ parameters.checkout_client_redirect_outcome_path }} \
+      ECOMMERCE_SURVEY_SHOW=${{ parameters.survey_show }} \
       bash env.sh
 
   displayName: 'Populate environment file'

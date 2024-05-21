@@ -2,6 +2,10 @@ import { NewTransactionResponse } from "../../../generated/definitions/payment-e
 
 export enum SessionItems {
   sessionToken = "sessionToken",
+  useremail = "useremail",
+  pspSelected = "pspSelected",
+  cart = "cart",
+  transaction = "transaction",
 }
 
 export const getSessionItem = (item: SessionItems) => {

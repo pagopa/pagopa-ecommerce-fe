@@ -1,4 +1,4 @@
-import { DeferredPromise } from "@pagopa/ts-commons//lib/promises";
+import { DeferredPromise } from "@pagopa/ts-commons/lib/promises";
 import { Millisecond } from "@pagopa/ts-commons/lib/units";
 import * as E from "fp-ts/Either";
 import { pipe } from "fp-ts/function";
