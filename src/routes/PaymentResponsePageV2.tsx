@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Box, Button, Typography } from "@mui/material";
 import { default as React, useEffect } from "react";
 import { useTranslation } from "react-i18next";

@@ -4,6 +4,9 @@ import { theme } from "@pagopa/mui-italia";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import PaymentResponsePageV2 from "routes/PaymentResponsePageV2";
+import { SessionItems } from "utils/storage/sessionStorage";
+import Guard from "components/commons/Guard";
 import { EcommerceRoutes } from "./routes/models/routeModel";
 import PaymentResponsePage from "./routes/PaymentResponsePage";
 import GdiCheckPage from "./routes/GdiCheckPage";
@@ -59,6 +62,14 @@ export function App() {
             <Route
               path={EcommerceRoutes.ESITO}
               element={<PaymentResponsePage />}
+            />
+            <Route
+              path={`v2/${EcommerceRoutes.ESITO}`}
+              element={
+                <Guard item={SessionItems.transaction}>
+                  <PaymentResponsePageV2 />
+                </Guard>
+              }
             />
           </Route>
         </Routes>

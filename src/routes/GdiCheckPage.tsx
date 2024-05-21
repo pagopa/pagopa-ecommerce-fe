@@ -46,6 +46,7 @@ const GdiCheckPage = () => {
   // Sdk Callbacks
   const onBuildError = () => {
     redirectToClient({
+      navigate,
       outcome: ViewOutcomeEnum.GENERIC_ERROR,
       transactionId,
       clientId,

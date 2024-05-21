@@ -1,8 +1,9 @@
+import { NavigateFunction } from "react-router-dom";
 import {
   IO_CLIENT_REDIRECT_PATH,
-  CHECKOUT_CLIENT_REDIRECT_OUTCOME_PATH,
   ROUTE_FRAGMENT,
   CLIENT_TYPE,
+  EcommerceRoutes,
 } from "../routes/models/routeModel";
 import { ViewOutcomeEnum } from "./api/transactions/types";
 
@@ -70,10 +71,12 @@ export function getFragments(
 }
 
 export const redirectToClient = ({
+  navigate,
   transactionId,
   outcome,
   clientId,
 }: {
+  navigate: NavigateFunction;
   transactionId?: string;
   outcome: ViewOutcomeEnum;
   clientId: string;
@@ -88,13 +91,16 @@ export const redirectToClient = ({
         }`
       );
     case CLIENT_TYPE.CHECKOUT:
-      return window.location.replace(
-        `${CHECKOUT_CLIENT_REDIRECT_OUTCOME_PATH}#outcome=${outcome}`
+      navigate(
+        `/${EcommerceRoutes.ROOT}/v2/${EcommerceRoutes.ESITO}#${ROUTE_FRAGMENT.CLIENT_ID}=${clientId}&${ROUTE_FRAGMENT.TRANSACTION_ID}=${transactionId}`,
+        { replace: true }
       );
+      break;
     // eslint-disable-next-line sonarjs/no-duplicated-branches
     default:
-      return window.location.replace(
-        `${CHECKOUT_CLIENT_REDIRECT_OUTCOME_PATH}#outcome=${outcome}`
+      navigate(
+        `/${EcommerceRoutes.ROOT}/v2/${EcommerceRoutes.ESITO}#${ROUTE_FRAGMENT.CLIENT_ID}=${clientId}&${ROUTE_FRAGMENT.TRANSACTION_ID}=${transactionId}`,
+        { replace: true }
       );
   }
 };

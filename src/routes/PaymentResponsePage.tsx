@@ -1,6 +1,7 @@
 import * as O from "fp-ts/Option";
 import { pipe } from "fp-ts/function";
 import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   ecommerceIOGetTransactionInfo,
   ecommerceCHECKOUTGetTransaction,
@@ -17,6 +18,8 @@ import { getFragments, redirectToClient } from "../utils/urlUtilities";
 import { CLIENT_TYPE, ROUTE_FRAGMENT } from "./models/routeModel";
 
 export default function PaymentResponsePage() {
+  const navigate = useNavigate();
+
   const {
     clientId,
     transactionId,
@@ -29,6 +32,7 @@ export default function PaymentResponsePage() {
 
   const redirectWithError = () =>
     redirectToClient({
+      navigate,
       transactionId,
       outcome: ViewOutcomeEnum.GENERIC_ERROR,
       clientId,
@@ -39,7 +43,7 @@ export default function PaymentResponsePage() {
       const outcome = getOnboardingPaymentOutcome(
         transactionInfo as transactionInfoStatus
       );
-      redirectToClient({ transactionId, outcome, clientId });
+      redirectToClient({ navigate, transactionId, outcome, clientId });
     });
 
     void (async () => {

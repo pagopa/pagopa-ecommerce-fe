@@ -8,6 +8,8 @@ export enum SessionItems {
   transaction = "transaction",
 }
 
+export const isStateEmpty = (item: SessionItems) => !getSessionItem(item);
+
 export const getSessionItem = (item: SessionItems) => {
   try {
     const serializedState = sessionStorage.getItem(item);
