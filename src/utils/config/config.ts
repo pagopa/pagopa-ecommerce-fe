@@ -59,6 +59,11 @@ const errorOrConfig: t.Validation<IConfig> = IConfig.decode({
         10
       )
     : 3000,
+  ECOMMERCE_SURVEY_SHOW: !!parseInt(
+    // eslint-disable-next-line no-underscore-dangle
+    (window as any)._env_.ECOMMERCE_SURVEY_SHOW,
+    2
+  ),
 });
 
 /**
