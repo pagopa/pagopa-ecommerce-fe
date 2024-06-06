@@ -333,7 +333,7 @@ stages:
               azureSubscription: 'PROD-PAGOPA-SERVICE-CONN'
               scriptLocation: inlineScript
               inlineScript: |
-                az storage blob sync --container '$web' --account-name pagopadcheckoutsa -s '$(Pipeline.Workspace)/Bundle_PROD' -d 'ecommerce-fe'
+                az storage blob sync --container '$web' --account-name pagopapcheckoutsa -s '$(Pipeline.Workspace)/Bundle_PROD' -d 'ecommerce-fe'
 
           - task: AzureCLI@1
             displayName: 'Purge CDN endpoint on PROD'
@@ -341,4 +341,4 @@ stages:
               azureSubscription: 'PROD-PAGOPA-SERVICE-CONN'
               scriptLocation: inlineScript
               inlineScript: |
-                az cdn endpoint purge -g pagopa-d-checkout-fe-rg -n pagopa-d-checkout-cdn-endpoint --profile-name pagopa-d-checkout-cdn-profile --content-paths "/*"
+                az cdn endpoint purge -g pagopa-p-checkout-fe-rg -n pagopa-p-checkout-cdn-endpoint --profile-name pagopa-p-checkout-cdn-profile --content-paths "/*"
