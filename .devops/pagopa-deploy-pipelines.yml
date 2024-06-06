@@ -292,7 +292,7 @@ stages:
               io_api_path: '/ecommerce/webview/v1'
               npg_sdk_url: 'https://xpay.nexigroup.com/monetaweb/resources/hfsdk.js'
               gdi_check_timeout: 12000
-              io_client_redirect_outcome_path: 'https://api.platform.pagopa.it/ecommerce/io/v1/transactions'
+              io_client_redirect_outcome_path: 'https://api.platform.pagopa.it/ecommerce/io-outcomes/v1/transactions'
               checkout_client_redirect_outcome_path: 'https://checkout.pagopa.it/v2/esito'
 
           - script: |
