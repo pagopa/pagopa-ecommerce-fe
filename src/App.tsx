@@ -58,7 +58,11 @@ export function App() {
             />
             <Route
               path={EcommerceRoutes.ESITO}
-              element={<PaymentResponsePage />}
+              element={<PaymentResponsePage cancelUrl={false} />}
+            />
+            <Route
+              path={EcommerceRoutes.CANCEL}
+              element={<PaymentResponsePage cancelUrl={true} />}
             />
           </Route>
         </Routes>

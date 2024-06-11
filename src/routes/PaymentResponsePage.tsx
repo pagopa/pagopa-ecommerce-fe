@@ -16,7 +16,12 @@ import { SessionItems, getSessionItem } from "../utils/storage/sessionStorage";
 import { getFragments, redirectToClient } from "../utils/urlUtilities";
 import { CLIENT_TYPE, ROUTE_FRAGMENT } from "./models/routeModel";
 
-export default function PaymentResponsePage() {
+export type PaymentResponsePageProperties = { cancelUrl: boolean };
+
+export default function PaymentResponsePage(
+  props: PaymentResponsePageProperties
+) {
+  const { cancelUrl } = props;
   const {
     clientId,
     transactionId,
@@ -60,6 +65,14 @@ export default function PaymentResponsePage() {
   };
 
   useEffect(() => {
+    if (cancelUrl && clientId && transactionId) {
+      redirectToClient({
+        transactionId,
+        outcome: ViewOutcomeEnum.CANCELED_BY_USER,
+        clientId,
+      });
+      return;
+    }
     const token =
       getSessionItem(SessionItems.sessionToken) ?? fragmentSessionToken;
     if (token && clientId && transactionId) {

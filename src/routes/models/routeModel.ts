@@ -4,6 +4,7 @@ export enum EcommerceRoutes {
   ROOT = "ecommerce-fe",
   GDI_CHECK = "gdi-check",
   ESITO = "esito",
+  CANCEL = "cancel",
 }
 
 export enum ROUTE_FRAGMENT {
