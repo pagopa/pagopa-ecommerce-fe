@@ -110,7 +110,7 @@ stages:
               azureSubscription: 'DEV-PAGOPA-SERVICE-CONN'
               scriptLocation: inlineScript
               inlineScript: |
-                az storage blob sync --container '$web' --account-name pagopadcheckoutsa -s '$(Pipeline.Workspace)/Bundle_DEV' -d 'ecommerce-fe'
+                az storage blob sync --container '$web' --account-name pagopadcheckoutsa -s '$(Pipeline.Workspace)/Bundle_DEV' -d 'ecommerce-fe/'
 
           - task: AzureCLI@1
             displayName: 'Purge CDN endpoint on DEV'
@@ -241,7 +241,7 @@ stages:
               azureSubscription: 'UAT-PAGOPA-SERVICE-CONN'
               scriptLocation: inlineScript
               inlineScript: |
-                az storage blob sync --container '$web' --account-name pagopaucheckoutsa -s '$(Pipeline.Workspace)/Bundle_UAT' -d 'ecommerce-fe'
+                az storage blob sync --container '$web' --account-name pagopaucheckoutsa -s '$(Pipeline.Workspace)/Bundle_UAT' -d 'ecommerce-fe/'
 
           - task: AzureCLI@1
             displayName: 'Purge CDN endpoint on UAT'
@@ -266,79 +266,79 @@ stages:
   #             CHECKOUT_RESOURCE_REPO_NAME: checkoutTests
 
     # Prepare Artifact
-  # - stage: Prepare_artifact_prod
-  #   dependsOn:
-  #     - Deploy_UAT_pagoPA
-  #   jobs:
-  #     - job: make_build
-  #       pool:
-  #         vmImage: 'ubuntu-latest'
-  #       steps:
-  #         - template: templates/node-job-setup/template.yaml@pagopaCommons
-  #           parameters:
-  #             # On the assumption that this stage is executed only when Relase stage is,
-  #             #  with this parameter we set the reference the deploy script must pull changes from.
-  #             # The branch/tag name is calculated from the source branch
-  #             #  ex: Build.SourceBranch=refs/heads/main --> main
-  #             #  ex: Build.SourceBranch=refs/tags/v1.2.3-RELEASE --> v1.2.3-RELEASE
-  #             gitReference: ${{ replace(replace(variables['Build.SourceBranch'], 'refs/tags/', ''), 'refs/heads/', '') }}
+  - stage: Prepare_artifact_prod
+    dependsOn:
+      - Deploy_UAT_pagoPA
+    jobs:
+      - job: make_build
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - template: templates/node-job-setup/template.yaml@pagopaCommons
+            parameters:
+              # On the assumption that this stage is executed only when Relase stage is,
+              #  with this parameter we set the reference the deploy script must pull changes from.
+              # The branch/tag name is calculated from the source branch
+              #  ex: Build.SourceBranch=refs/heads/main --> main
+              #  ex: Build.SourceBranch=refs/tags/v1.2.3-RELEASE --> v1.2.3-RELEASE
+              gitReference: ${{ replace(replace(variables['Build.SourceBranch'], 'refs/tags/', ''), 'refs/heads/', '') }}
 
-  #         - template: azure-templates/setup-env.yml
-  #           parameters:
-  #             env: 'PROD'
-  #             api_timeout: 10000
-  #             api_host: 'https://api.platform.pagopa.it'
-  #             checkout_api_path: '/ecommerce/checkout/v1'
-  #             io_api_path: '/ecommerce/webview/v1'
-  #             npg_sdk_url: 'https://xpay.nexigroup.com/monetaweb/resources/hfsdk.js'
-  #             gdi_check_timeout: 12000
-  #             io_client_redirect_outcome_path: 'https://api.platform.pagopa.it/ecommerce/io/v1/transactions'
-  #             checkout_client_redirect_outcome_path: 'https://checkout.pagopa.it/v2/esito'
+          - template: azure-templates/setup-env.yml
+            parameters:
+              env: 'PROD'
+              api_timeout: 10000
+              api_host: 'https://api.platform.pagopa.it'
+              checkout_api_path: '/ecommerce/checkout/v1'
+              io_api_path: '/ecommerce/webview/v1'
+              npg_sdk_url: 'https://xpay.nexigroup.com/monetaweb/resources/hfsdk.js'
+              gdi_check_timeout: 12000
+              io_client_redirect_outcome_path: 'https://api.platform.pagopa.it/ecommerce/io-outcomes/v1/transactions'
+              checkout_client_redirect_outcome_path: 'https://checkout.pagopa.it/v2/esito'
 
-  #         - script: |
-  #             yarn build
-  #           displayName: 'Build'
+          - script: |
+              yarn build
+            displayName: 'Build_PROD'
 
-  #         - publish: $(System.DefaultWorkingDirectory)/dist
-  #           artifact: Bundle
+          - publish: $(System.DefaultWorkingDirectory)/dist
+            artifact: Bundle_PROD
 
-  # - stage: UAT_to_PROD_promotion
-  #   dependsOn:
-  #     - Prepare_artifact_prod
-  #   jobs:
-  #     - job: Deploy_Prod_WaitForApproval
-  #       displayName: Wait for PROD approval
-  #       pool: server
-  #       timeoutInMinutes: 4320 # 3 days
-  #       steps:
-  #       - task: ManualValidation@0
-  #         timeoutInMinutes: 4320 # 3 days
-  #         inputs:
-  #           onTimeout: 'skip'
+  - stage: UAT_to_PROD_promotion
+    dependsOn:
+      - Prepare_artifact_prod
+    jobs:
+      - job: Deploy_Prod_WaitForApproval
+        displayName: Wait for PROD approval
+        pool: server
+        timeoutInMinutes: 4320 # 3 days
+        steps:
+        - task: ManualValidation@0
+          timeoutInMinutes: 4320 # 3 days
+          inputs:
+            onTimeout: 'skip'
 
-  # - stage: Deploy_PROD_pagoPA
-  #   dependsOn:
-  #     - UAT_to_PROD_promotion
-  #   jobs:
-  #     - job: 'deploy'
-  #       steps:
-  #         - checkout: none
+  - stage: Deploy_PROD_pagoPA
+    dependsOn:
+      - UAT_to_PROD_promotion
+    jobs:
+      - job: 'deploy'
+        steps:
+          - checkout: none
 
-  #         - download: current
-  #           artifact: Bundle
+          - download: current
+            artifact: Bundle_PROD
 
-  #         - task: AzureCLI@1
-  #           displayName: 'Sync checkout storage on PROD'
-  #           inputs:
-  #             azureSubscription: 'PROD-PAGOPA-SERVICE-CONN'
-  #             scriptLocation: inlineScript
-  #             inlineScript: |
-  #               call az storage blob sync --container $web --account-name pagopapcheckoutsa -s "$(Pipeline.Workspace)\Bundle" --exclude-path payment-transactions-gateway
+          - task: AzureCLI@1
+            displayName: 'Sync checkout storage on PROD'
+            inputs:
+              azureSubscription: 'PROD-PAGOPA-SERVICE-CONN'
+              scriptLocation: inlineScript
+              inlineScript: |
+                az storage blob sync --container '$web' --account-name pagopapcheckoutsa -s '$(Pipeline.Workspace)/Bundle_PROD' -d 'ecommerce-fe/'
 
-  #         - task: AzureCLI@1
-  #           displayName: 'Purge CDN endpoint on PROD'
-  #           inputs:
-  #             azureSubscription: 'PROD-PAGOPA-SERVICE-CONN'
-  #             scriptLocation: inlineScript
-  #             inlineScript: |
-  #               call az cdn endpoint purge -g pagopa-p-checkout-fe-rg -n pagopa-p-checkout-cdn-endpoint --profile-name pagopa-p-checkout-cdn-profile --content-paths "/*"
+          - task: AzureCLI@1
+            displayName: 'Purge CDN endpoint on PROD'
+            inputs:
+              azureSubscription: 'PROD-PAGOPA-SERVICE-CONN'
+              scriptLocation: inlineScript
+              inlineScript: |
+                az cdn endpoint purge -g pagopa-p-checkout-fe-rg -n pagopa-p-checkout-cdn-endpoint --profile-name pagopa-p-checkout-cdn-profile --content-paths "/*"
