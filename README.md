@@ -60,3 +60,7 @@ Test use cases:
 - *CHECKOUT* 
     1. start checkout mock [pagopa-checkout-be-mock](https://github.com/pagopa/pagopa-checkout-be-mock)
     2. open on browser http://localhost:1234/ecommerce-fe/esito#clientId=CHECKOUT&sessionToken=test&transactionId=1234
+
+- *APP IO*
+    1. start script ```yarn start-io-mock``` on other terminal
+    2. open on browser http://localhost:1234/ecommerce-fe/esito#clientId=IO&sessionToken=test&transactionId=1234
