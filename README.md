@@ -57,6 +57,6 @@ the application is available at http://localhost:1234
 
 Test use cases: 
 
-- *ECOMMERCE* 
+- *CHECKOUT* 
     1. start checkout mock [pagopa-checkout-be-mock](https://github.com/pagopa/pagopa-checkout-be-mock)
     2. open on browser http://localhost:1234/ecommerce-fe/esito#clientId=CHECKOUT&sessionToken=test&transactionId=1234
