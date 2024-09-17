@@ -1,6 +1,8 @@
 import * as O from "fp-ts/Option";
 import { pipe } from "fp-ts/function";
 import React, { useEffect } from "react";
+import { Box, Button, CircularProgress, Typography } from "@mui/material";
+import { t } from "i18next";
 import {
   ecommerceIOGetTransactionInfo,
   ecommerceCHECKOUTGetTransaction,
@@ -14,8 +16,6 @@ import { getOnboardingPaymentOutcome } from "../utils/api/transactions/Transacti
 import { SessionItems, getSessionItem } from "../utils/storage/sessionStorage";
 import { getFragments, redirectToClient } from "../utils/urlUtilities";
 import { CLIENT_TYPE, ROUTE_FRAGMENT } from "./models/routeModel";
-import { Box, Button, CircularProgress, Typography } from "@mui/material";
-import { t } from "i18next";
 
 export default function PaymentResponsePage() {
   const {
@@ -27,24 +27,25 @@ export default function PaymentResponsePage() {
     ROUTE_FRAGMENT.CLIENT_ID,
     ROUTE_FRAGMENT.TRANSACTION_ID
   );
-  const [outcome, setOutcome] = React.useState<ViewOutcomeEnum | null>(null);
+  const [paymentOutcome, setPaymentOutcome] =
+    React.useState<ViewOutcomeEnum | null>(null);
 
   const redirectWithError = () => {
-    setOutcome(ViewOutcomeEnum.GENERIC_ERROR);
-    performRedirectToClient(outcome!);
-  }
+    setPaymentOutcome(ViewOutcomeEnum.GENERIC_ERROR);
+    performRedirectToClient();
+  };
 
-  const performRedirectToClient = (outcome: ViewOutcomeEnum) => 
-    redirectToClient({ transactionId, outcome, clientId })
+  const performRedirectToClient = () => {
+    const outcome = paymentOutcome || ViewOutcomeEnum.GENERIC_ERROR;
+    redirectToClient({ transactionId, outcome, clientId });
+  };
 
   const GetTransaction = (token: string) => {
     const manageResp = O.match(redirectWithError, (transactionInfo) => {
-      setOutcome(
-        getOnboardingPaymentOutcome(
-          transactionInfo as transactionInfoStatus
-        )
+      setPaymentOutcome(
+        getOnboardingPaymentOutcome(transactionInfo as transactionInfoStatus)
       );
-      performRedirectToClient(outcome!);
+      performRedirectToClient();
     });
 
     void (async () => {
@@ -75,28 +76,32 @@ export default function PaymentResponsePage() {
 
   return (
     <PageContainer>
-      <Box sx={{
+      <Box
+        sx={{
           position: "fixed",
           width: "100vw",
           height: "calc(100vh - 80px)",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          justifyContent: "center"
-      }}>
+          justifyContent: "center",
+        }}
+      >
         <CircularProgress />
-        {clientId == CLIENT_TYPE.IO && outcome && 
-          <Box sx={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-between",
-            alignItems: "center",
-            maxWidth: "400px",
-            textAlign: "center",
-            pt: 3,
-            pb: 2,
-            gap: 2
-          }}>
+        {clientId === CLIENT_TYPE.IO && paymentOutcome && (
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              alignItems: "center",
+              maxWidth: "400px",
+              textAlign: "center",
+              pt: 3,
+              pb: 2,
+              gap: 2,
+            }}
+          >
             <Typography variant="h5">
               {t("resultPage.justFewMoments")}
             </Typography>
@@ -104,17 +109,17 @@ export default function PaymentResponsePage() {
               {t("resultPage.completeOperationMsg")}
             </Typography>
             <Button
-                  sx={{
-                    mt: 2
-                  }}
-                  variant="outlined"
-                  onClick={() => performRedirectToClient(outcome!)}
-                  id="continueToIOBtn"
-                >
+              sx={{
+                mt: 2,
+              }}
+              variant="outlined"
+              onClick={() => performRedirectToClient()}
+              id="continueToIOBtn"
+            >
               {t("resultPage.continueToIO")}
             </Button>
           </Box>
-}
+        )}
       </Box>
     </PageContainer>
   );
