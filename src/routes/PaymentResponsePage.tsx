@@ -27,24 +27,23 @@ export default function PaymentResponsePage() {
     ROUTE_FRAGMENT.CLIENT_ID,
     ROUTE_FRAGMENT.TRANSACTION_ID
   );
-  const [paymentOutcome, setPaymentOutcome] =
-    React.useState<ViewOutcomeEnum | null>(null);
+  const [hasOutcome, setHasOutcome] = React.useState<boolean>(false);
+  let outcome = ViewOutcomeEnum.GENERIC_ERROR;
 
   const redirectWithError = () => {
-    setPaymentOutcome(ViewOutcomeEnum.GENERIC_ERROR);
+    outcome = ViewOutcomeEnum.GENERIC_ERROR
+    setHasOutcome(true);
     performRedirectToClient();
   };
 
   const performRedirectToClient = () => {
-    const outcome = paymentOutcome || ViewOutcomeEnum.GENERIC_ERROR;
     redirectToClient({ transactionId, outcome, clientId });
   };
 
   const GetTransaction = (token: string) => {
     const manageResp = O.match(redirectWithError, (transactionInfo) => {
-      setPaymentOutcome(
-        getOnboardingPaymentOutcome(transactionInfo as transactionInfoStatus)
-      );
+      outcome = getOnboardingPaymentOutcome(transactionInfo as transactionInfoStatus)
+      setHasOutcome(true);
       performRedirectToClient();
     });
 
@@ -88,7 +87,7 @@ export default function PaymentResponsePage() {
         }}
       >
         <CircularProgress />
-        {clientId === CLIENT_TYPE.IO && paymentOutcome && (
+        {clientId === CLIENT_TYPE.IO && hasOutcome && (
           <Box
             sx={{
               display: "flex",
