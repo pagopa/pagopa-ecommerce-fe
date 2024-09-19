@@ -85,11 +85,12 @@ export default function PaymentResponsePage() {
         sx={{
           position: "fixed",
           width: "100vw",
-          height: "calc(100vh - 80px)",
+          height: "100vh",
           display: "flex",
+          pb: 15,
           flexDirection: "column",
           alignItems: "center",
-          justifyContent: "center",
+          justifyContent: "center"
         }}
       >
         <CircularProgress />
@@ -102,15 +103,14 @@ export default function PaymentResponsePage() {
               alignItems: "center",
               maxWidth: "400px",
               textAlign: "center",
-              pt: 3,
-              pb: 2,
+              p: 3,
               gap: 2,
             }}
           >
-            <Typography variant="h5">
+            <Typography variant="h5" fontWeight={700}>
               {t("resultPage.justFewMoments")}
             </Typography>
-            <Typography variant="body1">
+            <Typography variant="body2">
               {t("resultPage.completeOperationMsg")}
             </Typography>
             <Button
