@@ -1,6 +1,8 @@
 import * as O from "fp-ts/Option";
 import { pipe } from "fp-ts/function";
 import React, { useEffect } from "react";
+import { Box, Button, CircularProgress, Typography } from "@mui/material";
+import { t } from "i18next";
 import {
   ecommerceIOGetTransactionInfo,
   ecommerceCHECKOUTGetTransaction,
@@ -9,7 +11,6 @@ import {
   ViewOutcomeEnum,
   transactionInfoStatus,
 } from "../utils/api/transactions/types";
-import CheckoutLoader from "../components/CheckoutLoader";
 import PageContainer from "../components/PageContainer";
 import { getOnboardingPaymentOutcome } from "../utils/api/transactions/TransactionResultUtil";
 import { SessionItems, getSessionItem } from "../utils/storage/sessionStorage";
@@ -26,20 +27,23 @@ export default function PaymentResponsePage() {
     ROUTE_FRAGMENT.CLIENT_ID,
     ROUTE_FRAGMENT.TRANSACTION_ID
   );
+  const [outcomeState, setOutcomeAndRedirect] =
+    React.useState<ViewOutcomeEnum | null>(null);
 
-  const redirectWithError = () =>
-    redirectToClient({
-      transactionId,
-      outcome: ViewOutcomeEnum.GENERIC_ERROR,
-      clientId,
-    });
+  const redirectWithError = () => {
+    setOutcomeAndRedirect(ViewOutcomeEnum.GENERIC_ERROR);
+  };
+
+  const performRedirectToClient = () => {
+    const outcome = outcomeState || ViewOutcomeEnum.GENERIC_ERROR;
+    redirectToClient({ transactionId, outcome, clientId });
+  };
 
   const GetTransaction = (token: string) => {
     const manageResp = O.match(redirectWithError, (transactionInfo) => {
-      const outcome = getOnboardingPaymentOutcome(
-        transactionInfo as transactionInfoStatus
+      setOutcomeAndRedirect(
+        getOnboardingPaymentOutcome(transactionInfo as transactionInfoStatus)
       );
-      redirectToClient({ transactionId, outcome, clientId });
     });
 
     void (async () => {
@@ -59,6 +63,13 @@ export default function PaymentResponsePage() {
     })();
   };
 
+  // On outcome update perform redirect
+  useEffect(() => {
+    if (outcomeState) {
+      performRedirectToClient();
+    }
+  }, [outcomeState]);
+
   useEffect(() => {
     const token =
       getSessionItem(SessionItems.sessionToken) ?? fragmentSessionToken;
@@ -70,7 +81,51 @@ export default function PaymentResponsePage() {
 
   return (
     <PageContainer>
-      <CheckoutLoader />
+      <Box
+        sx={{
+          position: "fixed",
+          width: "100vw",
+          height: "calc(100vh - 80px)",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <CircularProgress />
+        {clientId === CLIENT_TYPE.IO && outcomeState && (
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              alignItems: "center",
+              maxWidth: "400px",
+              textAlign: "center",
+              pt: 3,
+              pb: 2,
+              gap: 2,
+            }}
+          >
+            <Typography variant="h5">
+              {t("resultPage.justFewMoments")}
+            </Typography>
+            <Typography variant="body1">
+              {t("resultPage.completeOperationMsg")}
+            </Typography>
+            <Button
+              sx={{
+                mt: 2,
+              }}
+              variant="outlined"
+              onClick={() => performRedirectToClient()}
+              id="continueToIOBtn"
+            >
+              {t("resultPage.continueToIO")}
+            </Button>
+          </Box>
+        )}
+      </Box>
     </PageContainer>
   );
 }

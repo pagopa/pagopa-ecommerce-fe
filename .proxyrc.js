@@ -14,6 +14,7 @@ const {createProxyMiddleware} = require("http-proxy-middleware");
 const apiHost = "http://127.0.0.1:8080";
 const ecommerceBasepathV1 = "/ecommerce/checkout/v1";
 const ecommerceIOBasepathV1 = "/ecommerce/io/v1";
+const ecommerceIOWebviewBasepathV1 = "/ecommerce/webview/v1";
 
 module.exports = function (app) {
     app.use(createProxyMiddleware(ecommerceBasepathV1, {
@@ -21,6 +22,10 @@ module.exports = function (app) {
     }));
 
     app.use(createProxyMiddleware(ecommerceIOBasepathV1, {
+        target: apiHost,
+    }));
+
+    app.use(createProxyMiddleware(ecommerceIOWebviewBasepathV1, {
         target: apiHost,
     }));
 }
