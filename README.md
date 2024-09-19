@@ -69,7 +69,7 @@ Test use cases:
 ## IO Mock outcome result
 The ecommerce transaction get transaction endpoint `/checkout/webview/v1/transactions/:transactionId` is driven by the following mockFlow values:
 
-| MOCK FLOW                                          | RptId Suffix | OUTCOME              | 
+| MOCK FLOW                                          | Transaction Id Suffix | OUTCOME              | 
 |----------------------------------------------------|--------------|----------------------|
 | NOTIFIED_OK                                        | other        | SUCCESS (0)          |
 | NOTIFICATION_REQUESTED - Outcome OK                | 61           | SUCCESS (0)          |
