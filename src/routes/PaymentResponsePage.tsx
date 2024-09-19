@@ -27,24 +27,24 @@ export default function PaymentResponsePage() {
     ROUTE_FRAGMENT.CLIENT_ID,
     ROUTE_FRAGMENT.TRANSACTION_ID
   );
-  const [hasOutcome, setHasOutcome] = React.useState<boolean>(false);
-  let outcome = ViewOutcomeEnum.GENERIC_ERROR;
+  const [outcomeState, setOutcome] = React.useState<ViewOutcomeEnum | null>(
+    null
+  );
 
   const redirectWithError = () => {
-    outcome = ViewOutcomeEnum.GENERIC_ERROR
-    setHasOutcome(true);
-    performRedirectToClient();
+    setOutcome(ViewOutcomeEnum.GENERIC_ERROR);
   };
 
   const performRedirectToClient = () => {
+    const outcome = outcomeState || ViewOutcomeEnum.GENERIC_ERROR;
     redirectToClient({ transactionId, outcome, clientId });
   };
 
   const GetTransaction = (token: string) => {
     const manageResp = O.match(redirectWithError, (transactionInfo) => {
-      outcome = getOnboardingPaymentOutcome(transactionInfo as transactionInfoStatus)
-      setHasOutcome(true);
-      performRedirectToClient();
+      setOutcome(
+        getOnboardingPaymentOutcome(transactionInfo as transactionInfoStatus)
+      );
     });
 
     void (async () => {
@@ -63,6 +63,12 @@ export default function PaymentResponsePage() {
       redirectWithError();
     })();
   };
+
+  // On outcome update perform redirect
+  useEffect(() => {
+    if(outcomeState)
+      performRedirectToClient();
+  }, [outcomeState]);
 
   useEffect(() => {
     const token =
@@ -87,7 +93,7 @@ export default function PaymentResponsePage() {
         }}
       >
         <CircularProgress />
-        {clientId === CLIENT_TYPE.IO && hasOutcome && (
+        {clientId === CLIENT_TYPE.IO && outcomeState && (
           <Box
             sx={{
               display: "flex",
