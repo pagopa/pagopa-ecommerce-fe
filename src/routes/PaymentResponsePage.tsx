@@ -27,12 +27,12 @@ export default function PaymentResponsePage() {
     ROUTE_FRAGMENT.CLIENT_ID,
     ROUTE_FRAGMENT.TRANSACTION_ID
   );
-  const [outcomeState, setOutcome] = React.useState<ViewOutcomeEnum | null>(
+  const [outcomeState, setOutcomeAndRedirect] = React.useState<ViewOutcomeEnum | null>(
     null
   );
 
   const redirectWithError = () => {
-    setOutcome(ViewOutcomeEnum.GENERIC_ERROR);
+    setOutcomeAndRedirect(ViewOutcomeEnum.GENERIC_ERROR);
   };
 
   const performRedirectToClient = () => {
@@ -42,7 +42,7 @@ export default function PaymentResponsePage() {
 
   const GetTransaction = (token: string) => {
     const manageResp = O.match(redirectWithError, (transactionInfo) => {
-      setOutcome(
+      setOutcomeAndRedirect(
         getOnboardingPaymentOutcome(transactionInfo as transactionInfoStatus)
       );
     });
@@ -66,8 +66,9 @@ export default function PaymentResponsePage() {
 
   // On outcome update perform redirect
   useEffect(() => {
-    if(outcomeState)
+    if (outcomeState) {
       performRedirectToClient();
+    }
   }, [outcomeState]);
 
   useEffect(() => {
