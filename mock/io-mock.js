@@ -10,7 +10,7 @@ const app = express();
 app.get("/ecommerce/webview/v1/transactions/:transactionId", (req, res) => {
 
     const transactionId = req.params.transactionId;
-    console.log("Transaction ID recieved: " + transactionId);
+    console.log("Transaction ID received: " + transactionId);
 
     const paymentSuccess =  {
         status: "NOTIFIED_OK",
