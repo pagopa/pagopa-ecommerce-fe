@@ -27,9 +27,8 @@ export default function PaymentResponsePage() {
     ROUTE_FRAGMENT.CLIENT_ID,
     ROUTE_FRAGMENT.TRANSACTION_ID
   );
-  const [outcomeState, setOutcomeAndRedirect] = React.useState<ViewOutcomeEnum | null>(
-    null
-  );
+  const [outcomeState, setOutcomeAndRedirect] =
+    React.useState<ViewOutcomeEnum | null>(null);
 
   const redirectWithError = () => {
     setOutcomeAndRedirect(ViewOutcomeEnum.GENERIC_ERROR);
