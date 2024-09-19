@@ -9,65 +9,143 @@ const app = express();
 
 app.get("/ecommerce/webview/v1/transactions/:transactionId", (req, res) => {
 
-  if (req.params.transactionId.endsWith("61"))
-    res.send(mockTransactionData("NOTIFICATION_REQUESTED", "NPG", "EXECUTED", "OK"));
+    const transactionId = req.params.transactionId;
+    console.log("Transaction ID recieved: " + transactionId);
 
-  else if (req.params.transactionId.endsWith("62"))
-    res.send(mockTransactionData("NOTIFICATION_REQUESTED", "NPG", "EXECUTED", "KO"));
+    const paymentSuccess =  {
+        status: "NOTIFIED_OK",
+        gateway: "NPG",
+        gatewayAuthorizationStatus: "EXECUTED",
+        outcome: "OK"
+    }
+  
+    const suffixMap = {
+        "61": {
+            status: "NOTIFICATION_REQUESTED",
+            gateway: "NPG",
+            gatewayAuthorizationStatus: "EXECUTED",
+            outcome: "OK"
+        },
+        "62": {
+            status: "NOTIFICATION_REQUESTED",
+            gateway: "NPG",
+            gatewayAuthorizationStatus: "EXECUTED",
+            outcome: "KO"
+        },
+        "63": {
+            status: "NOTIFICATION_ERROR",
+            gateway: "NPG",
+            gatewayAuthorizationStatus: "EXECUTED",
+            outcome: "OK"
+        },
+        "64": {
+            status: "NOTIFICATION_ERROR",
+            gateway: "NPG",
+            gatewayAuthorizationStatus: "EXECUTED",
+            outcome: "KO"
+        },
+        "65": {
+            status: "NOTIFIED_KO",
+            gateway: "NPG",
+            gatewayAuthorizationStatus: "EXECUTED",
+            outcome: "KO"
+        },
+        "66": {
+            status: "REFUNDED",
+            gateway: "NPG",
+            gatewayAuthorizationStatus: "EXECUTED",
+            outcome: "OK"
+        },
+        "67": {
+            status: "REFUND_REQUESTED",
+            gateway: "NPG",
+            gatewayAuthorizationStatus: "EXECUTED",
+            outcome: "OK"
+        },
+        "68": {
+            status: "REFUND_ERROR",
+            gateway: "NPG",
+            gatewayAuthorizationStatus: "EXECUTED",
+            outcome: "OK"
+        },
+        "69": {
+            status: "EXPIRED_NOT_AUTHORIZED",
+            gateway: "NPG",
+            gatewayAuthorizationStatus: "EXECUTED",
+            outcome: "OK"
+        },
+        "70": {
+            status: "CANCELED",
+            gateway: "NPG",
+            gatewayAuthorizationStatus: "EXECUTED",
+            outcome: "OK"
+        },
+        "71": {
+            status: "CANCELLATION_EXPIRED",
+            gateway: "NPG",
+            gatewayAuthorizationStatus: "EXECUTED",
+            outcome: "OK"
+        },
+        "72": {
+            status: "CLOSURE_ERROR",
+            gateway: "NPG",
+            gatewayAuthorizationStatus: "EXECUTED",
+            outcome: undefined
+        },
+        "73": {
+            status: "CLOSURE_REQUESTED",
+            gateway: "NPG",
+            gatewayAuthorizationStatus: "CANCELED",
+            outcome: undefined
+        },
+        "74": {
+            status: "AUTHORIZATION_COMPLETED",
+            gateway: "NPG",
+            gatewayAuthorizationStatus: "AUTHORIZED",
+            outcome: undefined
+        },
+        "75": {
+            status: "UNAUTHORIZED",
+            gateway: "NPG",
+            gatewayAuthorizationStatus: "DENIED_BY_RISK",
+            outcome: undefined
+        },
+        "76": {
+            status: "CLOSED",
+            gateway: "NPG",
+            gatewayAuthorizationStatus: undefined,
+            outcome: "NOT_RECEIVED"
+        },
+        "77": {
+            status: "CLOSED",
+            gateway: "NPG",
+            gatewayAuthorizationStatus: undefined,
+            outcome: "EXECUTED"
+        },
+        "78": {
+            status: "EXPIRED",
+            gateway: "NPG",
+            gatewayAuthorizationStatus: "EXECUTED",
+            outcome: "OK"
+        },
+        "79": {
+            status: "AUTHORIZATION_REQUESTED",
+            gateway: "NPG",
+            gatewayAuthorizationStatus: undefined,
+            outcome: undefined
+        }
+    };
 
-  else if (req.params.transactionId.endsWith("63"))
-    res.send(mockTransactionData("NOTIFICATION_ERROR", "NPG", "EXECUTED", "OK"));
+    const suffix = transactionId.slice(-2);
+    const params = suffixMap[suffix] || paymentSuccess;
 
-  else if (req.params.transactionId.endsWith("64"))
-    res.send(mockTransactionData("NOTIFICATION_ERROR", "NPG", "EXECUTED", "KO"));
-
-  else if (req.params.transactionId.endsWith("65"))
-    res.send(mockTransactionData("NOTIFIED_KO", "NPG", "EXECUTED", "KO"));
-
-  else if (req.params.transactionId.endsWith("66"))
-    res.send(mockTransactionData("REFUNDED", "NPG", "EXECUTED", "OK"));
-
-  else if (req.params.transactionId.endsWith("67"))
-    res.send(mockTransactionData("REFUND_REQUESTED", "NPG", "EXECUTED", "OK"));
-
-  else if (req.params.transactionId.endsWith("68"))
-    res.send(mockTransactionData("REFUND_ERROR", "NPG", "EXECUTED", "OK"));
-
-  else if (req.params.transactionId.endsWith("69"))
-    res.send(mockTransactionData("EXPIRED_NOT_AUTHORIZED", "NPG", "EXECUTED", "OK"));
-
-  else if (req.params.transactionId.endsWith("70"))
-    res.send(mockTransactionData("CANCELED", "NPG", "EXECUTED", "OK"));
-
-  else if (req.params.transactionId.endsWith("71"))
-    res.send(mockTransactionData("CANCELLATION_EXPIRED", "NPG", "EXECUTED", "OK"));
-
-  else if (req.params.transactionId.endsWith("72"))
-    res.send(mockTransactionData("CLOSURE_ERROR", "NPG", "EXECUTED", undefined));
-
-  else if (req.params.transactionId.endsWith("73"))
-    res.send(mockTransactionData("CLOSURE_REQUESTED", "NPG", "CANCELED", undefined));
-
-  else if (req.params.transactionId.endsWith("74"))
-    res.send(mockTransactionData("AUTHORIZATION_COMPLETED", "NPG", "AUTHORIZED", undefined));
-
-  else if (req.params.transactionId.endsWith("75"))
-    res.send(mockTransactionData("UNAUTHORIZED", "NPG", "DENIED_BY_RISK", undefined));
-
-  else if (req.params.transactionId.endsWith("76"))
-    res.send(mockTransactionData("CLOSED", "NPG", undefined, "NOT_RECEIVED"));
-
-  else if (req.params.transactionId.endsWith("77"))
-    res.send(mockTransactionData("CLOSED", "NPG", undefined, "EXECUTED"));
-
-  else if (req.params.transactionId.endsWith("78"))
-    res.send(mockTransactionData("EXPIRED", "NPG", "EXECUTED", "OK"));
-
-  else if (req.params.transactionId.endsWith("79"))
-    res.send(mockTransactionData("AUTHORIZATION_REQUESTED", "NPG", undefined, undefined));
-
-  else 
-    res.send(mockTransactionData("NOTIFIED_OK", "NPG", "EXECUTED", "OK"));
+    res.send(
+        mockTransactionData(
+            params.status, 
+            params.gateway, 
+            params.gatewayAuthorizationStatus,
+            params.outcome
+        ));
 
 });
 
