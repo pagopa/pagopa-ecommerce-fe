@@ -9,7 +9,7 @@ const app = express();
 
 app.get("/ecommerce/webview/v1/transactions/:transactionId", (req, res) => {
 
-    const transactionId = req.params.transactionId;
+    const transactionId = req.params.transactionId.replace(/\n|\r/g, "");
     console.log("Transaction ID received: " + transactionId);
 
     const paymentSuccess =  {
