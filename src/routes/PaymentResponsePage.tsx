@@ -90,7 +90,7 @@ export default function PaymentResponsePage() {
           pb: 15,
           flexDirection: "column",
           alignItems: "center",
-          justifyContent: "center"
+          justifyContent: "center",
         }}
       >
         <CircularProgress />
