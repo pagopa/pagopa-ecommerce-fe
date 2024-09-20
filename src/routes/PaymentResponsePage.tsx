@@ -87,7 +87,7 @@ export default function PaymentResponsePage() {
           width: "100vw",
           height: "100vh",
           display: "flex",
-          pb: 15,
+          pb: 20,
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
