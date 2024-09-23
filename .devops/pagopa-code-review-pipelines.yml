@@ -177,7 +177,7 @@ stages:
           displayName: 'Start ecommerce fe with noredirect env'
           workingDirectory: pagopa-ecommerce-fe
 
-        - script: yarn test:noredirect-integration
+        - script: yarn test:noredirect
           displayName: 'IO no redirect button Integration tests exec '
           workingDirectory: pagopa-ecommerce-fe
 

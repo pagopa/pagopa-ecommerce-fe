@@ -48,7 +48,7 @@ In order to build and run this project are required:
    ```
 
 ### Usage
- 
+
 In order to run the application on a local dev server with mock API responses:
 -  ```sh
    yarn dev
