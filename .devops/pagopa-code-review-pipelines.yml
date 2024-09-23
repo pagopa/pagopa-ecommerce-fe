@@ -171,6 +171,15 @@ stages:
         - script: yarn test:integration
           displayName: 'Integration tests exec'
           workingDirectory: pagopa-ecommerce-fe
+          
+        - script: |
+            yarn dev:env:noredirect &
+          displayName: 'Start ecommerce fe with noredirect env'
+          workingDirectory: pagopa-ecommerce-fe
+
+        - script: yarn test:noredirect-integration
+          displayName: 'IO no redirect button Integration tests exec '
+          workingDirectory: pagopa-ecommerce-fe
 
         - task: PublishTestResults@2
           displayName: 'Publish integration tests results from Jest tests'
