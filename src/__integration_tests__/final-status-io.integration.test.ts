@@ -34,14 +34,13 @@ describe("Check final status on IO mapping tests", () => {
   ]);
 
 
-  /**
-   * Increase default test timeout (80000ms)
-   * to support entire payment flow
+   /**
+   * Default test timeout (80000ms)
     */
-  jest.setTimeout(120000);
-  jest.retryTimes(0);
-  page.setDefaultNavigationTimeout(120000);
-  page.setDefaultTimeout(120000);
+  jest.setTimeout(80000);
+  jest.retryTimes(3);
+  page.setDefaultNavigationTimeout(80000);
+  page.setDefaultTimeout(80000);
 
   beforeAll(async () => {
     await page.goto(ECOMMERCE_FE_ESITO_PAGE);

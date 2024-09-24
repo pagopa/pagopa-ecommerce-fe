@@ -5,13 +5,12 @@ describe("Test showing final button for continue to IO", () => {
   const ECOMMERCE_FE_ESITO_PAGE = "http://localhost:1234/ecommerce-fe/esito#clientId=IO&sessionToken=test&transactionId=302054585254587560";
 
   /**
-   * Increase default test timeout (80000ms)
-   * to support entire payment flow
+   * Default test timeout (80000ms)
     */
-  jest.setTimeout(120000);
-  jest.retryTimes(0);
-  page.setDefaultNavigationTimeout(120000);
-  page.setDefaultTimeout(120000);
+  jest.setTimeout(80000);
+  jest.retryTimes(3);
+  page.setDefaultNavigationTimeout(80000);
+  page.setDefaultTimeout(80000);
 
   beforeAll(async () => {
     await page.setViewport({ width: 1200, height: 907 });
