@@ -15,7 +15,7 @@
     "proxy": "npm-run-all generate type-check dev:env dev:proxy",
     "dev:env": "export $(grep -v '^#' .env.development | xargs) && chmod +x env.sh && ./env.sh",
     "dev:env:noredirect": "export $(grep -v '^#' .env.development.noredirect | xargs) && chmod +x env.sh && ./env.sh",
-    "dev:server": "parcel src/index.html",
+    "dev:server": "parcel src/index.html &",
     "dev:proxy": "parcel src/index.html",
     "test": "jest --config=jest.config.js",
     "test:integration": "jest --config=jest.integration.config.js",
