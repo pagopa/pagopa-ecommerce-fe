@@ -56,7 +56,7 @@ stages:
             io_api_path: '/ecommerce/webview/v1'
             npg_sdk_url: 'https://stg-ta.nexigroup.com/monetaweb/resources/hfsdk.js'
             gdi_check_timeout: 12000
-            io_client_redirect_outcome_path: '/pp-restapi/v4'
+            io_client_redirect_outcome_path: 'https://api.dev.platform.pagopa.it/ecommerce/io-outcomes/v1/transactions'
             checkout_client_redirect_outcome_path: 'https://dev.checkout.pagopa.it/v2/esito'
 
         - script: |
@@ -155,6 +155,11 @@ stages:
           workingDirectory: pagopa-ecommerce-fe
 
         - script: |
+            yarn start-io-mock &
+          displayName: 'Start ecommerce fe IO mock'
+          workingDirectory: pagopa-ecommerce-fe
+
+        - script: |
             yarn dev &
           displayName: 'Start ecommerce fe'
           workingDirectory: pagopa-ecommerce-fe
@@ -165,6 +170,15 @@ stages:
 
         - script: yarn test:integration
           displayName: 'Integration tests exec'
+          workingDirectory: pagopa-ecommerce-fe
+          
+        - script: |
+            yarn dev:env:noredirect &
+          displayName: 'Set ecommerce fe with noredirect env'
+          workingDirectory: pagopa-ecommerce-fe
+
+        - script: yarn test:noredirect
+          displayName: 'IO noredirect button Integration tests exec'
           workingDirectory: pagopa-ecommerce-fe
 
         - task: PublishTestResults@2
