@@ -15,6 +15,7 @@ import PageContainer from "../components/PageContainer";
 import { getOnboardingPaymentOutcome } from "../utils/api/transactions/TransactionResultUtil";
 import { SessionItems, getSessionItem } from "../utils/storage/sessionStorage";
 import { getFragments, redirectToClient } from "../utils/urlUtilities";
+import { getConfigOrThrow } from "../utils/config/config";
 import { CLIENT_TYPE, ROUTE_FRAGMENT } from "./models/routeModel";
 
 export default function PaymentResponsePage() {
@@ -29,6 +30,7 @@ export default function PaymentResponsePage() {
   );
   const [outcomeState, setOutcomeState] =
     React.useState<ViewOutcomeEnum | null>(null);
+  const config = getConfigOrThrow();
 
   const redirectWithError = () => {
     performRedirectToClient(ViewOutcomeEnum.GENERIC_ERROR);
@@ -40,7 +42,10 @@ export default function PaymentResponsePage() {
     redirectToClient({ transactionId, outcome, clientId });
     // if is new outcome, update state after timeout
     if (newOutcome) {
-      setTimeout(() => setOutcomeState(outcome), 1000);
+      setTimeout(
+        () => setOutcomeState(outcome),
+        config.ECOMMERCE_SHOW_CONTINUE_IO_BTN_DELAY_MILLIS
+      );
     }
   };
 

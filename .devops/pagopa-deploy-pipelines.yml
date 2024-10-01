@@ -85,6 +85,7 @@ stages:
               gdi_check_timeout: 12000
               io_client_redirect_outcome_path: 'https://api.dev.platform.pagopa.it/ecommerce/io-outcomes/v1/transactions'
               checkout_client_redirect_outcome_path: 'https://dev.checkout.pagopa.it/v2/esito'
+              show_continue_io_btn_delay_millis: 2000
 
           - script: |
               yarn build
@@ -202,6 +203,7 @@ stages:
               gdi_check_timeout: 12000
               io_client_redirect_outcome_path: 'https://api.uat.platform.pagopa.it/ecommerce/io-outcomes/v1/transactions'
               checkout_client_redirect_outcome_path: 'https://uat.checkout.pagopa.it/v2/esito'
+              show_continue_io_btn_delay_millis: 2000
 
           - script: |
               yarn build
@@ -294,6 +296,7 @@ stages:
               gdi_check_timeout: 12000
               io_client_redirect_outcome_path: 'https://api.platform.pagopa.it/ecommerce/io-outcomes/v1/transactions'
               checkout_client_redirect_outcome_path: 'https://checkout.pagopa.it/v2/esito'
+              show_continue_io_btn_delay_millis: 2000
 
           - script: |
               yarn build

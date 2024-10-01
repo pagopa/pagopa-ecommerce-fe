@@ -24,6 +24,7 @@ export const IConfig = t.interface({
   ECOMMERCE_CHECKOUT_CLIENT_REDIRECT_OUTCOME_PATH: NonEmptyString,
   ECOMMERCE_GET_TRANSACTION_POLLING_RETRIES: t.number,
   ECOMMERCE_GET_TRANSACTION_POLLING_DELAY_MILLIS: t.number,
+  ECOMMERCE_SHOW_CONTINUE_IO_BTN_DELAY_MILLIS: t.number,
 });
 
 // No need to re-evaluate this object for each call
@@ -58,6 +59,12 @@ const errorOrConfig: t.Validation<IConfig> = IConfig.decode({
         10
       )
     : 3000,
+  // eslint-disable-next-line no-underscore-dangle
+  ECOMMERCE_SHOW_CONTINUE_IO_BTN_DELAY_MILLIS: parseInt(
+    // eslint-disable-next-line no-underscore-dangle
+    (window as any)._env_.ECOMMERCE_SHOW_CONTINUE_IO_BTN_DELAY_MILLIS,
+    10
+  ),
 });
 
 /**
