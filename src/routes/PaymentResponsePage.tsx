@@ -15,6 +15,7 @@ import PageContainer from "../components/PageContainer";
 import { getOnboardingPaymentOutcome } from "../utils/api/transactions/TransactionResultUtil";
 import { SessionItems, getSessionItem } from "../utils/storage/sessionStorage";
 import { getFragments, redirectToClient } from "../utils/urlUtilities";
+import { getConfigOrThrow } from "../utils/config/config";
 import { CLIENT_TYPE, ROUTE_FRAGMENT } from "./models/routeModel";
 
 export default function PaymentResponsePage() {
@@ -27,21 +28,30 @@ export default function PaymentResponsePage() {
     ROUTE_FRAGMENT.CLIENT_ID,
     ROUTE_FRAGMENT.TRANSACTION_ID
   );
-  const [outcomeState, setOutcomeAndRedirect] =
+  const [outcomeState, setOutcomeState] =
     React.useState<ViewOutcomeEnum | null>(null);
+  const config = getConfigOrThrow();
 
   const redirectWithError = () => {
-    setOutcomeAndRedirect(ViewOutcomeEnum.GENERIC_ERROR);
+    performRedirectToClient(ViewOutcomeEnum.GENERIC_ERROR);
   };
 
-  const performRedirectToClient = () => {
-    const outcome = outcomeState || ViewOutcomeEnum.GENERIC_ERROR;
+  const performRedirectToClient = (newOutcome?: ViewOutcomeEnum) => {
+    // if not present new outcome use old one
+    const outcome = newOutcome || outcomeState || ViewOutcomeEnum.GENERIC_ERROR;
     redirectToClient({ transactionId, outcome, clientId });
+    // if is new outcome, update state after timeout
+    if (newOutcome) {
+      setTimeout(
+        () => setOutcomeState(outcome),
+        config.ECOMMERCE_SHOW_CONTINUE_IO_BTN_DELAY_MILLIS
+      );
+    }
   };
 
   const GetTransaction = (token: string) => {
     const manageResp = O.match(redirectWithError, (transactionInfo) => {
-      setOutcomeAndRedirect(
+      performRedirectToClient(
         getOnboardingPaymentOutcome(transactionInfo as transactionInfoStatus)
       );
     });
@@ -62,13 +72,6 @@ export default function PaymentResponsePage() {
       redirectWithError();
     })();
   };
-
-  // On outcome update perform redirect
-  useEffect(() => {
-    if (outcomeState) {
-      performRedirectToClient();
-    }
-  }, [outcomeState]);
 
   useEffect(() => {
     const token =
