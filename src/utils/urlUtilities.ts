@@ -78,6 +78,7 @@ export const redirectToClient = ({
   outcome: ViewOutcomeEnum;
   clientId: string;
 }) => {
+  const now = new Date().getTime()
   switch (clientId) {
     case CLIENT_TYPE.IO:
       return window.location.replace(
@@ -89,12 +90,12 @@ export const redirectToClient = ({
       );
     case CLIENT_TYPE.CHECKOUT:
       return window.location.replace(
-        `${CHECKOUT_CLIENT_REDIRECT_OUTCOME_PATH}#outcome=${outcome}`
+        `${CHECKOUT_CLIENT_REDIRECT_OUTCOME_PATH}?t=${now}#outcome=${outcome}`
       );
     // eslint-disable-next-line sonarjs/no-duplicated-branches
     default:
       return window.location.replace(
-        `${CHECKOUT_CLIENT_REDIRECT_OUTCOME_PATH}#outcome=${outcome}`
+        `${CHECKOUT_CLIENT_REDIRECT_OUTCOME_PATH}?t=${now}#outcome=${outcome}`
       );
   }
 };
