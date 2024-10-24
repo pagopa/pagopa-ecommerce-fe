@@ -78,7 +78,7 @@ export const redirectToClient = ({
   outcome: ViewOutcomeEnum;
   clientId: string;
 }) => {
-  const now = new Date().getTime()
+  const now = new Date().getTime();
   switch (clientId) {
     case CLIENT_TYPE.IO:
       return window.location.replace(
