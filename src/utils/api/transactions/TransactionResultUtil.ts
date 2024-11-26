@@ -81,7 +81,9 @@ export const getOnboardingPaymentOutcome = (
     case TransactionStatusEnum.REFUNDED:
     case TransactionStatusEnum.REFUND_REQUESTED:
     case TransactionStatusEnum.REFUND_ERROR:
-      return ViewOutcomeEnum.PSP_ERROR;
+      return gateway === PaymentGateway.NPG
+        ? ViewOutcomeEnum.PSP_ERROR
+        : ViewOutcomeEnum.GENERIC_ERROR; // This switch has to be removed when also redirect gateway mapping will be set to PSP_ERROR in place of GENERIC_ERROR
     case TransactionStatusEnum.EXPIRED_NOT_AUTHORIZED:
       return ViewOutcomeEnum.TIMEOUT;
     case TransactionStatusEnum.CANCELED:
