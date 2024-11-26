@@ -59,6 +59,8 @@ export const gatewayAuthorizationStatusMap = new Map<
 // eslint-disable-next-line complexity
 export const getOnboardingPaymentOutcome = (
   transactionInfo: transactionInfoStatus
+  // to be removed when also redirect gateway mapping will be set to PSP_ERROR in place of GENERIC_ERROR
+  // eslint-disable-next-line sonarjs/cognitive-complexity
 ): ViewOutcomeEnum => {
   const {
     status,
@@ -95,7 +97,9 @@ export const getOnboardingPaymentOutcome = (
             errorCode,
             gatewayAuthorizationStatus
           )
-        : ViewOutcomeEnum.PSP_ERROR;
+        : gateway === PaymentGateway.NPG // This switch has to be removed when also redirect gateway mapping will be set to PSP_ERROR in place of GENERIC_ERROR
+        ? ViewOutcomeEnum.PSP_ERROR
+        : ViewOutcomeEnum.GENERIC_ERROR;
     case TransactionStatusEnum.CLOSED:
       return sendPaymentResultOutcome ===
         SendPaymentResultOutcomeEnum.NOT_RECEIVED
@@ -162,10 +166,10 @@ function evaluateUnauthorizedStatus(
           return (
             gatewayAuthorizationStatusMap.get(
               errorCode as gatewayAuthorizationStatusType
-            ) || ViewOutcomeEnum.GENERIC_ERROR
+            ) || ViewOutcomeEnum.PSP_ERROR
           );
         default:
-          return ViewOutcomeEnum.GENERIC_ERROR;
+          return ViewOutcomeEnum.PSP_ERROR;
       }
     case PaymentGateway.REDIRECT:
       switch (gatewayAuthorizationStatus) {
