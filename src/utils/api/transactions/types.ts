@@ -17,6 +17,11 @@ export enum ViewOutcomeEnum {
   CANCELED_BY_USER = "8",
   EXCESSIVE_AMOUNT = "10",
   TAKING_CHARGE = "17",
+  PSP_ERROR = "25",
+  BE_KO = "99",
+  BALANCE_LIMIT = "116",
+  CVV_ERROR = "117",
+  LIMIT_EXCEDEED = "121",
 }
 
 export enum EcommerceFinalStatusCodeEnum {

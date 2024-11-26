@@ -20,16 +20,16 @@ export const gatewayAuthorizationStatusMap = new Map<
   ["102", ViewOutcomeEnum.AUTH_ERROR],
   ["104", ViewOutcomeEnum.INVALID_DATA],
   ["106", ViewOutcomeEnum.AUTH_ERROR],
-  ["109", ViewOutcomeEnum.GENERIC_ERROR],
+  ["109", ViewOutcomeEnum.PSP_ERROR],
   ["110", ViewOutcomeEnum.INVALID_DATA],
   ["111", ViewOutcomeEnum.INVALID_CARD],
-  ["115", ViewOutcomeEnum.GENERIC_ERROR],
-  ["116", ViewOutcomeEnum.AUTH_ERROR],
-  ["117", ViewOutcomeEnum.AUTH_ERROR],
+  ["115", ViewOutcomeEnum.PSP_ERROR],
+  ["116", ViewOutcomeEnum.BALANCE_LIMIT],
+  ["117", ViewOutcomeEnum.CVV_ERROR],
   ["118", ViewOutcomeEnum.INVALID_DATA],
   ["119", ViewOutcomeEnum.AUTH_ERROR],
   ["120", ViewOutcomeEnum.AUTH_ERROR],
-  ["121", ViewOutcomeEnum.AUTH_ERROR],
+  ["121", ViewOutcomeEnum.LIMIT_EXCEDEED],
   ["122", ViewOutcomeEnum.AUTH_ERROR],
   ["123", ViewOutcomeEnum.AUTH_ERROR],
   ["124", ViewOutcomeEnum.AUTH_ERROR],
@@ -46,14 +46,14 @@ export const gatewayAuthorizationStatusMap = new Map<
   ["888", ViewOutcomeEnum.AUTH_ERROR],
   ["902", ViewOutcomeEnum.AUTH_ERROR],
   ["903", ViewOutcomeEnum.AUTH_ERROR],
-  ["904", ViewOutcomeEnum.GENERIC_ERROR],
-  ["906", ViewOutcomeEnum.GENERIC_ERROR],
-  ["907", ViewOutcomeEnum.GENERIC_ERROR],
-  ["908", ViewOutcomeEnum.GENERIC_ERROR],
-  ["909", ViewOutcomeEnum.GENERIC_ERROR],
-  ["911", ViewOutcomeEnum.GENERIC_ERROR],
-  ["913", ViewOutcomeEnum.GENERIC_ERROR],
-  ["999", ViewOutcomeEnum.GENERIC_ERROR],
+  ["904", ViewOutcomeEnum.PSP_ERROR],
+  ["906", ViewOutcomeEnum.PSP_ERROR],
+  ["907", ViewOutcomeEnum.PSP_ERROR],
+  ["908", ViewOutcomeEnum.PSP_ERROR],
+  ["909", ViewOutcomeEnum.PSP_ERROR],
+  ["911", ViewOutcomeEnum.PSP_ERROR],
+  ["913", ViewOutcomeEnum.PSP_ERROR],
+  ["999", ViewOutcomeEnum.PSP_ERROR],
 ]);
 
 // eslint-disable-next-line complexity
@@ -79,7 +79,7 @@ export const getOnboardingPaymentOutcome = (
     case TransactionStatusEnum.REFUNDED:
     case TransactionStatusEnum.REFUND_REQUESTED:
     case TransactionStatusEnum.REFUND_ERROR:
-      return ViewOutcomeEnum.GENERIC_ERROR;
+      return ViewOutcomeEnum.PSP_ERROR;
     case TransactionStatusEnum.EXPIRED_NOT_AUTHORIZED:
       return ViewOutcomeEnum.TIMEOUT;
     case TransactionStatusEnum.CANCELED:
@@ -95,7 +95,7 @@ export const getOnboardingPaymentOutcome = (
             errorCode,
             gatewayAuthorizationStatus
           )
-        : ViewOutcomeEnum.GENERIC_ERROR;
+        : ViewOutcomeEnum.PSP_ERROR;
     case TransactionStatusEnum.CLOSED:
       return sendPaymentResultOutcome ===
         SendPaymentResultOutcomeEnum.NOT_RECEIVED
@@ -120,7 +120,7 @@ export const getOnboardingPaymentOutcome = (
     case TransactionStatusEnum.AUTHORIZATION_REQUESTED:
       return ViewOutcomeEnum.TAKING_CHARGE;
     default:
-      return ViewOutcomeEnum.GENERIC_ERROR;
+      return ViewOutcomeEnum.BE_KO;
   }
 };
 
@@ -146,19 +146,18 @@ function evaluateUnauthorizedStatus(
   switch (gateway) {
     case PaymentGateway.NPG:
       switch (gatewayAuthorizationStatus) {
-        case NpgResultCodeEnum.EXECUTED:
         case NpgResultCodeEnum.AUTHORIZED:
         case NpgResultCodeEnum.PENDING:
         case NpgResultCodeEnum.VOIDED:
         case NpgResultCodeEnum.REFUNDED:
         case NpgResultCodeEnum.FAILED:
-          return ViewOutcomeEnum.GENERIC_ERROR;
-        case NpgResultCodeEnum.CANCELED:
-          return ViewOutcomeEnum.CANCELED_BY_USER;
+          return ViewOutcomeEnum.PSP_ERROR;
         case NpgResultCodeEnum.DENIED_BY_RISK:
         case NpgResultCodeEnum.THREEDS_VALIDATED:
         case NpgResultCodeEnum.THREEDS_FAILED:
           return ViewOutcomeEnum.AUTH_ERROR;
+        case NpgResultCodeEnum.CANCELED:
+          return ViewOutcomeEnum.CANCELED_BY_USER;
         case NpgResultCodeEnum.DECLINED:
           return (
             gatewayAuthorizationStatusMap.get(
