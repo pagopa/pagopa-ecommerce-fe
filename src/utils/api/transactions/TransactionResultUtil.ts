@@ -77,10 +77,11 @@ export const getOnboardingPaymentOutcome = (
       return sendPaymentResultOutcome === SendPaymentResultOutcomeEnum.OK
         ? ViewOutcomeEnum.SUCCESS
         : ViewOutcomeEnum.GENERIC_ERROR;
-    case TransactionStatusEnum.NOTIFIED_KO:
-    case TransactionStatusEnum.REFUNDED:
     case TransactionStatusEnum.REFUND_REQUESTED:
     case TransactionStatusEnum.REFUND_ERROR:
+      return ViewOutcomeEnum.GENERIC_ERROR;
+    case TransactionStatusEnum.REFUNDED:
+    case TransactionStatusEnum.NOTIFIED_KO:
       return gateway === PaymentGateway.NPG
         ? ViewOutcomeEnum.PSP_ERROR
         : ViewOutcomeEnum.GENERIC_ERROR; // This switch has to be removed when also redirect gateway mapping will be set to PSP_ERROR in place of GENERIC_ERROR
@@ -89,9 +90,16 @@ export const getOnboardingPaymentOutcome = (
     case TransactionStatusEnum.CANCELED:
     case TransactionStatusEnum.CANCELLATION_EXPIRED:
       return ViewOutcomeEnum.CANCELED_BY_USER;
-    case TransactionStatusEnum.CLOSURE_ERROR:
     case TransactionStatusEnum.CLOSURE_REQUESTED:
+    case TransactionStatusEnum.CLOSURE_ERROR:
     case TransactionStatusEnum.AUTHORIZATION_COMPLETED:
+      return !wasAuthorizedByGateway(gateway, gatewayAuthorizationStatus)
+        ? evaluateUnauthorizedStatus(
+            gateway,
+            errorCode,
+            gatewayAuthorizationStatus
+          )
+        : ViewOutcomeEnum.GENERIC_ERROR;
     case TransactionStatusEnum.UNAUTHORIZED:
       return !wasAuthorizedByGateway(gateway, gatewayAuthorizationStatus)
         ? evaluateUnauthorizedStatus(
@@ -126,7 +134,7 @@ export const getOnboardingPaymentOutcome = (
     case TransactionStatusEnum.AUTHORIZATION_REQUESTED:
       return ViewOutcomeEnum.TAKING_CHARGE;
     default:
-      return ViewOutcomeEnum.BE_KO;
+      return ViewOutcomeEnum.GENERIC_ERROR;
   }
 };
 
@@ -171,7 +179,7 @@ function evaluateUnauthorizedStatus(
             ) || ViewOutcomeEnum.PSP_ERROR
           );
         default:
-          return ViewOutcomeEnum.PSP_ERROR;
+          return ViewOutcomeEnum.GENERIC_ERROR;
       }
     case PaymentGateway.REDIRECT:
       switch (gatewayAuthorizationStatus) {
