@@ -21,7 +21,7 @@ export enum ViewOutcomeEnum {
   BE_KO = "99",
   BALANCE_LIMIT = "116",
   CVV_ERROR = "117",
-  LIMIT_EXCEDEED = "121",
+  LIMIT_EXCEEDED = "121",
 }
 
 export enum EcommerceFinalStatusCodeEnum {

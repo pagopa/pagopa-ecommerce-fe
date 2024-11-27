@@ -29,7 +29,7 @@ export const gatewayAuthorizationStatusMap = new Map<
   ["118", ViewOutcomeEnum.INVALID_DATA],
   ["119", ViewOutcomeEnum.AUTH_ERROR],
   ["120", ViewOutcomeEnum.AUTH_ERROR],
-  ["121", ViewOutcomeEnum.LIMIT_EXCEDEED],
+  ["121", ViewOutcomeEnum.LIMIT_EXCEEDED],
   ["122", ViewOutcomeEnum.AUTH_ERROR],
   ["123", ViewOutcomeEnum.AUTH_ERROR],
   ["124", ViewOutcomeEnum.AUTH_ERROR],
