@@ -119,10 +119,7 @@ export const getOnboardingPaymentOutcome = (
         ? ViewOutcomeEnum.TAKING_CHARGE
         : ViewOutcomeEnum.GENERIC_ERROR;
     case TransactionStatusEnum.EXPIRED: {
-      if (
-        gatewayAuthorizationStatus === null ||
-        gatewayAuthorizationStatus === undefined
-      ) {
+      if (gatewayAuthorizationStatus == null) {
         return ViewOutcomeEnum.TAKING_CHARGE;
       } else if (!wasAuthorizedByGateway(gateway, gatewayAuthorizationStatus)) {
         return evaluateUnauthorizedStatus(
@@ -197,7 +194,7 @@ function evaluateUnauthorizedStatus(
             ) || ViewOutcomeEnum.PSP_ERROR
           );
         default:
-          return ViewOutcomeEnum.GENERIC_ERROR;
+          return ViewOutcomeEnum.PSP_ERROR;
       }
     case PaymentGateway.REDIRECT:
       switch (gatewayAuthorizationStatus) {
@@ -210,7 +207,7 @@ function evaluateUnauthorizedStatus(
         case RedirectResultCodeEnum.EXPIRED:
           return ViewOutcomeEnum.PSP_ERROR;
         default:
-          return ViewOutcomeEnum.GENERIC_ERROR;
+          return ViewOutcomeEnum.PSP_ERROR;
       }
     default:
       return ViewOutcomeEnum.GENERIC_ERROR;
