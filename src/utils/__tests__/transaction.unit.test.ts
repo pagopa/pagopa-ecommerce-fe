@@ -9,13 +9,22 @@ import { TransactionStatusEnum } from "../../../generated/definitions/payment-ec
 import { SendPaymentResultOutcomeEnum } from "../../../generated/definitions/payment-ecommerce-webview/NewTransactionResponse";
 
 describe("Onboarding Payment Outcome mapping", () => {
-  it("returns SUCCESS", () => {
+  it.each([
+    {
+      gateway: PaymentGateway.NPG,
+      authorizationStatusOK: NpgResultCodeEnum.EXECUTED,
+    },
+    {
+      gateway: PaymentGateway.REDIRECT,
+      authorizationStatusOK: RedirectResultCodeEnum.OK,
+    },
+  ])("returns SUCCESS for testData: %s", (testData) => {
     expect(
       getOnboardingPaymentOutcome({
         status: TransactionStatusEnum.NOTIFIED_OK,
         sendPaymentResultOutcome: SendPaymentResultOutcomeEnum.OK,
-        gatewayAuthorizationStatus: NpgResultCodeEnum.EXECUTED,
-        gateway: PaymentGateway.NPG,
+        gatewayAuthorizationStatus: testData.authorizationStatusOK,
+        gateway: testData.gateway,
       })
     ).toBe(ViewOutcomeEnum.SUCCESS);
 
@@ -23,8 +32,8 @@ describe("Onboarding Payment Outcome mapping", () => {
       getOnboardingPaymentOutcome({
         status: TransactionStatusEnum.EXPIRED,
         sendPaymentResultOutcome: SendPaymentResultOutcomeEnum.OK,
-        gatewayAuthorizationStatus: NpgResultCodeEnum.EXECUTED,
-        gateway: PaymentGateway.NPG,
+        gatewayAuthorizationStatus: testData.authorizationStatusOK,
+        gateway: testData.gateway,
       })
     ).toBe(ViewOutcomeEnum.SUCCESS);
 
@@ -32,8 +41,8 @@ describe("Onboarding Payment Outcome mapping", () => {
       getOnboardingPaymentOutcome({
         status: TransactionStatusEnum.NOTIFICATION_ERROR,
         sendPaymentResultOutcome: SendPaymentResultOutcomeEnum.OK,
-        gatewayAuthorizationStatus: NpgResultCodeEnum.EXECUTED,
-        gateway: PaymentGateway.NPG,
+        gatewayAuthorizationStatus: testData.authorizationStatusOK,
+        gateway: testData.gateway,
       })
     ).toBe(ViewOutcomeEnum.SUCCESS);
 
@@ -41,49 +50,58 @@ describe("Onboarding Payment Outcome mapping", () => {
       getOnboardingPaymentOutcome({
         status: TransactionStatusEnum.NOTIFICATION_REQUESTED,
         sendPaymentResultOutcome: SendPaymentResultOutcomeEnum.OK,
-        gatewayAuthorizationStatus: NpgResultCodeEnum.EXECUTED,
-        gateway: PaymentGateway.NPG,
+        gatewayAuthorizationStatus: testData.authorizationStatusOK,
+        gateway: testData.gateway,
       })
     ).toBe(ViewOutcomeEnum.SUCCESS);
   });
 
-  it("returns GENERIC_ERROR", () => {
+  it.each([
+    {
+      gateway: PaymentGateway.NPG,
+      authorizationStatusOK: NpgResultCodeEnum.EXECUTED,
+    },
+    {
+      gateway: PaymentGateway.REDIRECT,
+      authorizationStatusOK: RedirectResultCodeEnum.OK,
+    },
+  ])("returns GENERIC_ERROR for test data: %s", (testData) => {
     expect(
       getOnboardingPaymentOutcome({
         status: TransactionStatusEnum.AUTHORIZATION_COMPLETED,
-        gatewayAuthorizationStatus: NpgResultCodeEnum.EXECUTED,
-        gateway: PaymentGateway.NPG,
+        gatewayAuthorizationStatus: testData.authorizationStatusOK,
+        gateway: testData.gateway,
       })
     ).toBe(ViewOutcomeEnum.GENERIC_ERROR);
 
     expect(
       getOnboardingPaymentOutcome({
         status: TransactionStatusEnum.CLOSURE_ERROR,
-        gatewayAuthorizationStatus: NpgResultCodeEnum.EXECUTED,
-        gateway: PaymentGateway.NPG,
+        gatewayAuthorizationStatus: testData.authorizationStatusOK,
+        gateway: testData.gateway,
       })
     ).toBe(ViewOutcomeEnum.GENERIC_ERROR);
 
     expect(
       getOnboardingPaymentOutcome({
         status: TransactionStatusEnum.REFUND_REQUESTED,
-        gatewayAuthorizationStatus: NpgResultCodeEnum.EXECUTED,
-        gateway: PaymentGateway.NPG,
+        gatewayAuthorizationStatus: testData.authorizationStatusOK,
+        gateway: testData.gateway,
       })
     ).toBe(ViewOutcomeEnum.GENERIC_ERROR);
 
     expect(
       getOnboardingPaymentOutcome({
         status: TransactionStatusEnum.REFUND_ERROR,
-        gatewayAuthorizationStatus: NpgResultCodeEnum.EXECUTED,
-        gateway: PaymentGateway.NPG,
+        gatewayAuthorizationStatus: testData.authorizationStatusOK,
+        gateway: testData.gateway,
       })
     ).toBe(ViewOutcomeEnum.GENERIC_ERROR);
 
     expect(
       getOnboardingPaymentOutcome({
         status: TransactionStatusEnum.CLOSED,
-        gateway: PaymentGateway.NPG,
+        gateway: testData.gateway,
         sendPaymentResultOutcome: SendPaymentResultOutcomeEnum.KO,
       })
     ).toBe(ViewOutcomeEnum.GENERIC_ERROR);
@@ -91,7 +109,7 @@ describe("Onboarding Payment Outcome mapping", () => {
     expect(
       getOnboardingPaymentOutcome({
         status: TransactionStatusEnum.CLOSED,
-        gateway: PaymentGateway.NPG,
+        gateway: testData.gateway,
         sendPaymentResultOutcome: SendPaymentResultOutcomeEnum.OK,
       })
     ).toBe(ViewOutcomeEnum.GENERIC_ERROR);
@@ -99,18 +117,20 @@ describe("Onboarding Payment Outcome mapping", () => {
     expect(
       getOnboardingPaymentOutcome({
         status: TransactionStatusEnum.CLOSED,
-        gateway: PaymentGateway.NPG,
+        gateway: testData.gateway,
       })
     ).toBe(ViewOutcomeEnum.GENERIC_ERROR);
 
     expect(
       getOnboardingPaymentOutcome({
         status: TransactionStatusEnum.EXPIRED,
-        gatewayAuthorizationStatus: NpgResultCodeEnum.EXECUTED,
-        gateway: PaymentGateway.NPG,
+        gatewayAuthorizationStatus: testData.authorizationStatusOK,
+        gateway: testData.gateway,
       })
     ).toBe(ViewOutcomeEnum.GENERIC_ERROR);
+  });
 
+  it("returns GENERIC_ERROR for misconfigured data", () => {
     expect(getOnboardingPaymentOutcome({})).toBe(ViewOutcomeEnum.GENERIC_ERROR);
     expect(
       getOnboardingPaymentOutcome({
@@ -120,36 +140,48 @@ describe("Onboarding Payment Outcome mapping", () => {
     ).toBe(ViewOutcomeEnum.GENERIC_ERROR);
   });
 
-  it("returns CANCELED_BY_USER", () => {
+  it.each([
+    { gateway: PaymentGateway.NPG },
+    { gateway: PaymentGateway.REDIRECT },
+  ])("returns CANCELED_BY_USER for test data: %s", (testData) => {
     expect(
       getOnboardingPaymentOutcome({
         status: TransactionStatusEnum.CANCELED,
-        gateway: PaymentGateway.NPG,
+        gateway: testData.gateway,
       })
     ).toBe(ViewOutcomeEnum.CANCELED_BY_USER);
 
     expect(
       getOnboardingPaymentOutcome({
         status: TransactionStatusEnum.CANCELLATION_EXPIRED,
-        gateway: PaymentGateway.NPG,
+        gateway: testData.gateway,
       })
     ).toBe(ViewOutcomeEnum.CANCELED_BY_USER);
   });
 
-  it("returns TAKE_IN_CHARGE", () => {
+  it.each([
+    {
+      gateway: PaymentGateway.NPG,
+      authorizationStatusOK: NpgResultCodeEnum.EXECUTED,
+    },
+    {
+      gateway: PaymentGateway.REDIRECT,
+      authorizationStatusOK: RedirectResultCodeEnum.OK,
+    },
+  ])("returns TAKE_IN_CHARGE for test data: %s", (testData) => {
     expect(
       getOnboardingPaymentOutcome({
         status: TransactionStatusEnum.CLOSURE_REQUESTED,
-        gatewayAuthorizationStatus: NpgResultCodeEnum.EXECUTED,
-        gateway: PaymentGateway.NPG,
+        gatewayAuthorizationStatus: testData.authorizationStatusOK,
+        gateway: testData.gateway,
       })
     ).toBe(ViewOutcomeEnum.TAKE_IN_CHARGE);
 
     expect(
       getOnboardingPaymentOutcome({
         status: TransactionStatusEnum.CLOSED,
-        gatewayAuthorizationStatus: NpgResultCodeEnum.EXECUTED,
-        gateway: PaymentGateway.NPG,
+        gatewayAuthorizationStatus: testData.authorizationStatusOK,
+        gateway: testData.gateway,
         sendPaymentResultOutcome: SendPaymentResultOutcomeEnum.NOT_RECEIVED,
       })
     ).toBe(ViewOutcomeEnum.TAKE_IN_CHARGE);
@@ -157,7 +189,7 @@ describe("Onboarding Payment Outcome mapping", () => {
     expect(
       getOnboardingPaymentOutcome({
         status: TransactionStatusEnum.EXPIRED,
-        gateway: PaymentGateway.NPG,
+        gateway: testData.gateway,
       })
     ).toBe(ViewOutcomeEnum.TAKE_IN_CHARGE);
 
@@ -165,23 +197,26 @@ describe("Onboarding Payment Outcome mapping", () => {
       getOnboardingPaymentOutcome({
         status: TransactionStatusEnum.EXPIRED,
         sendPaymentResultOutcome: SendPaymentResultOutcomeEnum.NOT_RECEIVED,
-        gatewayAuthorizationStatus: NpgResultCodeEnum.EXECUTED,
-        gateway: PaymentGateway.NPG,
+        gatewayAuthorizationStatus: testData.authorizationStatusOK,
+        gateway: testData.gateway,
       })
     ).toBe(ViewOutcomeEnum.TAKE_IN_CHARGE);
 
     expect(
       getOnboardingPaymentOutcome({
         status: TransactionStatusEnum.AUTHORIZATION_REQUESTED,
-        gateway: PaymentGateway.NPG,
+        gateway: testData.gateway,
       })
     ).toBe(ViewOutcomeEnum.TAKE_IN_CHARGE);
   });
-  it("returns TIMEOUT", () => {
+  it.each([
+    { gateway: PaymentGateway.NPG },
+    { gateway: PaymentGateway.REDIRECT },
+  ])("returns TIMEOUT for testData: %s", (testData) => {
     expect(
       getOnboardingPaymentOutcome({
         status: TransactionStatusEnum.EXPIRED_NOT_AUTHORIZED,
-        gateway: PaymentGateway.NPG,
+        gateway: testData.gateway,
       })
     ).toBe(ViewOutcomeEnum.TIMEOUT);
   });
@@ -197,9 +232,25 @@ describe("Onboarding Payment Outcome mapping", () => {
 
     expect(
       getOnboardingPaymentOutcome({
+        status: TransactionStatusEnum.NOTIFICATION_REQUESTED,
+        sendPaymentResultOutcome: SendPaymentResultOutcomeEnum.KO,
+        gateway: PaymentGateway.REDIRECT,
+      })
+    ).toBe(ViewOutcomeEnum.PSP_ERROR);
+
+    expect(
+      getOnboardingPaymentOutcome({
         status: TransactionStatusEnum.NOTIFICATION_ERROR,
         sendPaymentResultOutcome: SendPaymentResultOutcomeEnum.KO,
         gateway: PaymentGateway.NPG,
+      })
+    ).toBe(ViewOutcomeEnum.PSP_ERROR);
+
+    expect(
+      getOnboardingPaymentOutcome({
+        status: TransactionStatusEnum.NOTIFICATION_ERROR,
+        sendPaymentResultOutcome: SendPaymentResultOutcomeEnum.KO,
+        gateway: PaymentGateway.REDIRECT,
       })
     ).toBe(ViewOutcomeEnum.PSP_ERROR);
 
@@ -212,9 +263,24 @@ describe("Onboarding Payment Outcome mapping", () => {
 
     expect(
       getOnboardingPaymentOutcome({
+        status: TransactionStatusEnum.NOTIFIED_KO,
+        gateway: PaymentGateway.REDIRECT,
+      })
+    ).toBe(ViewOutcomeEnum.PSP_ERROR);
+
+    expect(
+      getOnboardingPaymentOutcome({
         status: TransactionStatusEnum.REFUNDED,
         gatewayAuthorizationStatus: NpgResultCodeEnum.EXECUTED,
         gateway: PaymentGateway.NPG,
+      })
+    ).toBe(ViewOutcomeEnum.PSP_ERROR);
+
+    expect(
+      getOnboardingPaymentOutcome({
+        status: TransactionStatusEnum.REFUNDED,
+        gatewayAuthorizationStatus: NpgResultCodeEnum.EXECUTED,
+        gateway: PaymentGateway.REDIRECT,
       })
     ).toBe(ViewOutcomeEnum.PSP_ERROR);
 
@@ -640,14 +706,27 @@ describe("Onboarding Payment Outcome mapping", () => {
     ).toBe(ViewOutcomeEnum.LIMIT_EXCEEDED);
   });
 
-  it("returns TAKE_IN_CHARGE for transaction locked in AUTHORIZATION_REQUESTED", () => {
-    expect(
-      getOnboardingPaymentOutcome({
-        status: TransactionStatusEnum.AUTHORIZATION_REQUESTED,
-        gateway: PaymentGateway.NPG,
-      })
-    ).toBe(ViewOutcomeEnum.TAKE_IN_CHARGE);
-  });
+  it.each([
+    { gateway: PaymentGateway.NPG },
+    { gateway: PaymentGateway.REDIRECT },
+  ])(
+    "returns TAKE_IN_CHARGE for transaction locked in AUTHORIZATION_REQUESTED for test data: %s",
+    (testData) => {
+      expect(
+        getOnboardingPaymentOutcome({
+          status: TransactionStatusEnum.AUTHORIZATION_REQUESTED,
+          gateway: testData.gateway,
+        })
+      ).toBe(ViewOutcomeEnum.TAKE_IN_CHARGE);
+
+      expect(
+        getOnboardingPaymentOutcome({
+          status: TransactionStatusEnum.AUTHORIZATION_REQUESTED,
+          gateway: testData.gateway,
+        })
+      ).toBe(ViewOutcomeEnum.TAKE_IN_CHARGE);
+    }
+  );
 
   it.each([
     {
