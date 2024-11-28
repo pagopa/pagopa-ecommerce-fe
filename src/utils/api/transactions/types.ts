@@ -16,7 +16,7 @@ export enum ViewOutcomeEnum {
   INVALID_CARD = "7",
   CANCELED_BY_USER = "8",
   EXCESSIVE_AMOUNT = "10",
-  TAKING_CHARGE = "17",
+  TAKE_IN_CHARGE = "17",
   PSP_ERROR = "25",
   BE_KO = "99",
   BALANCE_LIMIT = "116",

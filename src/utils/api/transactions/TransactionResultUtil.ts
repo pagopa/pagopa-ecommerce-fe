@@ -95,7 +95,7 @@ export const getOnboardingPaymentOutcome = (
             errorCode,
             gatewayAuthorizationStatus
           )
-        : ViewOutcomeEnum.TAKING_CHARGE;
+        : ViewOutcomeEnum.TAKE_IN_CHARGE;
     case TransactionStatusEnum.CLOSURE_ERROR:
     case TransactionStatusEnum.AUTHORIZATION_COMPLETED:
       return !wasAuthorizedByGateway(gateway, gatewayAuthorizationStatus)
@@ -116,11 +116,11 @@ export const getOnboardingPaymentOutcome = (
     case TransactionStatusEnum.CLOSED:
       return sendPaymentResultOutcome ===
         SendPaymentResultOutcomeEnum.NOT_RECEIVED
-        ? ViewOutcomeEnum.TAKING_CHARGE
+        ? ViewOutcomeEnum.TAKE_IN_CHARGE
         : ViewOutcomeEnum.GENERIC_ERROR;
     case TransactionStatusEnum.EXPIRED: {
       if (gatewayAuthorizationStatus == null) {
-        return ViewOutcomeEnum.TAKING_CHARGE;
+        return ViewOutcomeEnum.TAKE_IN_CHARGE;
       } else if (!wasAuthorizedByGateway(gateway, gatewayAuthorizationStatus)) {
         return evaluateUnauthorizedStatus(
           gateway,
@@ -134,14 +134,14 @@ export const getOnboardingPaymentOutcome = (
           case SendPaymentResultOutcomeEnum.KO:
             return ViewOutcomeEnum.PSP_ERROR;
           case SendPaymentResultOutcomeEnum.NOT_RECEIVED:
-            return ViewOutcomeEnum.TAKING_CHARGE;
+            return ViewOutcomeEnum.TAKE_IN_CHARGE;
           default:
             return ViewOutcomeEnum.GENERIC_ERROR; // BE_KO(99)
         }
       }
     }
     case TransactionStatusEnum.AUTHORIZATION_REQUESTED:
-      return ViewOutcomeEnum.TAKING_CHARGE;
+      return ViewOutcomeEnum.TAKE_IN_CHARGE;
     default:
       return ViewOutcomeEnum.GENERIC_ERROR;
   }

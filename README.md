@@ -87,7 +87,7 @@ The ecommerce transaction get transaction endpoint `/checkout/webview/v1/transac
 | CLOSURE_REQUESTED - NPG CANCELED                   | 73                    | CANCELED_BY_USER (8) |   
 | AUTHORIZATION_COMPLETED - NPG AUTHORIZED           | 74                    | PSP_ERROR (25)       |
 | UNAUTHORIZED - NPG DENIED_BY_RISK                  | 75                    | AUTH_ERROR (2)       |
-| CLOSED - Outcome NOT_RECEIVED                      | 76                    | TAKING_CHARGE (17)   |
+| CLOSED - Outcome NOT_RECEIVED                      | 76                    | TAKE_IN_CHARGE (17)   |
 | CLOSED - Other                                     | 77                    | GENERIC_ERROR (1)    |
 | EXPIRED - Outcome OK                               | 78                    | SUCCESS (0)          |
-| AUTHORIZATION_REQUESTED                            | 79                    | TAKING_CHARGE (17)   |  
+| AUTHORIZATION_REQUESTED                            | 79                    | TAKE_IN_CHARGE (17)   |  
