@@ -50,8 +50,7 @@ describe("Onboarding Payment Outcome mapping", () => {
   it("returns GENERIC_ERROR", () => {
     expect(
       getOnboardingPaymentOutcome({
-        status: TransactionStatusEnum.NOTIFICATION_REQUESTED,
-        sendPaymentResultOutcome: SendPaymentResultOutcomeEnum.KO,
+        status: TransactionStatusEnum.AUTHORIZATION_COMPLETED,
         gatewayAuthorizationStatus: NpgResultCodeEnum.EXECUTED,
         gateway: PaymentGateway.NPG,
       })
@@ -59,8 +58,7 @@ describe("Onboarding Payment Outcome mapping", () => {
 
     expect(
       getOnboardingPaymentOutcome({
-        status: TransactionStatusEnum.NOTIFICATION_ERROR,
-        sendPaymentResultOutcome: SendPaymentResultOutcomeEnum.KO,
+        status: TransactionStatusEnum.CLOSURE_ERROR,
         gatewayAuthorizationStatus: NpgResultCodeEnum.EXECUTED,
         gateway: PaymentGateway.NPG,
       })
@@ -68,8 +66,7 @@ describe("Onboarding Payment Outcome mapping", () => {
 
     expect(
       getOnboardingPaymentOutcome({
-        status: TransactionStatusEnum.EXPIRED,
-        sendPaymentResultOutcome: SendPaymentResultOutcomeEnum.NOT_RECEIVED,
+        status: TransactionStatusEnum.REFUND_REQUESTED,
         gatewayAuthorizationStatus: NpgResultCodeEnum.EXECUTED,
         gateway: PaymentGateway.NPG,
       })
@@ -77,18 +74,18 @@ describe("Onboarding Payment Outcome mapping", () => {
 
     expect(
       getOnboardingPaymentOutcome({
-        status: TransactionStatusEnum.EXPIRED,
-        sendPaymentResultOutcome: SendPaymentResultOutcomeEnum.KO,
+        status: TransactionStatusEnum.REFUND_ERROR,
         gatewayAuthorizationStatus: NpgResultCodeEnum.EXECUTED,
         gateway: PaymentGateway.NPG,
       })
     ).toBe(ViewOutcomeEnum.GENERIC_ERROR);
   });
 
-  it("returns PSP_ERROR", () => {
+  it("returns TAKING_CHARGE", () => {
     expect(
       getOnboardingPaymentOutcome({
-        status: TransactionStatusEnum.AUTHORIZATION_COMPLETED,
+        status: TransactionStatusEnum.NOTIFICATION_ERROR,
+        sendPaymentResultOutcome: SendPaymentResultOutcomeEnum.KO,
         gatewayAuthorizationStatus: NpgResultCodeEnum.EXECUTED,
         gateway: PaymentGateway.NPG,
       })
@@ -100,11 +97,30 @@ describe("Onboarding Payment Outcome mapping", () => {
         gatewayAuthorizationStatus: NpgResultCodeEnum.EXECUTED,
         gateway: PaymentGateway.NPG,
       })
-    ).toBe(ViewOutcomeEnum.PSP_ERROR);
+    ).toBe(ViewOutcomeEnum.TAKING_CHARGE);
 
     expect(
       getOnboardingPaymentOutcome({
-        status: TransactionStatusEnum.CLOSURE_ERROR,
+        status: TransactionStatusEnum.EXPIRED,
+        gateway: PaymentGateway.NPG,
+      })
+    ).toBe(ViewOutcomeEnum.TAKING_CHARGE);
+
+    expect(
+      getOnboardingPaymentOutcome({
+        status: TransactionStatusEnum.EXPIRED,
+        sendPaymentResultOutcome: SendPaymentResultOutcomeEnum.NOT_RECEIVED,
+        gatewayAuthorizationStatus: NpgResultCodeEnum.EXECUTED,
+        gateway: PaymentGateway.NPG,
+      })
+    ).toBe(ViewOutcomeEnum.TAKING_CHARGE);
+  });
+
+  it("returns PSP_ERROR", () => {
+    expect(
+      getOnboardingPaymentOutcome({
+        status: TransactionStatusEnum.NOTIFICATION_REQUESTED,
+        sendPaymentResultOutcome: SendPaymentResultOutcomeEnum.KO,
         gatewayAuthorizationStatus: NpgResultCodeEnum.EXECUTED,
         gateway: PaymentGateway.NPG,
       })
@@ -121,7 +137,7 @@ describe("Onboarding Payment Outcome mapping", () => {
 
     expect(
       getOnboardingPaymentOutcome({
-        status: TransactionStatusEnum.REFUND_REQUESTED,
+        status: TransactionStatusEnum.REFUNDED,
         gatewayAuthorizationStatus: NpgResultCodeEnum.EXECUTED,
         gateway: PaymentGateway.NPG,
       })
@@ -130,21 +146,7 @@ describe("Onboarding Payment Outcome mapping", () => {
     expect(
       getOnboardingPaymentOutcome({
         status: TransactionStatusEnum.EXPIRED,
-        gateway: PaymentGateway.NPG,
-      })
-    ).toBe(ViewOutcomeEnum.PSP_ERROR);
-
-    expect(
-      getOnboardingPaymentOutcome({
-        status: TransactionStatusEnum.REFUND_ERROR,
-        gatewayAuthorizationStatus: NpgResultCodeEnum.EXECUTED,
-        gateway: PaymentGateway.NPG,
-      })
-    ).toBe(ViewOutcomeEnum.PSP_ERROR);
-
-    expect(
-      getOnboardingPaymentOutcome({
-        status: TransactionStatusEnum.REFUNDED,
+        sendPaymentResultOutcome: SendPaymentResultOutcomeEnum.KO,
         gatewayAuthorizationStatus: NpgResultCodeEnum.EXECUTED,
         gateway: PaymentGateway.NPG,
       })
@@ -154,7 +156,7 @@ describe("Onboarding Payment Outcome mapping", () => {
   it.each([
     {
       gatewayOutcome: RedirectResultCodeEnum.OK,
-      expectedOutcome: "1",
+      expectedOutcome: "25",
     },
     {
       gatewayOutcome: RedirectResultCodeEnum.KO,
@@ -166,11 +168,11 @@ describe("Onboarding Payment Outcome mapping", () => {
     },
     {
       gatewayOutcome: RedirectResultCodeEnum.EXPIRED,
-      expectedOutcome: "4",
+      expectedOutcome: "25",
     },
     {
       gatewayOutcome: RedirectResultCodeEnum.ERROR,
-      expectedOutcome: "1",
+      expectedOutcome: "25",
     },
   ])("maps REDIRECT outcome properly for test data: %s", (testData) => {
     expect(

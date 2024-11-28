@@ -76,21 +76,26 @@ export const getOnboardingPaymentOutcome = (
     case TransactionStatusEnum.NOTIFICATION_ERROR:
       return sendPaymentResultOutcome === SendPaymentResultOutcomeEnum.OK
         ? ViewOutcomeEnum.SUCCESS
-        : ViewOutcomeEnum.GENERIC_ERROR;
+        : ViewOutcomeEnum.PSP_ERROR;
     case TransactionStatusEnum.REFUND_REQUESTED:
     case TransactionStatusEnum.REFUND_ERROR:
       return ViewOutcomeEnum.GENERIC_ERROR;
     case TransactionStatusEnum.REFUNDED:
     case TransactionStatusEnum.NOTIFIED_KO:
-      return gateway === PaymentGateway.NPG
-        ? ViewOutcomeEnum.PSP_ERROR
-        : ViewOutcomeEnum.GENERIC_ERROR; // This switch has to be removed when also redirect gateway mapping will be set to PSP_ERROR in place of GENERIC_ERROR
+      return ViewOutcomeEnum.PSP_ERROR;
     case TransactionStatusEnum.EXPIRED_NOT_AUTHORIZED:
       return ViewOutcomeEnum.TIMEOUT;
     case TransactionStatusEnum.CANCELED:
     case TransactionStatusEnum.CANCELLATION_EXPIRED:
       return ViewOutcomeEnum.CANCELED_BY_USER;
     case TransactionStatusEnum.CLOSURE_REQUESTED:
+      return !wasAuthorizedByGateway(gateway, gatewayAuthorizationStatus)
+        ? evaluateUnauthorizedStatus(
+            gateway,
+            errorCode,
+            gatewayAuthorizationStatus
+          )
+        : ViewOutcomeEnum.TAKING_CHARGE;
     case TransactionStatusEnum.CLOSURE_ERROR:
     case TransactionStatusEnum.AUTHORIZATION_COMPLETED:
       return !wasAuthorizedByGateway(gateway, gatewayAuthorizationStatus)
@@ -107,27 +112,40 @@ export const getOnboardingPaymentOutcome = (
             errorCode,
             gatewayAuthorizationStatus
           )
-        : gateway === PaymentGateway.NPG // This switch has to be removed when also redirect gateway mapping will be set to PSP_ERROR in place of GENERIC_ERROR
-        ? ViewOutcomeEnum.PSP_ERROR
-        : ViewOutcomeEnum.GENERIC_ERROR;
+        : ViewOutcomeEnum.PSP_ERROR;
     case TransactionStatusEnum.CLOSED:
       return sendPaymentResultOutcome ===
         SendPaymentResultOutcomeEnum.NOT_RECEIVED
         ? ViewOutcomeEnum.TAKING_CHARGE
         : ViewOutcomeEnum.GENERIC_ERROR;
     case TransactionStatusEnum.EXPIRED: {
-      if (!wasAuthorizedByGateway(gateway, gatewayAuthorizationStatus)) {
+      if (
+        gatewayAuthorizationStatus === null ||
+        gatewayAuthorizationStatus === undefined
+      ) {
+        return ViewOutcomeEnum.TAKING_CHARGE;
+      } else if (!wasAuthorizedByGateway(gateway, gatewayAuthorizationStatus)) {
         return evaluateUnauthorizedStatus(
           gateway,
           errorCode,
           gatewayAuthorizationStatus
         );
-      }
-      if (
+      } else if (
         sendPaymentResultOutcome === SendPaymentResultOutcomeEnum.OK &&
         wasAuthorizedByGateway(gateway, gatewayAuthorizationStatus)
       ) {
         return ViewOutcomeEnum.SUCCESS;
+      } else if (
+        sendPaymentResultOutcome === SendPaymentResultOutcomeEnum.KO &&
+        wasAuthorizedByGateway(gateway, gatewayAuthorizationStatus)
+      ) {
+        return ViewOutcomeEnum.PSP_ERROR;
+      } else if (
+        sendPaymentResultOutcome ===
+          SendPaymentResultOutcomeEnum.NOT_RECEIVED &&
+        wasAuthorizedByGateway(gateway, gatewayAuthorizationStatus)
+      ) {
+        return ViewOutcomeEnum.TAKING_CHARGE;
       }
       return ViewOutcomeEnum.GENERIC_ERROR;
     }
@@ -188,9 +206,9 @@ function evaluateUnauthorizedStatus(
         case RedirectResultCodeEnum.CANCELED:
           return ViewOutcomeEnum.CANCELED_BY_USER;
         case RedirectResultCodeEnum.ERROR:
-          return ViewOutcomeEnum.GENERIC_ERROR;
+          return ViewOutcomeEnum.PSP_ERROR;
         case RedirectResultCodeEnum.EXPIRED:
-          return ViewOutcomeEnum.TIMEOUT;
+          return ViewOutcomeEnum.PSP_ERROR;
         default:
           return ViewOutcomeEnum.GENERIC_ERROR;
       }

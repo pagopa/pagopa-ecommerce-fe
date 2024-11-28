@@ -70,24 +70,24 @@ Test use cases:
 The ecommerce transaction get transaction endpoint `/checkout/webview/v1/transactions/:transactionId` is driven by the following mockFlow values:
 
 | MOCK FLOW                                          | Transaction Id Suffix | OUTCOME              | 
-|----------------------------------------------------|--------------|----------------------|
-| NOTIFIED_OK                                        | other        | SUCCESS (0)          |
-| NOTIFICATION_REQUESTED - Outcome OK                | 61           | SUCCESS (0)          |
-| NOTIFICATION_REQUESTED - Outcome KO                | 62           | GENERIC_ERROR (1)    |
-| NOTIFICATION_ERROR - Outcome OK                    | 63           | SUCCESS (0)          |
-| NOTIFICATION_ERROR - Outcome KO                    | 64           | GENERIC_ERROR (1)    |
-| NOTIFIED_KO                                        | 65           | GENERIC_ERROR (1)    |
-| REFUNDED                                           | 66           | GENERIC_ERROR (1)    |
-| REFUND_REQUESTED                                   | 67           | GENERIC_ERROR (1)    |
-| REFUND_ERROR                                       | 68           | GENERIC_ERROR (1)    |
-| EXPIRED_NOT_AUTHORIZED                             | 69           | TIMEOUT (4)          |
-| CANCELED                                           | 70           | CANCELED_BY_USER (8) |  
-| CANCELLATION_EXPIRED                               | 71           | CANCELED_BY_USER (8) |  
-| CLOSURE_ERROR - NPG EXECUTED                       | 72           | GENERIC_ERROR (1)    |
-| CLOSURE_REQUESTED - NPG CANCELED                   | 73           | CANCELED_BY_USER (8) |   
-| AUTHORIZATION_COMPLETED - NPG AUTHORIZED           | 74           | GENERIC_ERROR (1)    |
-| UNAUTHORIZED - NPG DENIED_BY_RISK                  | 75           | AUTH_ERROR (2)       |
-| CLOSED - Outcome NOT_RECEIVED                      | 76           | TAKING_CHARGE (17)   |
-| CLOSED - Other                                     | 77           | GENERIC_ERROR (1)    |
-| EXPIRED - Outcome OK                               | 78           | SUCCESS (0)          |
-| AUTHORIZATION_REQUESTED                            | 79           | TAKING_CHARGE (17)   |  
+|----------------------------------------------------|-----------------------|----------------------|
+| NOTIFIED_OK                                        | other                 | SUCCESS (0)          |
+| NOTIFICATION_REQUESTED - Outcome OK                | 61                    | SUCCESS (0)          |
+| NOTIFICATION_REQUESTED - Outcome KO                | 62                    | PSP_ERROR (25)       |
+| NOTIFICATION_ERROR - Outcome OK                    | 63                    | SUCCESS (0)          |
+| NOTIFICATION_ERROR - Outcome KO                    | 64                    | PSP_ERROR (25)       |
+| NOTIFIED_KO                                        | 65                    | PSP_ERROR (25)       |
+| REFUNDED                                           | 66                    | PSP_ERROR (25)       |
+| REFUND_REQUESTED                                   | 67                    | GENERIC_ERROR (1)    |
+| REFUND_ERROR                                       | 68                    | GENERIC_ERROR (1)    |
+| EXPIRED_NOT_AUTHORIZED                             | 69                    | TIMEOUT (4)          |
+| CANCELED                                           | 70                    | CANCELED_BY_USER (8) |  
+| CANCELLATION_EXPIRED                               | 71                    | CANCELED_BY_USER (8) |  
+| CLOSURE_ERROR - NPG EXECUTED                       | 72                    | GENERIC_ERROR (1)    |
+| CLOSURE_REQUESTED - NPG CANCELED                   | 73                    | CANCELED_BY_USER (8) |   
+| AUTHORIZATION_COMPLETED - NPG AUTHORIZED           | 74                    | PSP_ERROR (25)       |
+| UNAUTHORIZED - NPG DENIED_BY_RISK                  | 75                    | AUTH_ERROR (2)       |
+| CLOSED - Outcome NOT_RECEIVED                      | 76                    | TAKING_CHARGE (17)   |
+| CLOSED - Other                                     | 77                    | GENERIC_ERROR (1)    |
+| EXPIRED - Outcome OK                               | 78                    | SUCCESS (0)          |
+| AUTHORIZATION_REQUESTED                            | 79                    | TAKING_CHARGE (17)   |  
