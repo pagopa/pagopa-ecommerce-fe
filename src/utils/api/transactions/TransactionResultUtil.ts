@@ -127,19 +127,18 @@ export const getOnboardingPaymentOutcome = (
           errorCode,
           gatewayAuthorizationStatus
         );
-     } else {
-          switch (sendPaymentResultOutcome) {
-            case SendPaymentResultOutcomeEnum.OK:
-              return ViewOutcomeEnum.SUCCESS;
-            case SendPaymentResultOutcomeEnum.KO:
-              return ViewOutcomeEnum.PSP_ERROR;
-            case SendPaymentResultOutcomeEnum.NOT_RECEIVED:
-              return ViewOutcomeEnum.TAKING_CHARGE;
-            default:
-              return ViewOutcomeEnum.GENERIC_ERROR; // BE_KO(99)
-          }
-     }
-      return ViewOutcomeEnum.GENERIC_ERROR;
+      } else {
+        switch (sendPaymentResultOutcome) {
+          case SendPaymentResultOutcomeEnum.OK:
+            return ViewOutcomeEnum.SUCCESS;
+          case SendPaymentResultOutcomeEnum.KO:
+            return ViewOutcomeEnum.PSP_ERROR;
+          case SendPaymentResultOutcomeEnum.NOT_RECEIVED:
+            return ViewOutcomeEnum.TAKING_CHARGE;
+          default:
+            return ViewOutcomeEnum.GENERIC_ERROR; // BE_KO(99)
+        }
+      }
     }
     case TransactionStatusEnum.AUTHORIZATION_REQUESTED:
       return ViewOutcomeEnum.TAKING_CHARGE;
