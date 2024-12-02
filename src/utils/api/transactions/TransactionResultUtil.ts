@@ -59,7 +59,6 @@ export const gatewayAuthorizationStatusMap = new Map<
 // eslint-disable-next-line complexity
 export const getOnboardingPaymentOutcome = (
   transactionInfo: transactionInfoStatus
-  // to be removed when also redirect gateway mapping will be set to PSP_ERROR in place of GENERIC_ERROR
   // eslint-disable-next-line sonarjs/cognitive-complexity
 ): ViewOutcomeEnum => {
   const {
