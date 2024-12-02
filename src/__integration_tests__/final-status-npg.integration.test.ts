@@ -21,23 +21,23 @@ describe("Unauthorized npg final status mapping tests", () => {
     ],
     [
       "AUTHORIZATION_COMPLETED_WITH_NPG_AUTH_STATUS_AUTHORIZED",
-      "1"
+      "25"
     ],
     [
       "AUTHORIZATION_COMPLETED_WITH_NPG_AUTH_STATUS_PENDING",
-      "1"
+      "25"
     ],
     [
       "AUTHORIZATION_COMPLETED_WITH_NPG_AUTH_STATUS_VOIDED",
-      "1"
+      "25"
     ],
     [
       "AUTHORIZATION_COMPLETED_WITH_NPG_AUTH_STATUS_REFUNDED",
-     "1"
+     "25"
     ],
     [
       "AUTHORIZATION_COMPLETED_WITH_NPG_AUTH_STATUS_FAILED",
-      "1"
+      "25"
     ],
     [
       "AUTHORIZATION_COMPLETED_WITH_NPG_AUTH_STATUS_CANCELED",
@@ -77,7 +77,7 @@ describe("Unauthorized npg final status mapping tests", () => {
     ],
     [
       "AUTHORIZATION_COMPLETED_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_109",
-      "1"
+      "25"
     ],
     [
       "AUTHORIZATION_COMPLETED_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_110",
@@ -89,15 +89,15 @@ describe("Unauthorized npg final status mapping tests", () => {
     ],
     [
       "AUTHORIZATION_COMPLETED_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_115",
-      "1"
+      "25"
     ],
     [
       "AUTHORIZATION_COMPLETED_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_116",
-      "2"
+      "116"
     ],
     [
       "AUTHORIZATION_COMPLETED_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_117",
-      "2"
+      "117"
     ],
 
     [
@@ -117,7 +117,7 @@ describe("Unauthorized npg final status mapping tests", () => {
 
     [
       "AUTHORIZATION_COMPLETED_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_121",
-      "2"
+      "121"
     ],
 
     [
@@ -196,63 +196,63 @@ describe("Unauthorized npg final status mapping tests", () => {
     ],
     [
       "AUTHORIZATION_COMPLETED_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_904",
-      "1"
+      "25"
     ],
     [
       "AUTHORIZATION_COMPLETED_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_906",
-      "1"
+      "25"
     ],
     [
       "AUTHORIZATION_COMPLETED_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_907",
-      "1"
+      "25"
     ],
     [
       "AUTHORIZATION_COMPLETED_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_908",
-      "1"
+      "25"
     ],
     [
       "AUTHORIZATION_COMPLETED_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_909",
-      "1"
+      "25"
     ],
     [
       "AUTHORIZATION_COMPLETED_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_911",
-      "1"
+      "25"
     ],
     [
       "AUTHORIZATION_COMPLETED_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_913",
-      "1"
+      "25"
     ],
     [
       "AUTHORIZATION_COMPLETED_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_999",
-      "1"
+      "25"
     ],
     [
       "AUTHORIZATION_COMPLETED_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_GENERIC",
-      "1"
+      "25"
     ],
     [
       "CLOSURE_REQUESTED_WITH_NPG_AUTH_STATUS_EXECUTED",
-      "1"
+      "17"
     ],
     [
       "CLOSURE_REQUESTED_WITH_NPG_AUTH_STATUS_AUTHORIZED",
-      "1"
+      "25"
     ],
     [
       "CLOSURE_REQUESTED_WITH_NPG_AUTH_STATUS_PENDING",
-      "1"
+      "25"
     ],
     [
       "CLOSURE_REQUESTED_WITH_NPG_AUTH_STATUS_VOIDED",
-      "1"
+      "25"
     ],
     [
       "CLOSURE_REQUESTED_WITH_NPG_AUTH_STATUS_REFUNDED",
-      "1"
+      "25"
     ],
     [
       "CLOSURE_REQUESTED_WITH_NPG_AUTH_STATUS_FAILED",
-      "1"
+      "25"
     ],
     [
       "CLOSURE_REQUESTED_WITH_NPG_AUTH_STATUS_CANCELED",
@@ -292,7 +292,7 @@ describe("Unauthorized npg final status mapping tests", () => {
     ],
     [
       "CLOSURE_REQUESTED_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_109",
-      "1"
+      "25"
     ],
     [
       "CLOSURE_REQUESTED_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_110",
@@ -304,15 +304,15 @@ describe("Unauthorized npg final status mapping tests", () => {
     ],
     [
       "CLOSURE_REQUESTED_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_115",
-      "1"
+      "25"
     ],
     [
       "CLOSURE_REQUESTED_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_116",
-      "2"
+      "116"
     ],
     [
       "CLOSURE_REQUESTED_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_117",
-      "2"
+      "117"
     ],
 
     [
@@ -332,7 +332,7 @@ describe("Unauthorized npg final status mapping tests", () => {
 
     [
       "CLOSURE_REQUESTED_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_121",
-      "2"
+      "121"
     ],
 
     [
@@ -411,39 +411,39 @@ describe("Unauthorized npg final status mapping tests", () => {
     ],
     [
       "CLOSURE_REQUESTED_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_904",
-      "1"
+      "25"
     ],
     [
       "CLOSURE_REQUESTED_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_906",
-      "1"
+      "25"
     ],
     [
       "CLOSURE_REQUESTED_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_907",
-     "1"
+     "25"
     ],
     [
       "CLOSURE_REQUESTED_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_908",
-     "1"
+     "25"
     ],
     [
       "CLOSURE_REQUESTED_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_909",
-      "1"
+      "25"
     ],
     [
       "CLOSURE_REQUESTED_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_911",
-     "1"
+     "25"
     ],
     [
       "CLOSURE_REQUESTED_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_913",
-      "1"
+      "25"
     ],
     [
       "CLOSURE_REQUESTED_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_999",
-      "1"
+      "25"
     ],
     [
       "CLOSURE_REQUESTED_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_GENERIC",
-      "1"
+      "25"
     ],
     [
       "CLOSURE_ERROR_WITH_NPG_AUTH_STATUS_EXECUTED",
@@ -451,23 +451,23 @@ describe("Unauthorized npg final status mapping tests", () => {
     ],
     [
       "CLOSURE_ERROR_WITH_NPG_AUTH_STATUS_AUTHORIZED",
-      "1"
+      "25"
     ],
     [
       "CLOSURE_ERROR_WITH_NPG_AUTH_STATUS_PENDING",
-      "1"
+      "25"
     ],
     [
       "CLOSURE_ERROR_WITH_NPG_AUTH_STATUS_VOIDED",
-      "1"
+      "25"
     ],
     [
       "CLOSURE_ERROR_WITH_NPG_AUTH_STATUS_REFUNDED",
-      "1"
+      "25"
     ],
     [
       "CLOSURE_ERROR_WITH_NPG_AUTH_STATUS_FAILED",
-      "1"
+      "25"
     ],
     [
       "CLOSURE_ERROR_WITH_NPG_AUTH_STATUS_CANCELED",
@@ -507,7 +507,7 @@ describe("Unauthorized npg final status mapping tests", () => {
     ],
     [
       "CLOSURE_ERROR_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_109",
-      "1"
+      "25"
     ],
     [
       "CLOSURE_ERROR_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_110",
@@ -519,15 +519,15 @@ describe("Unauthorized npg final status mapping tests", () => {
     ],
     [
       "CLOSURE_ERROR_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_115",
-      "1"
+      "25"
     ],
     [
       "CLOSURE_ERROR_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_116",
-      "2"
+      "116"
     ],
     [
       "CLOSURE_ERROR_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_117",
-      "2"
+      "117"
     ],
 
     [
@@ -547,7 +547,7 @@ describe("Unauthorized npg final status mapping tests", () => {
 
     [
       "CLOSURE_ERROR_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_121",
-      "2"
+      "121"
     ],
 
     [
@@ -626,39 +626,39 @@ describe("Unauthorized npg final status mapping tests", () => {
     ],
     [
       "CLOSURE_ERROR_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_904",
-      "1"
+      "25"
     ],
     [
       "CLOSURE_ERROR_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_906",
-      "1"
+      "25"
     ],
     [
       "CLOSURE_ERROR_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_907",
-      "1"
+      "25"
     ],
     [
       "CLOSURE_ERROR_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_908",
-      "1"
+      "25"
     ],
     [
       "CLOSURE_ERROR_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_909",
-      "1"
+      "25"
     ],
     [
       "CLOSURE_ERROR_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_911",
-      "1"
+      "25"
     ],
     [
       "CLOSURE_ERROR_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_913",
-      "1"
+      "25"
     ],
     [
       "CLOSURE_ERROR_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_999",
-      "1"
+      "25"
     ],
     [
       "CLOSURE_ERROR_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_GENERIC",
-      "1"
+      "25"
     ],
     [
       "CLOSED_WITH_NPG_AUTH_STATUS_EXECUTED_SEND_PAYMENT_RESULT_NOT_RECEIVED",
@@ -666,23 +666,23 @@ describe("Unauthorized npg final status mapping tests", () => {
     ],
     [
       "UNAUTHORIZED_WITH_NPG_AUTH_STATUS_AUTHORIZED",
-      "1"
+      "25"
     ],
     [
       "UNAUTHORIZED_WITH_NPG_AUTH_STATUS_PENDING",
-      "1"
+      "25"
     ],
     [
       "UNAUTHORIZED_WITH_NPG_AUTH_STATUS_VOIDED",
-      "1"
+      "25"
     ],
     [
       "UNAUTHORIZED_WITH_NPG_AUTH_STATUS_REFUNDED",
-      "1"
+      "25"
     ],
     [
       "UNAUTHORIZED_WITH_NPG_AUTH_STATUS_FAILED",
-      "1"
+      "25"
     ],
     [
       "UNAUTHORIZED_WITH_NPG_AUTH_STATUS_CANCELED",
@@ -722,7 +722,7 @@ describe("Unauthorized npg final status mapping tests", () => {
     ],
     [
       "UNAUTHORIZED_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_109",
-      "1"
+      "25"
     ],
     [
       "UNAUTHORIZED_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_110",
@@ -734,15 +734,15 @@ describe("Unauthorized npg final status mapping tests", () => {
     ],
     [
       "UNAUTHORIZED_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_115",
-      "1"
+      "25"
     ],
     [
       "UNAUTHORIZED_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_116",
-      "2"
+      "116"
     ],
     [
       "UNAUTHORIZED_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_117",
-      "2"
+      "117"
     ],
 
     [
@@ -762,7 +762,7 @@ describe("Unauthorized npg final status mapping tests", () => {
 
     [
       "UNAUTHORIZED_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_121",
-      "2"
+      "121"
     ],
 
     [
@@ -841,39 +841,39 @@ describe("Unauthorized npg final status mapping tests", () => {
     ],
     [
       "UNAUTHORIZED_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_904",
-      "1"
+      "25"
     ],
     [
       "UNAUTHORIZED_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_906",
-      "1"
+      "25"
     ],
     [
       "UNAUTHORIZED_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_907",
-      "1"
+      "25"
     ],
     [
       "UNAUTHORIZED_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_908",
-      "1"
+      "25"
     ],
     [
       "UNAUTHORIZED_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_909",
-      "1"
+      "25"
     ],
     [
       "UNAUTHORIZED_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_911",
-      "1"
+      "25"
     ],
     [
       "UNAUTHORIZED_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_913",
-      "1"
+      "25"
     ],
     [
       "UNAUTHORIZED_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_999",
-      "1"
+      "25"
     ],
     [
       "UNAUTHORIZED_WITH_NPG_AUTH_STATUS_DECLINED_ERROR_CODE_GENERIC",
-      "1"
+      "25"
     ],
     [
       "NOTIFICATION_REQUESTED_WITH_NPG_AUTH_STATUS_EXECUTED_AND_SEND_PAYMENT_RESULT_OK",
@@ -881,7 +881,7 @@ describe("Unauthorized npg final status mapping tests", () => {
     ],
     [
       "NOTIFICATION_REQUESTED_WITH_NPG_AUTH_STATUS_EXECUTED_AND_SEND_PAYMENT_RESULT_KO",
-      "1"
+      "25"
     ],
     [
       "NOTIFICATION_ERROR_WITH_NPG_AUTH_STATUS_EXECUTED_AND_SEND_PAYMENT_RESULT_OK",
@@ -889,7 +889,7 @@ describe("Unauthorized npg final status mapping tests", () => {
     ],
     [
       "NOTIFICATION_ERROR_WITH_NPG_AUTH_STATUS_EXECUTED_AND_SEND_PAYMENT_RESULT_KO",
-      "1"
+      "25"
     ],
     [
       "NOTIFIED_OK_WITH_NPG_AUTH_STATUS_EXECUTED_AND_SEND_PAYMENT_RESULT_OK",
@@ -897,11 +897,11 @@ describe("Unauthorized npg final status mapping tests", () => {
     ],
     [
       "NOTIFIED_KO_WITH_NPG_AUTH_STATUS_EXECUTED_AND_SEND_PAYMENT_RESULT_KO",
-      "1"
+      "25"
     ],
     [
       "EXPIRED_TRANSACTION_FOR_AUTHORIZATION_REQUESTED",
-      "1"
+      "17"
     ],
 
     [
@@ -910,23 +910,23 @@ describe("Unauthorized npg final status mapping tests", () => {
     ],
     [
       "EXPIRED_TRANSACTION_FOR_AUTHORIZATION_COMPLETED_AUTH_STATUS_AUTHORIZED",
-      "1"
+      "25"
     ],
     [
       "EXPIRED_TRANSACTION_FOR_AUTHORIZATION_COMPLETED_AUTH_STATUS_PENDING",
-      "1"
+      "25"
     ],
     [
       "EXPIRED_TRANSACTION_FOR_AUTHORIZATION_COMPLETED_AUTH_STATUS_VOIDED",
-      "1"
+      "25"
     ],
     [
       "EXPIRED_TRANSACTION_FOR_AUTHORIZATION_COMPLETED_AUTH_STATUS_REFUNDED",
-      "1"
+      "25"
     ],
     [
       "EXPIRED_TRANSACTION_FOR_AUTHORIZATION_COMPLETED_AUTH_STATUS_FAILED",
-      "1"
+      "25"
     ],
     [
       "EXPIRED_TRANSACTION_FOR_AUTHORIZATION_COMPLETED_AUTH_STATUS_CANCELED",
@@ -966,7 +966,7 @@ describe("Unauthorized npg final status mapping tests", () => {
     ],
     [
       "EXPIRED_TRANSACTION_FOR_AUTHORIZATION_COMPLETED_AUTH_STATUS_DECLINED_ERROR_CODE_109",
-      "1"
+      "25"
     ],
     [
       "EXPIRED_TRANSACTION_FOR_AUTHORIZATION_COMPLETED_AUTH_STATUS_DECLINED_ERROR_CODE_110",
@@ -978,15 +978,15 @@ describe("Unauthorized npg final status mapping tests", () => {
     ],
     [
       "EXPIRED_TRANSACTION_FOR_AUTHORIZATION_COMPLETED_AUTH_STATUS_DECLINED_ERROR_CODE_115",
-      "1"
+      "25"
     ],
     [
       "EXPIRED_TRANSACTION_FOR_AUTHORIZATION_COMPLETED_AUTH_STATUS_DECLINED_ERROR_CODE_116",
-      "2"
+      "116"
     ],
     [
       "EXPIRED_TRANSACTION_FOR_AUTHORIZATION_COMPLETED_AUTH_STATUS_DECLINED_ERROR_CODE_117",
-      "2"
+      "117"
     ],
 
     [
@@ -1006,7 +1006,7 @@ describe("Unauthorized npg final status mapping tests", () => {
 
     [
       "EXPIRED_TRANSACTION_FOR_AUTHORIZATION_COMPLETED_AUTH_STATUS_DECLINED_ERROR_CODE_121",
-      "2"
+      "121"
     ],
 
     [
@@ -1085,47 +1085,47 @@ describe("Unauthorized npg final status mapping tests", () => {
     ],
     [
       "EXPIRED_TRANSACTION_FOR_AUTHORIZATION_COMPLETED_AUTH_STATUS_DECLINED_ERROR_CODE_904",
-      "1"
+      "25"
     ],
     [
       "EXPIRED_TRANSACTION_FOR_AUTHORIZATION_COMPLETED_AUTH_STATUS_DECLINED_ERROR_CODE_906",
-      "1"
+      "25"
     ],
     [
       "EXPIRED_TRANSACTION_FOR_AUTHORIZATION_COMPLETED_AUTH_STATUS_DECLINED_ERROR_CODE_907",
-      "1"
+      "25"
     ],
     [
       "EXPIRED_TRANSACTION_FOR_AUTHORIZATION_COMPLETED_AUTH_STATUS_DECLINED_ERROR_CODE_908",
-     "1"
+     "25"
     ],
     [
       "EXPIRED_TRANSACTION_FOR_AUTHORIZATION_COMPLETED_AUTH_STATUS_DECLINED_ERROR_CODE_909",
-      "1"
+      "25"
     ],
     [
       "EXPIRED_TRANSACTION_FOR_AUTHORIZATION_COMPLETED_AUTH_STATUS_DECLINED_ERROR_CODE_911",
-      "1"
+      "25"
     ],
     [
       "EXPIRED_TRANSACTION_FOR_AUTHORIZATION_COMPLETED_AUTH_STATUS_DECLINED_ERROR_CODE_913",
-      "1"
+      "25"
     ],
     [
       "EXPIRED_TRANSACTION_FOR_AUTHORIZATION_COMPLETED_AUTH_STATUS_DECLINED_ERROR_CODE_999",
-      "1"
+      "25"
     ],
     [
       "EXPIRED_TRANSACTION_FOR_AUTHORIZATION_COMPLETED_AUTH_STATUS_DECLINED_ERROR_CODE_GENERIC",
-      "1"
+      "25"
     ],
     [
       "EXPIRED_TRANSACTION_FOR_CLOSURE_REQUESTED_AUTH_STATUS_EXECUTED_AND_SEND_PAYMENT_RESULT_NOT_RECEIVED",
-      "1"
+      "17"
     ],
     [
       "EXPIRED_TRANSACTION_FOR_CLOSURE_ERROR_AUTH_STATUS_EXECUTED_AND_SEND_PAYMENT_RESULT_NOT_RECEIVED",
-      "1"
+      "17"
     ],
     [
       "EXPIRED_TRANSACTION_FOR_NOTIFICATION_REQUESTED_AUTH_STATUS_EXECUTED_AND_SEND_PAYMENT_RESULT_OK",
@@ -1137,11 +1137,11 @@ describe("Unauthorized npg final status mapping tests", () => {
     ],
     [
       "EXPIRED_TRANSACTION_FOR_NOTIFICATION_REQUESTED_AUTH_STATUS_EXECUTED_AND_SEND_PAYMENT_RESULT_KO",
-      "1"
+      "25"
     ],
     [
       "EXPIRED_TRANSACTION_FOR_NOTIFICATION_ERROR_AUTH_STATUS_EXECUTED_AND_SEND_PAYMENT_RESULT_KO",
-      "1"
+      "25"
     ],
     [
       "REFUND_REQUESTED_TRANSACTION_WITH_NPG_AUTH_STATUS_EXECUTED",
@@ -1153,7 +1153,7 @@ describe("Unauthorized npg final status mapping tests", () => {
     ],
     [
       "REFUNDED_TRANSACTION_WITH_NPG_AUTH_STATUS_EXECUTED",
-      "1"
+      "25"
     ],
     [
       "AUTHORIZATION_COMPLETED_WITH_REDIRECT_AUTH_STATUS_OK",
@@ -1169,15 +1169,15 @@ describe("Unauthorized npg final status mapping tests", () => {
     ],
     [
       "AUTHORIZATION_COMPLETED_WITH_REDIRECT_AUTH_STATUS_ERROR",
-      "1"
+      "25"
     ],
     [
       "AUTHORIZATION_COMPLETED_WITH_REDIRECT_AUTH_STATUS_EXPIRED",
-     "4"
+     "25"
     ],
     [
       "CLOSURE_REQUESTED_WITH_REDIRECT_AUTH_STATUS_OK",
-      "1"
+      "17"
     ],
     [
       "CLOSURE_REQUESTED_WITH_REDIRECT_AUTH_STATUS_KO",
@@ -1189,11 +1189,11 @@ describe("Unauthorized npg final status mapping tests", () => {
     ],
     [
       "CLOSURE_REQUESTED_WITH_REDIRECT_AUTH_STATUS_ERROR",
-      "1"
+      "25"
     ],
     [
       "CLOSURE_REQUESTED_WITH_REDIRECT_AUTH_STATUS_EXPIRED",
-     "4"
+     "25"
     ],
     [
       "CLOSURE_ERROR_WITH_REDIRECT_AUTH_STATUS_OK",
@@ -1209,15 +1209,15 @@ describe("Unauthorized npg final status mapping tests", () => {
     ],
     [
       "CLOSURE_ERROR_WITH_REDIRECT_AUTH_STATUS_ERROR",
-      "1"
+      "25"
     ],
     [
       "CLOSURE_ERROR_WITH_REDIRECT_AUTH_STATUS_EXPIRED",
-     "4"
+     "25"
     ],
     [
       "UNAUTHORIZED_WITH_REDIRECT_AUTH_STATUS_OK",
-      "1"
+      "25"
     ],
     [
       "UNAUTHORIZED_WITH_REDIRECT_AUTH_STATUS_KO",
@@ -1229,15 +1229,15 @@ describe("Unauthorized npg final status mapping tests", () => {
     ],
     [
       "UNAUTHORIZED_WITH_REDIRECT_AUTH_STATUS_ERROR",
-      "1"
+      "25"
     ],
     [
       "UNAUTHORIZED_WITH_REDIRECT_AUTH_STATUS_EXPIRED",
-     "4"
+     "25"
     ],
     [
       "UNAUTHORIZED_WITH_REDIRECT_AUTH_STATUS_OK",
-      "1"
+      "25"
     ],
     [
       "UNAUTHORIZED_WITH_REDIRECT_AUTH_STATUS_KO",
@@ -1249,11 +1249,11 @@ describe("Unauthorized npg final status mapping tests", () => {
     ],
     [
       "UNAUTHORIZED_WITH_REDIRECT_AUTH_STATUS_ERROR",
-      "1"
+      "25"
     ],
     [
       "UNAUTHORIZED_WITH_REDIRECT_AUTH_STATUS_EXPIRED",
-     "4"
+     "25"
     ],
     [
       "NOTIFICATION_REQUESTED_WITH_REDIRECT_AUTH_STATUS_OK_AND_SEND_PAYMENT_RESULT_OK",
@@ -1261,7 +1261,7 @@ describe("Unauthorized npg final status mapping tests", () => {
     ],
     [
       "NOTIFICATION_REQUESTED_WITH_REDIRECT_AUTH_STATUS_OK_AND_SEND_PAYMENT_RESULT_KO",
-      "1"
+      "25"
     ],
     [
       "NOTIFICATION_ERROR_WITH_REDIRECT_AUTH_STATUS_OK_AND_SEND_PAYMENT_RESULT_OK",
@@ -1269,7 +1269,7 @@ describe("Unauthorized npg final status mapping tests", () => {
     ],
     [
       "NOTIFICATION_ERROR_WITH_REDIRECT_AUTH_STATUS_OK_AND_SEND_PAYMENT_RESULT_KO",
-      "1"
+      "25"
     ],
     [
       "NOTIFIED_OK_WITH_REDIRECT_AUTH_STATUS_OK_AND_SEND_PAYMENT_RESULT_OK",
@@ -1277,7 +1277,7 @@ describe("Unauthorized npg final status mapping tests", () => {
     ],
     [
       "NOTIFIED_KO_WITH_REDIRECT_AUTH_STATUS_OK_AND_SEND_PAYMENT_RESULT_KO",
-      "1"
+      "25"
     ],
     [
       "EXPIRED_TRANSACTION_WITH_REDIRECT_FOR_AUTHORIZATION_COMPLETED_AUTH_STATUS_OK",
@@ -1293,19 +1293,19 @@ describe("Unauthorized npg final status mapping tests", () => {
     ],
     [
       "EXPIRED_TRANSACTION_WITH_REDIRECT_FOR_AUTHORIZATION_COMPLETED_AUTH_STATUS_EXPIRED",
-      "4"
+      "25"
     ],
     [
       "EXPIRED_TRANSACTION_WITH_REDIRECT_FOR_AUTHORIZATION_COMPLETED_AUTH_STATUS_ERROR",
-      "1"
+      "25"
     ],    
     [
       "EXPIRED_TRANSACTION_WITH_REDIRECT_FOR_CLOSURE_REQUESTED_AUTH_STATUS_OK_AND_SEND_PAYMENT_RESULT_NOT_RECEIVED",
-      "1"
+      "17"
     ],
     [
       "EXPIRED_TRANSACTION_WITH_REDIRECT_FOR_CLOSURE_ERROR_AUTH_STATUS_OK_AND_SEND_PAYMENT_RESULT_NOT_RECEIVED",
-      "1"
+      "17"
     ],
     [
       "EXPIRED_TRANSACTION_WITH_REDIRECT_FOR_NOTIFICATION_REQUESTED_AUTH_STATUS_OK_AND_SEND_PAYMENT_RESULT_OK",
@@ -1317,7 +1317,7 @@ describe("Unauthorized npg final status mapping tests", () => {
     ],
     [
       "EXPIRED_TRANSACTION_WITH_REDIRECT_FOR_NOTIFICATION_REQUESTED_AUTH_STATUS_OK_AND_SEND_PAYMENT_RESULT_KO",
-      "1"
+      "25"
     ],
     [
       "EXPIRED_TRANSACTION_WITH_REDIRECT_FOR_NOTIFICATION_ERROR_AUTH_STATUS_OK_AND_SEND_PAYMENT_RESULT_KO",
@@ -1333,7 +1333,7 @@ describe("Unauthorized npg final status mapping tests", () => {
     ],
     [
       "REFUNDED_TRANSACTION_WITH_REDIRECT_AUTH_STATUS_OK",
-      "1"
+      "25"
     ]
   ]);
 
