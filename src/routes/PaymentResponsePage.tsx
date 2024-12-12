@@ -37,7 +37,6 @@ export default function PaymentResponsePage() {
   };
 
   const performRedirectToClient = (newOutcome?: ViewOutcomeEnum) => {
-    (window as any).console.log("newOutcome", newOutcome);
     // if not present new outcome use old one
     const outcome = newOutcome || outcomeState || ViewOutcomeEnum.GENERIC_ERROR;
     redirectToClient({ transactionId, outcome, clientId });
