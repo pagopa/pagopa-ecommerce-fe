@@ -51,6 +51,7 @@ export default function PaymentResponsePage() {
 
   const GetTransaction = (token: string) => {
     const manageResp = O.match(redirectWithError, (transactionInfo) => {
+      (window as any).alert(JSON.stringify(transactionInfo));
       performRedirectToClient(
         getOnboardingPaymentOutcome(transactionInfo as transactionInfoStatus)
       );

@@ -6,7 +6,7 @@ import { TransactionInfo as IOTransactionInfo } from "../../../../generated/defi
 import { TransactionInfo as CHECKOUTTransactionInfo } from "../../../../generated/definitions/payment-ecommerce-v2/TransactionInfo";
 
 import {
-  ecommerceCHECKOUTClientClientWithPolling,
+  ecommerceCHECKOUTClientClientWithPollingV2,
   ecommerceIOClientWithPolling,
 } from "../client";
 
@@ -47,7 +47,7 @@ export const ecommerceCHECKOUTGetTransaction = (
   pipe(
     TE.tryCatch(
       () =>
-        ecommerceCHECKOUTClientClientWithPolling.getTransactionInfo({
+        ecommerceCHECKOUTClientClientWithPollingV2.getTransactionInfo({
           bearerAuth: token,
           transactionId,
         }),
