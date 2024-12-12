@@ -33,10 +33,11 @@ export default function PaymentResponsePage() {
   const config = getConfigOrThrow();
 
   const redirectWithError = () => {
-    performRedirectToClient(ViewOutcomeEnum.GENERIC_ERROR);
+    // performRedirectToClient(ViewOutcomeEnum.GENERIC_ERROR);
   };
 
   const performRedirectToClient = (newOutcome?: ViewOutcomeEnum) => {
+    (window as any).console.log("newOutcome", newOutcome);
     // if not present new outcome use old one
     const outcome = newOutcome || outcomeState || ViewOutcomeEnum.GENERIC_ERROR;
     redirectToClient({ transactionId, outcome, clientId });
@@ -51,7 +52,6 @@ export default function PaymentResponsePage() {
 
   const GetTransaction = (token: string) => {
     const manageResp = O.match(redirectWithError, (transactionInfo) => {
-      (window as any).alert(JSON.stringify(transactionInfo));
       performRedirectToClient(
         getOnboardingPaymentOutcome(transactionInfo as transactionInfoStatus)
       );
