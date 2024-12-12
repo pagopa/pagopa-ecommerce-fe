@@ -54,7 +54,6 @@ describe("Check final status on IO mapping tests", () => {
       await page.goto(ECOMMERCE_FE_ESITO_PAGE + transactionId);
       await page.waitForFunction("window.location.pathname.includes('ecommerce/io-outcomes/v1/transactions')")
       const pollingOutcome = Number.parseInt(page.url().split("outcome=")[1]);
-      console.log(`Found outcome: [${pollingOutcome}]`);
       expect(pollingOutcome).toBe(Number.parseInt(expectedOutcome));
     })
   }
