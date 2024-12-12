@@ -8,8 +8,8 @@ import {
   ecommerceCHECKOUTGetTransaction,
 } from "../utils/api/transactions/getTransactionInfo";
 import {
-  ViewOutcomeEnum,
   transactionInfoStatus,
+  ViewOutcomeEnum,
 } from "../utils/api/transactions/types";
 import PageContainer from "../components/PageContainer";
 import { getOnboardingPaymentOutcome } from "../utils/api/transactions/TransactionResultUtil";

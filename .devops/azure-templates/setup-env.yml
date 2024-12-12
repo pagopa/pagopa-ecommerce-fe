@@ -16,6 +16,10 @@ parameters:
     type: string
     default: ''
 
+  - name: "checkout_api_v2_path"
+    type: string
+    default: ""
+
   - name: 'io_api_path'
     type: string
     default: ''

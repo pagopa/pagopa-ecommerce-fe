@@ -1,4 +1,4 @@
-import { NewTransactionResponse } from "../../../generated/definitions/payment-ecommerce-webview/NewTransactionResponse";
+import { NewTransactionResponse } from "../../../generated/definitions/payment-ecommerce-v1/NewTransactionResponse";
 
 export enum SessionItems {
   sessionToken = "sessionToken",
