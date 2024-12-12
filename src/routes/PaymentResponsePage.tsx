@@ -33,7 +33,7 @@ export default function PaymentResponsePage() {
   const config = getConfigOrThrow();
 
   const redirectWithError = () => {
-    // performRedirectToClient(ViewOutcomeEnum.GENERIC_ERROR);
+    performRedirectToClient(ViewOutcomeEnum.GENERIC_ERROR);
   };
 
   const performRedirectToClient = (newOutcome?: ViewOutcomeEnum) => {
