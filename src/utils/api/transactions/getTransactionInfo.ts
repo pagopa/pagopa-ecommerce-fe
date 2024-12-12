@@ -2,8 +2,8 @@ import * as E from "fp-ts/Either";
 import * as O from "fp-ts/Option";
 import * as TE from "fp-ts/TaskEither";
 import { flow, pipe } from "fp-ts/function";
-import { TransactionInfo as IOTransactionInfo } from "../../../../generated/definitions/payment-ecommerce-webview/TransactionInfo";
-import { TransactionInfo as CHECKOUTTransactionInfo } from "../../../../generated/definitions/payment-ecommerce/TransactionInfo";
+import { TransactionInfo as IOTransactionInfo } from "../../../../generated/definitions/payment-ecommerce-webview-v2/TransactionInfo";
+import { TransactionInfo as CHECKOUTTransactionInfo } from "../../../../generated/definitions/payment-ecommerce-v2/TransactionInfo";
 
 import {
   ecommerceCHECKOUTClientClientWithPolling,
