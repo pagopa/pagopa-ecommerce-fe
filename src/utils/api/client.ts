@@ -12,6 +12,7 @@ import {
   TransactionInfo,
   TransactionInfoGatewayInfo,
 } from "../../../generated/definitions/payment-ecommerce-webview-v2/TransactionInfo";
+import { TransactionInfoNodeInfo } from "../../../generated/definitions/payment-ecommerce-v2/TransactionInfo";
 import {
   EcommerceInterruptStatusCodeEnumType,
   EcommerceMaybeInterruptStatusCodeEnumType,
@@ -30,12 +31,14 @@ const pollingConfig = {
 /** This function return true when polling on GET transaction must be interrupted */
 const interruptTransactionPolling = (
   transactionStatus: TransactionInfo["status"],
-  gatewayInfo?: TransactionInfoGatewayInfo
+  gatewayInfo?: TransactionInfoGatewayInfo,
+  nodeInfo?: TransactionInfoNodeInfo
 ) =>
   pipe(
     EcommerceInterruptStatusCodeEnumType.decode(transactionStatus),
     E.isRight
   ) ||
+  nodeInfo?.closePaymentResultError?.statusCode?.toString().startsWith("4") ||
   (pipe(
     EcommerceMaybeInterruptStatusCodeEnumType.decode(transactionStatus),
     E.isRight
@@ -48,9 +51,12 @@ const decodeFinalStatusResult = async (r: Response): Promise<boolean> => {
     pollingConfig.counter.reset();
     return false;
   }
-  const { status, gatewayInfo } = (await r.clone().json()) as TransactionInfo;
+  const { status, gatewayInfo, nodeInfo } = (await r
+    .clone()
+    .json()) as TransactionInfo;
   return !(
-    r.status === 200 && interruptTransactionPolling(status, gatewayInfo)
+    r.status === 200 &&
+    interruptTransactionPolling(status, gatewayInfo, nodeInfo)
   );
 };
 
