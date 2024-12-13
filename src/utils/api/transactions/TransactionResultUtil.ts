@@ -4,6 +4,7 @@ import { TransactionStatusEnum } from "../../../../generated/definitions/payment
 import {
   TransactionInfoGatewayInfo,
   SendPaymentResultOutcomeEnum,
+  TransactionInfoNodeInfoClosePaymentResultError,
 } from "../../../../generated/definitions/payment-ecommerce-webview-v2/TransactionInfo";
 import {
   gatewayAuthorizationStatusType,
@@ -13,6 +14,10 @@ import {
   RedirectResultCodeEnum,
   transactionInfoStatus,
 } from "./types";
+import {
+  getClosePaymentErrorsMap,
+  IClosePaymentErrorItem,
+} from "./transactionClosePaymentErrorUtil";
 
 export const authorizationStatusMap = new Map<
   gatewayAuthorizationStatusType,
@@ -89,6 +94,16 @@ export const getOnboardingPaymentOutcome = (
         ? evaluateUnauthorizedStatus(transactionInfo.gatewayInfo)
         : ViewOutcomeEnum.TAKE_IN_CHARGE;
     case TransactionStatusEnum.CLOSURE_ERROR:
+      if (transactionInfo?.nodeInfo?.closePaymentResultError) {
+        return evaluateClosePaymentResultError(
+          transactionInfo?.nodeInfo?.closePaymentResultError
+        );
+      } else {
+        return !wasAuthorizedByGateway(transactionInfo.gatewayInfo)
+          ? evaluateUnauthorizedStatus(transactionInfo.gatewayInfo)
+          : ViewOutcomeEnum.GENERIC_ERROR;
+      }
+
     case TransactionStatusEnum.AUTHORIZATION_COMPLETED:
       return !wasAuthorizedByGateway(transactionInfo.gatewayInfo)
         ? evaluateUnauthorizedStatus(transactionInfo.gatewayInfo)
@@ -230,3 +245,47 @@ export const EcommerceMaybeInterruptStatusCodeEnumType =
     EcommerceMaybeInterruptStatusCodeEnum,
     "EcommerceMaybeInterruptStatusCodeEnumType"
   );
+
+/**
+ * This function will match any status code from closePaymentResultError with any
+ * status code defined in the ClosePaymentErrorsMap item.
+ *
+ * NOTE:
+ * ClosePaymentErrorsMap supports placeholders, so 5xx will match any error >= 500
+ */
+function evaluateClosePaymentResultError(
+  closePaymentResultError?: TransactionInfoNodeInfoClosePaymentResultError
+): ViewOutcomeEnum {
+  // NOTE: this should never happen by design,
+  // is only added just to be sure
+  if (closePaymentResultError === undefined) {
+    return ViewOutcomeEnum.GENERIC_ERROR;
+  }
+
+  function matchStatusCode(numericCode: number, statusCode: string) {
+    const numericCodeStr = numericCode.toString();
+    const regex = new RegExp("^" + statusCode.replace(/x/g, "\\d") + "$");
+    return regex.test(numericCodeStr);
+  }
+  // find the proper error output configuration based on the closePaymentResultError
+  const matchingItem: IClosePaymentErrorItem | undefined =
+    getClosePaymentErrorsMap().find(
+      (x: IClosePaymentErrorItem) =>
+        matchStatusCode(
+          closePaymentResultError?.statusCode ?? 0,
+          x.statusCode
+        ) &&
+        (x.enablingDescriptions === undefined ||
+          x.enablingDescriptions.includes(
+            closePaymentResultError?.description as string
+          ))
+    );
+
+  // return outcome
+  if (matchingItem) {
+    return matchingItem.outcome;
+  }
+
+  // default
+  return ViewOutcomeEnum.GENERIC_ERROR;
+}

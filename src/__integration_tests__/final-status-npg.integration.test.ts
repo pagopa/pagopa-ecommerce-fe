@@ -1334,6 +1334,22 @@ describe("Unauthorized npg final status mapping tests", () => {
     [
       "REFUNDED_TRANSACTION_WITH_REDIRECT_AUTH_STATUS_OK",
       "25"
+    ],
+    [
+      "CLOSURE_ERROR_WITH_NPG_ON_CLOSE_PAYMENT_ERROR_CODE_422_DID_NOT_RECEIVE_RPT",
+      "18"
+    ],
+    [
+      "CLOSURE_ERROR_WITH_NPG_ON_CLOSE_PAYMENT_ERROR_CODE_422_OUTCOME_ALREADY_ACQUIRED",
+      "1"
+    ],
+    [
+      "CLOSURE_ERROR_WITH_NPG_ON_CLOSE_PAYMENT_ERROR_CODE_400_REFUND_CASES",
+      "18"
+    ],
+    [
+      "CLOSURE_ERROR_WITH_NPG_ON_CLOSE_PAYMENT_ERROR_CODE_404_REFUND_CASES",
+      "18"
     ]
   ]);
 
