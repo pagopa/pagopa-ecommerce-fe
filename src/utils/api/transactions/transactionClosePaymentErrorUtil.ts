@@ -12,12 +12,10 @@ export const getClosePaymentErrorsMap = () => [
     enablingDescriptions: ["Node did not receive RPT yet"],
     outcome: ViewOutcomeEnum.REFUND_IMMEDIATELY,
   },
-  // this is out of scope, will be used later
-  /* {
+  {
     statusCode: "422",
-    enablingDescriptions: ["Outcome already acquired"],
-    outcome: ViewOutcomeEnum.TAKING_CHARGE,
-  }, */
+    outcome: ViewOutcomeEnum.GENERIC_ERROR,
+  },
   {
     statusCode: "400",
     outcome: ViewOutcomeEnum.REFUND_IMMEDIATELY,
