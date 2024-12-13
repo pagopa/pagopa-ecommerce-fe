@@ -69,6 +69,11 @@ export const getOnboardingPaymentOutcome = (
   transactionInfo: transactionInfoStatus
   // eslint-disable-next-line sonarjs/cognitive-complexity
 ): ViewOutcomeEnum => {
+  if (transactionInfo?.nodeInfo?.closePaymentResultError) {
+    return evaluateClosePaymentResultError(
+      transactionInfo?.nodeInfo?.closePaymentResultError
+    );
+  }
   switch (transactionInfo.status) {
     case TransactionStatusEnum.NOTIFIED_OK:
       return ViewOutcomeEnum.SUCCESS;
@@ -94,16 +99,6 @@ export const getOnboardingPaymentOutcome = (
         ? evaluateUnauthorizedStatus(transactionInfo.gatewayInfo)
         : ViewOutcomeEnum.TAKE_IN_CHARGE;
     case TransactionStatusEnum.CLOSURE_ERROR:
-      if (transactionInfo?.nodeInfo?.closePaymentResultError) {
-        return evaluateClosePaymentResultError(
-          transactionInfo?.nodeInfo?.closePaymentResultError
-        );
-      } else {
-        return !wasAuthorizedByGateway(transactionInfo.gatewayInfo)
-          ? evaluateUnauthorizedStatus(transactionInfo.gatewayInfo)
-          : ViewOutcomeEnum.GENERIC_ERROR;
-      }
-
     case TransactionStatusEnum.AUTHORIZATION_COMPLETED:
       return !wasAuthorizedByGateway(transactionInfo.gatewayInfo)
         ? evaluateUnauthorizedStatus(transactionInfo.gatewayInfo)
