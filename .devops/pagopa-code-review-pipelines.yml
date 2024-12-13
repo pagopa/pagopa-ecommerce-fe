@@ -52,8 +52,9 @@ stages:
             env: 'DEV'
             api_timeout: 10000
             api_host: 'http://localhost:1234'
-            checkout_api_v2_path: '/ecommerce/checkout/v1'
-            io_api_v2_path: '/ecommerce/webview/v1'
+            checkout_api_path: "/ecommerce/checkout/v1"
+            checkout_api_v2_path: "/ecommerce/checkout/v2"
+            io_api_v2_path: "/ecommerce/webview/v2"
             npg_sdk_url: 'https://stg-ta.nexigroup.com/monetaweb/resources/hfsdk.js'
             gdi_check_timeout: 12000
             io_client_redirect_outcome_path: 'https://api.dev.platform.pagopa.it/ecommerce/io-outcomes/v1/transactions'
