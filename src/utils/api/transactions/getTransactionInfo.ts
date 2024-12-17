@@ -7,7 +7,7 @@ import { TransactionInfo as CHECKOUTTransactionInfo } from "../../../../generate
 
 import {
   ecommerceCHECKOUTClientClientWithPollingV2,
-  ecommerceIOClientWithPolling,
+  ecommerceIOClientWithPollingV2,
 } from "../client";
 
 export const ecommerceIOGetTransactionInfo = (
@@ -17,7 +17,7 @@ export const ecommerceIOGetTransactionInfo = (
   pipe(
     TE.tryCatch(
       () =>
-        ecommerceIOClientWithPolling.getTransactionInfo({
+        ecommerceIOClientWithPollingV2.getTransactionInfo({
           eCommerceSessionToken: token,
           transactionId,
         }),

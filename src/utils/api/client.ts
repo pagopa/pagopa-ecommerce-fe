@@ -60,7 +60,7 @@ const decodeFinalStatusResult = async (r: Response): Promise<boolean> => {
   );
 };
 
-export const ecommerceIOClientWithPolling = createIOClient({
+export const ecommerceIOClientWithPollingV2 = createIOClient({
   baseUrl: config.ECOMMERCE_API_HOST,
   fetchApi: constantPollingWithPromisePredicateFetch(
     DeferredPromise<boolean>().e1,
