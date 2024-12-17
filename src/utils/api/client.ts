@@ -3,7 +3,7 @@ import { Millisecond } from "@pagopa/ts-commons/lib/units";
 import * as E from "fp-ts/Either";
 import { pipe } from "fp-ts/function";
 import { createCounter } from "../../utils/counter";
-import { createClient as createIOClient } from "../../../generated/definitions/payment-ecommerce-webview-v2/client";
+import { createClient as createIOClientV2 } from "../../../generated/definitions/payment-ecommerce-webview-v2/client";
 import { createClient as createCHECKOUTClient } from "../../../generated/definitions/payment-ecommerce-v1/client";
 import { createClient as createCHECKOUTClientV2 } from "../../../generated/definitions/payment-ecommerce-v2/client";
 import { getConfigOrThrow } from "../config/config";
@@ -60,7 +60,7 @@ const decodeFinalStatusResult = async (r: Response): Promise<boolean> => {
   );
 };
 
-export const ecommerceIOClientWithPollingV2 = createIOClient({
+export const ecommerceIOClientWithPollingV2 = createIOClientV2({
   baseUrl: config.ECOMMERCE_API_HOST,
   fetchApi: constantPollingWithPromisePredicateFetch(
     DeferredPromise<boolean>().e1,
