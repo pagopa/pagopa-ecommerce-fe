@@ -70,9 +70,11 @@ export const getOnboardingPaymentOutcome = (
   // eslint-disable-next-line sonarjs/cognitive-complexity
 ): ViewOutcomeEnum => {
   if (transactionInfo?.nodeInfo?.closePaymentResultError) {
-    return evaluateClosePaymentResultError(
-      transactionInfo?.nodeInfo?.closePaymentResultError
-    );
+    return !wasAuthorizedByGateway(transactionInfo.gatewayInfo)
+      ? evaluateUnauthorizedStatus(transactionInfo.gatewayInfo)
+      : evaluateClosePaymentResultError(
+          transactionInfo?.nodeInfo?.closePaymentResultError
+        );
   }
   switch (transactionInfo.status) {
     case TransactionStatusEnum.NOTIFIED_OK:
