@@ -253,7 +253,7 @@ export const EcommerceMaybeInterruptStatusCodeEnumType =
 function evaluateClosePaymentResultError(
   closePaymentResultError?: TransactionInfoNodeInfoClosePaymentResultError
 ): ViewOutcomeEnum {
-  // NOTE: this should never happen by design,
+  // this should never happen by design,
   // is only added just to be sure
   if (closePaymentResultError === undefined) {
     return ViewOutcomeEnum.GENERIC_ERROR;
