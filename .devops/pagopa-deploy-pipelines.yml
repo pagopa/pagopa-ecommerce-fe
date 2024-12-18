@@ -79,8 +79,9 @@ stages:
               env: 'DEV'
               api_timeout: 10000
               api_host: 'https://api.dev.platform.pagopa.it'
-              checkout_api_path: '/ecommerce/checkout/v1'
-              io_api_path: '/ecommerce/webview/v1'
+              checkout_api_path: "/ecommerce/checkout/v1"
+              checkout_api_v2_path: "/ecommerce/checkout/v2"
+              io_api_v2_path: "/ecommerce/webview/v2"
               npg_sdk_url: 'https://stg-ta.nexigroup.com/monetaweb/resources/hfsdk.js'
               gdi_check_timeout: 20000
               io_client_redirect_outcome_path: 'https://api.dev.platform.pagopa.it/ecommerce/io-outcomes/v1/transactions'
@@ -197,8 +198,9 @@ stages:
               env: 'UAT'
               api_timeout: 10000
               api_host: 'https://api.uat.platform.pagopa.it'
-              checkout_api_path: '/ecommerce/checkout/v1'
-              io_api_path: '/ecommerce/webview/v1'
+              checkout_api_path: "/ecommerce/checkout/v1"
+              checkout_api_v2_path: "/ecommerce/checkout/v2"
+              io_api_v2_path: "/ecommerce/webview/v2"
               npg_sdk_url: 'https://stg-ta.nexigroup.com/monetaweb/resources/hfsdk.js'
               gdi_check_timeout: 20000
               io_client_redirect_outcome_path: 'https://api.uat.platform.pagopa.it/ecommerce/io-outcomes/v1/transactions'
@@ -290,8 +292,9 @@ stages:
               env: 'PROD'
               api_timeout: 10000
               api_host: 'https://api.platform.pagopa.it'
-              checkout_api_path: '/ecommerce/checkout/v1'
-              io_api_path: '/ecommerce/webview/v1'
+              checkout_api_path: "/ecommerce/checkout/v1"
+              checkout_api_v2_path: "/ecommerce/checkout/v2"
+              io_api_v2_path: "/ecommerce/webview/v2"
               npg_sdk_url: 'https://xpay.nexigroup.com/monetaweb/resources/hfsdk.js'
               gdi_check_timeout: 20000
               io_client_redirect_outcome_path: 'https://api.platform.pagopa.it/ecommerce/io-outcomes/v1/transactions'

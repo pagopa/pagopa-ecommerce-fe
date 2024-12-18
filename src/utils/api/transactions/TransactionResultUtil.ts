@@ -1,17 +1,25 @@
 import { enumType } from "@pagopa/ts-commons/lib/types";
 import * as t from "io-ts";
-import { SendPaymentResultOutcomeEnum } from "../../../../generated/definitions/payment-ecommerce-webview/NewTransactionResponse";
-import { TransactionStatusEnum } from "../../../../generated/definitions/payment-ecommerce-webview/TransactionStatus";
+import { TransactionStatusEnum } from "../../../../generated/definitions/payment-ecommerce-webview-v2/TransactionStatus";
+import {
+  TransactionInfoGatewayInfo,
+  SendPaymentResultOutcomeEnum,
+  TransactionInfoNodeInfoClosePaymentResultError,
+} from "../../../../generated/definitions/payment-ecommerce-webview-v2/TransactionInfo";
 import {
   gatewayAuthorizationStatusType,
   ViewOutcomeEnum,
   PaymentGateway,
   NpgResultCodeEnum,
-  transactionInfoStatus,
   RedirectResultCodeEnum,
+  transactionInfoStatus,
 } from "./types";
+import {
+  getClosePaymentErrorsMap,
+  IClosePaymentErrorItem,
+} from "./transactionClosePaymentErrorUtil";
 
-export const gatewayAuthorizationStatusMap = new Map<
+export const authorizationStatusMap = new Map<
   gatewayAuthorizationStatusType,
   ViewOutcomeEnum
 >([
@@ -61,19 +69,20 @@ export const getOnboardingPaymentOutcome = (
   transactionInfo: transactionInfoStatus
   // eslint-disable-next-line sonarjs/cognitive-complexity
 ): ViewOutcomeEnum => {
-  const {
-    status,
-    sendPaymentResultOutcome,
-    gateway,
-    gatewayAuthorizationStatus,
-    errorCode,
-  } = transactionInfo || {};
-  switch (status) {
+  if (transactionInfo?.nodeInfo?.closePaymentResultError) {
+    return !wasAuthorizedByGateway(transactionInfo.gatewayInfo)
+      ? evaluateUnauthorizedStatus(transactionInfo.gatewayInfo)
+      : evaluateClosePaymentResultError(
+          transactionInfo?.nodeInfo?.closePaymentResultError
+        );
+  }
+  switch (transactionInfo.status) {
     case TransactionStatusEnum.NOTIFIED_OK:
       return ViewOutcomeEnum.SUCCESS;
     case TransactionStatusEnum.NOTIFICATION_REQUESTED:
     case TransactionStatusEnum.NOTIFICATION_ERROR:
-      return sendPaymentResultOutcome === SendPaymentResultOutcomeEnum.OK
+      return transactionInfo?.nodeInfo?.sendPaymentResultOutcome ===
+        SendPaymentResultOutcomeEnum.OK
         ? ViewOutcomeEnum.SUCCESS
         : ViewOutcomeEnum.PSP_ERROR;
     case TransactionStatusEnum.REFUND_REQUESTED:
@@ -88,46 +97,30 @@ export const getOnboardingPaymentOutcome = (
     case TransactionStatusEnum.CANCELLATION_EXPIRED:
       return ViewOutcomeEnum.CANCELED_BY_USER;
     case TransactionStatusEnum.CLOSURE_REQUESTED:
-      return !wasAuthorizedByGateway(gateway, gatewayAuthorizationStatus)
-        ? evaluateUnauthorizedStatus(
-            gateway,
-            errorCode,
-            gatewayAuthorizationStatus
-          )
+      return !wasAuthorizedByGateway(transactionInfo.gatewayInfo)
+        ? evaluateUnauthorizedStatus(transactionInfo.gatewayInfo)
         : ViewOutcomeEnum.TAKE_IN_CHARGE;
     case TransactionStatusEnum.CLOSURE_ERROR:
     case TransactionStatusEnum.AUTHORIZATION_COMPLETED:
-      return !wasAuthorizedByGateway(gateway, gatewayAuthorizationStatus)
-        ? evaluateUnauthorizedStatus(
-            gateway,
-            errorCode,
-            gatewayAuthorizationStatus
-          )
+      return !wasAuthorizedByGateway(transactionInfo.gatewayInfo)
+        ? evaluateUnauthorizedStatus(transactionInfo.gatewayInfo)
         : ViewOutcomeEnum.GENERIC_ERROR;
     case TransactionStatusEnum.UNAUTHORIZED:
-      return !wasAuthorizedByGateway(gateway, gatewayAuthorizationStatus)
-        ? evaluateUnauthorizedStatus(
-            gateway,
-            errorCode,
-            gatewayAuthorizationStatus
-          )
+      return !wasAuthorizedByGateway(transactionInfo.gatewayInfo)
+        ? evaluateUnauthorizedStatus(transactionInfo.gatewayInfo)
         : ViewOutcomeEnum.PSP_ERROR;
     case TransactionStatusEnum.CLOSED:
-      return sendPaymentResultOutcome ===
+      return transactionInfo?.nodeInfo?.sendPaymentResultOutcome ===
         SendPaymentResultOutcomeEnum.NOT_RECEIVED
         ? ViewOutcomeEnum.TAKE_IN_CHARGE
         : ViewOutcomeEnum.GENERIC_ERROR;
     case TransactionStatusEnum.EXPIRED: {
-      if (gatewayAuthorizationStatus == null) {
+      if (transactionInfo?.gatewayInfo?.authorizationStatus == null) {
         return ViewOutcomeEnum.TAKE_IN_CHARGE;
-      } else if (!wasAuthorizedByGateway(gateway, gatewayAuthorizationStatus)) {
-        return evaluateUnauthorizedStatus(
-          gateway,
-          errorCode,
-          gatewayAuthorizationStatus
-        );
+      } else if (!wasAuthorizedByGateway(transactionInfo.gatewayInfo)) {
+        return evaluateUnauthorizedStatus(transactionInfo.gatewayInfo);
       } else {
-        switch (sendPaymentResultOutcome) {
+        switch (transactionInfo?.nodeInfo?.sendPaymentResultOutcome) {
           case SendPaymentResultOutcomeEnum.OK:
             return ViewOutcomeEnum.SUCCESS;
           case SendPaymentResultOutcomeEnum.KO:
@@ -147,27 +140,32 @@ export const getOnboardingPaymentOutcome = (
 };
 
 export const wasAuthorizedByGateway = (
-  gateway?: string,
-  gatewayAuthorizationStatus?: string
+  gatewayInfo?: TransactionInfoGatewayInfo
 ): boolean => {
-  switch (gateway) {
+  if (gatewayInfo === undefined) {
+    return false;
+  }
+
+  switch (gatewayInfo.gateway) {
     case PaymentGateway.NPG:
-      return gatewayAuthorizationStatus === NpgResultCodeEnum.EXECUTED;
+      return gatewayInfo.authorizationStatus === NpgResultCodeEnum.EXECUTED;
     case PaymentGateway.REDIRECT:
-      return gatewayAuthorizationStatus === RedirectResultCodeEnum.OK;
+      return gatewayInfo.authorizationStatus === RedirectResultCodeEnum.OK;
     default:
       return false;
   }
 };
 
 function evaluateUnauthorizedStatus(
-  gateway?: string,
-  errorCode?: string,
-  gatewayAuthorizationStatus?: string
+  gatewayInfo?: TransactionInfoGatewayInfo
 ): ViewOutcomeEnum {
-  switch (gateway) {
+  if (gatewayInfo === undefined) {
+    return ViewOutcomeEnum.GENERIC_ERROR;
+  }
+
+  switch (gatewayInfo.gateway) {
     case PaymentGateway.NPG:
-      switch (gatewayAuthorizationStatus) {
+      switch (gatewayInfo.authorizationStatus) {
         case NpgResultCodeEnum.AUTHORIZED:
         case NpgResultCodeEnum.PENDING:
         case NpgResultCodeEnum.VOIDED:
@@ -182,15 +180,15 @@ function evaluateUnauthorizedStatus(
           return ViewOutcomeEnum.CANCELED_BY_USER;
         case NpgResultCodeEnum.DECLINED:
           return (
-            gatewayAuthorizationStatusMap.get(
-              errorCode as gatewayAuthorizationStatusType
+            authorizationStatusMap.get(
+              gatewayInfo.errorCode as gatewayAuthorizationStatusType
             ) || ViewOutcomeEnum.PSP_ERROR
           );
         default:
           return ViewOutcomeEnum.PSP_ERROR;
       }
     case PaymentGateway.REDIRECT:
-      switch (gatewayAuthorizationStatus) {
+      switch (gatewayInfo.authorizationStatus) {
         case RedirectResultCodeEnum.KO:
           return ViewOutcomeEnum.AUTH_ERROR;
         case RedirectResultCodeEnum.CANCELED:
@@ -244,3 +242,47 @@ export const EcommerceMaybeInterruptStatusCodeEnumType =
     EcommerceMaybeInterruptStatusCodeEnum,
     "EcommerceMaybeInterruptStatusCodeEnumType"
   );
+
+/**
+ * This function will match any status code from closePaymentResultError with any
+ * status code defined in the ClosePaymentErrorsMap item.
+ *
+ * NOTE:
+ * ClosePaymentErrorsMap supports placeholders, so 5xx will match any error >= 500
+ */
+function evaluateClosePaymentResultError(
+  closePaymentResultError?: TransactionInfoNodeInfoClosePaymentResultError
+): ViewOutcomeEnum {
+  // this should never happen by design,
+  // is only added just to be sure
+  if (closePaymentResultError === undefined) {
+    return ViewOutcomeEnum.GENERIC_ERROR;
+  }
+
+  function matchStatusCode(numericCode: number, statusCode: string) {
+    const numericCodeStr = numericCode.toString();
+    const regex = new RegExp("^" + statusCode.replace(/x/g, "\\d") + "$");
+    return regex.test(numericCodeStr);
+  }
+  // find the proper error output configuration based on the closePaymentResultError
+  const matchingItem: IClosePaymentErrorItem | undefined =
+    getClosePaymentErrorsMap().find(
+      (x: IClosePaymentErrorItem) =>
+        matchStatusCode(
+          closePaymentResultError?.statusCode ?? 0,
+          x.statusCode
+        ) &&
+        (x.enablingDescriptions === undefined ||
+          x.enablingDescriptions.includes(
+            closePaymentResultError?.description as string
+          ))
+    );
+
+  // return outcome
+  if (matchingItem) {
+    return matchingItem.outcome;
+  }
+
+  // default
+  return ViewOutcomeEnum.GENERIC_ERROR;
+}

@@ -2,12 +2,12 @@ import * as E from "fp-ts/Either";
 import * as O from "fp-ts/Option";
 import * as TE from "fp-ts/TaskEither";
 import { flow, pipe } from "fp-ts/function";
-import { TransactionInfo as IOTransactionInfo } from "../../../../generated/definitions/payment-ecommerce-webview/TransactionInfo";
-import { TransactionInfo as CHECKOUTTransactionInfo } from "../../../../generated/definitions/payment-ecommerce/TransactionInfo";
+import { TransactionInfo as IOTransactionInfo } from "../../../../generated/definitions/payment-ecommerce-webview-v2/TransactionInfo";
+import { TransactionInfo as CHECKOUTTransactionInfo } from "../../../../generated/definitions/payment-ecommerce-v2/TransactionInfo";
 
 import {
-  ecommerceCHECKOUTClientClientWithPolling,
-  ecommerceIOClientWithPolling,
+  ecommerceCHECKOUTClientClientWithPollingV2,
+  ecommerceIOClientWithPollingV2,
 } from "../client";
 
 export const ecommerceIOGetTransactionInfo = (
@@ -17,7 +17,7 @@ export const ecommerceIOGetTransactionInfo = (
   pipe(
     TE.tryCatch(
       () =>
-        ecommerceIOClientWithPolling.getTransactionInfo({
+        ecommerceIOClientWithPollingV2.getTransactionInfo({
           eCommerceSessionToken: token,
           transactionId,
         }),
@@ -47,7 +47,7 @@ export const ecommerceCHECKOUTGetTransaction = (
   pipe(
     TE.tryCatch(
       () =>
-        ecommerceCHECKOUTClientClientWithPolling.getTransactionInfo({
+        ecommerceCHECKOUTClientClientWithPollingV2.getTransactionInfo({
           bearerAuth: token,
           transactionId,
         }),

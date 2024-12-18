@@ -1,6 +1,6 @@
 import * as t from "io-ts";
 import { enumType } from "@pagopa/ts-commons/lib/types";
-import { TransactionInfo } from "../../../../generated/definitions/payment-ecommerce-webview/TransactionInfo";
+import { TransactionInfo } from "../../../../generated/definitions/payment-ecommerce-webview-v2/TransactionInfo";
 
 export enum PaymentGateway {
   NPG = "NPG",
@@ -17,6 +17,7 @@ export enum ViewOutcomeEnum {
   CANCELED_BY_USER = "8",
   EXCESSIVE_AMOUNT = "10",
   TAKE_IN_CHARGE = "17",
+  REFUNDED = "18",
   PSP_ERROR = "25",
   BE_KO = "99",
   BALANCE_LIMIT = "116",
@@ -115,12 +116,5 @@ export const EcommerceFinalStatusCodeEnumType =
     "EcommerceFinalStatusCodeEnumType"
   );
 export type transactionInfoStatus = Partial<
-  Pick<
-    TransactionInfo,
-    | "status"
-    | "sendPaymentResultOutcome"
-    | "gateway"
-    | "gatewayAuthorizationStatus"
-    | "errorCode"
-  >
+  Pick<TransactionInfo, "status" | "nodeInfo" | "gatewayInfo">
 >;
