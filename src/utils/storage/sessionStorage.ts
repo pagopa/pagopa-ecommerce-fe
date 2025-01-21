@@ -2,6 +2,7 @@ import { NewTransactionResponse } from "../../../generated/definitions/payment-e
 
 export enum SessionItems {
   sessionToken = "sessionToken",
+  transaction = "transaction",
 }
 
 export const getSessionItem = (item: SessionItems) => {
@@ -26,6 +27,18 @@ export function setSessionItem(
     name,
     typeof item === "string" ? item : JSON.stringify(item)
   );
+}
+
+export function setSessionItemIfNotPresent(
+  name: SessionItems,
+  item: string | NewTransactionResponse
+) {
+  if (!sessionStorage.getItem(name)) {
+    sessionStorage.setItem(
+      name,
+      typeof item === "string" ? item : JSON.stringify(item)
+    );
+  }
 }
 
 export const clearStorage = () => {
