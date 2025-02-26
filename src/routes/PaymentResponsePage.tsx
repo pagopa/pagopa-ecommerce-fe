@@ -13,9 +13,14 @@ import {
 } from "../utils/api/transactions/types";
 import PageContainer from "../components/PageContainer";
 import { getOnboardingPaymentOutcome } from "../utils/api/transactions/TransactionResultUtil";
-import { SessionItems, getSessionItem } from "../utils/storage/sessionStorage";
+import {
+  SessionItems,
+  getSessionItem,
+  setSessionItemIfNotPresent,
+} from "../utils/storage/sessionStorage";
 import { getFragments, redirectToClient } from "../utils/urlUtilities";
 import { getConfigOrThrow } from "../utils/config/config";
+import { NewTransactionResponse as NewTransactionResponseV2 } from "../../generated/definitions/payment-ecommerce-v2/NewTransactionResponse";
 import { CLIENT_TYPE, ROUTE_FRAGMENT } from "./models/routeModel";
 
 export default function PaymentResponsePage() {
@@ -51,6 +56,12 @@ export default function PaymentResponsePage() {
 
   const GetTransaction = (token: string) => {
     const manageResp = O.match(redirectWithError, (transactionInfo) => {
+      if (clientId === CLIENT_TYPE.CHECKOUT) {
+        setSessionItemIfNotPresent(
+          SessionItems.transaction,
+          transactionInfo as NewTransactionResponseV2
+        );
+      }
       performRedirectToClient(
         getOnboardingPaymentOutcome(transactionInfo as transactionInfoStatus)
       );
