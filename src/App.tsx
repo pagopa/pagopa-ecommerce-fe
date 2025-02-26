@@ -48,7 +48,12 @@ export function App() {
   return (
     <ThemeProvider theme={checkoutTheme}>
       <CssBaseline />
-      <BrowserRouter>
+      <BrowserRouter
+        future={{
+          v7_relativeSplatPath: true,
+          v7_startTransition: true,
+        }}
+      >
         <Routes>
           <Route path={EcommerceRoutes.ROOT}>
             <Route path="" element={<Navigate to={EcommerceRoutes.ESITO} />} />
