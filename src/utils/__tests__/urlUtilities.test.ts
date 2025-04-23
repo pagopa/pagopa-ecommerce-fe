@@ -1,0 +1,127 @@
+jest.mock('../../routes/models/routeModel', () => ({
+    IO_CLIENT_REDIRECT_PATH: '/io',
+    CHECKOUT_CLIENT_REDIRECT_OUTCOME_PATH: '/co',
+    ROUTE_FRAGMENT: { PARAM1: 'param1', PARAM2: 'param2' },
+    CLIENT_TYPE: { IO: 'IO', CHECKOUT: 'CHECKOUT' }
+  }));
+  
+  const originalLocation = window.location;
+  const mockLocation: Partial<Location> = {
+    search: '',
+    href: '',
+    replace: jest.fn()
+  };
+  
+  beforeAll(() => {
+    Object.defineProperty(window, 'location', {
+      value: mockLocation,
+      writable: true,
+    });
+  });
+  
+  afterAll(() => {
+    Object.defineProperty(window, 'location', {
+      value: originalLocation,
+      writable: true,
+    });
+  });
+  
+  import {
+    getUrlParameter,
+    getBase64Fragment,
+    getFragmentParameter,
+    getFragments,
+    redirectToClient,
+  } from '../urlUtilities';
+  import { ViewOutcomeEnum } from '../api/transactions/types';
+  
+  describe('getUrlParameter', () => {
+    it('returns empty string when parameter not present', () => {
+      mockLocation.search = '?foo=bar';
+      expect(getUrlParameter('baz')).toBe('');
+    });
+  
+    it('returns decoded value when present', () => {
+      const val = encodeURIComponent('hello world');
+      mockLocation.search = `?param=${val}`;
+      expect(getUrlParameter('param')).toBe('hello world');
+    });
+  
+    it('handles multiple parameters', () => {
+      mockLocation.search = '?foo=1&bar=2';
+      expect(getUrlParameter('bar')).toBe('2');
+    });
+  });
+  
+  describe('getFragmentParameter', () => {
+    it('returns empty on invalid URI', () => {
+      expect(getFragmentParameter('not a url', 'x')).toBe('');
+    });
+  
+    it('returns empty when fragment missing', () => {
+      const uri = 'http://example.com#';
+      expect(getFragmentParameter(uri, 'a')).toBe('');
+    });
+  
+    it('returns fragment value when exists', () => {
+      const uri = 'http://example.com#foo=bar&baz=qux';
+      expect(getFragmentParameter(uri, 'foo')).toBe('bar');
+      expect(getFragmentParameter(uri, 'baz')).toBe('qux');
+    });
+  
+    it('returns empty for nonexistent fragment', () => {
+      const uri = 'http://example.com#foo=bar';
+      expect(getFragmentParameter(uri, 'missing')).toBe('');
+    });
+  });
+  
+  describe('getBase64Fragment', () => {
+    const encoded = Buffer.from('hello', 'ascii').toString('base64');
+  
+    it('decodes base64 fragment', () => {
+      const uri = `http://example.com#data=${encoded}`;
+      expect(getBase64Fragment(uri, 'data')).toBe('hello');
+    });
+  });
+  
+  describe('getFragments', () => {
+    it('returns an object mapping fragments', () => {
+      mockLocation.href = 'http://example.com#param1=one&param2=two';
+      const fragments = getFragments(
+        'param1' as any,
+        'param2' as any
+      );
+      expect(fragments).toEqual({ param1: 'one', param2: 'two' });
+    });
+  });
+  
+  describe('redirectToClient', () => {
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
+  
+    it('redirects IO client with transactionId', () => {
+      jest.spyOn(Date.prototype, 'getTime').mockReturnValue(1234);
+      redirectToClient({ clientId: 'IO', transactionId: 'tx1', outcome: ViewOutcomeEnum.SUCCESS });
+      expect(mockLocation.replace).toHaveBeenCalledWith('/io/tx1/outcomes?outcome='+ViewOutcomeEnum.SUCCESS);
+    });
+  
+    it('redirects IO client without transactionId', () => {
+      jest.spyOn(Date.prototype, 'getTime').mockReturnValue(1234);
+      redirectToClient({ clientId: 'IO', outcome: ViewOutcomeEnum.GENERIC_ERROR });
+      expect(mockLocation.replace).toHaveBeenCalledWith('/io/outcomes?outcome='+ViewOutcomeEnum.GENERIC_ERROR);
+    });
+  
+    it('redirects CHECKOUT client', () => {
+      jest.spyOn(Date.prototype, 'getTime').mockReturnValue(5678);
+      redirectToClient({ clientId: 'CHECKOUT', outcome: ViewOutcomeEnum.SUCCESS });
+      expect(mockLocation.replace).toHaveBeenCalledWith('/co?t=5678#outcome='+ViewOutcomeEnum.SUCCESS);
+    });
+  
+    it('defaults to CHECKOUT on unknown clientId', () => {
+      jest.spyOn(Date.prototype, 'getTime').mockReturnValue(9999);
+      redirectToClient({ clientId: 'UNKNOWN', outcome: ViewOutcomeEnum.TIMEOUT });
+      expect(mockLocation.replace).toHaveBeenCalledWith('/co?t=9999#outcome='+ViewOutcomeEnum.TIMEOUT);
+    });
+  });
+  
