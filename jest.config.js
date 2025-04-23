@@ -32,9 +32,9 @@ module.exports = {
     "src/**/*.ts",
     "src/**/*.tsx",
     "!<rootDir>/src/index.tsx",
-    "!<rootDir>/src/**/__tests__/**/*",
-    "!<rootDir>/src/**/__integration_tests__/**/*",
-    "!<rootDir>/src/**/__mocks__/**/*"
+    "!<rootDir>/src/__tests__/**/*",
+    "!<rootDir>/src/__integration_tests__/**/*",
+    "!<rootDir>/src/__mocks__/**/*"
   ],
   coveragePathIgnorePatterns: [
     "/node_modules/",
