@@ -45,7 +45,9 @@ export const interruptTransactionPolling = (
   ) &&
     !wasAuthorizedByGateway(gatewayInfo));
 
-export const decodeFinalStatusResult = async (r: Response): Promise<boolean> => {
+export const decodeFinalStatusResult = async (
+  r: Response
+): Promise<boolean> => {
   pollingConfig.counter.increment();
   if (pollingConfig.counter.getValue() === pollingConfig.retries) {
     pollingConfig.counter.reset();
