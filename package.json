@@ -21,7 +21,10 @@
     "test": "jest --config=jest.config.js",
     "test:integration": "jest --config=jest.integration.config.js",
     "test:noredirect": "jest --config=jest.noredirect.config.js",
-    "test:coverage": "jest --coverage --passWithNoTests --config=package.json",
+    "test:coverage": "jest --coverage --passWithNoTests --config=jest.config.js",
+    "test:components:coverage": "jest src/components --coverage --passWithNoTests --config=jest.config.js --collectCoverageFrom='src/components/**/*.{ts,tsx}'",
+    "test:routes:coverage": "jest src/routes --coverage --passWithNoTests --config=jest.config.js --collectCoverageFrom='src/routes/**/*.{ts,tsx}'",
+    "test:utils:coverage": "jest src/utils --coverage --passWithNoTests --config=jest.config.js --collectCoverageFrom='src/utils/**/*.{ts,tsx}'",
     "preversion": "auto-changelog  --config .auto-changelog.json --unreleased --commit-limit false --stdout --template preview.hbs",
     "version": "auto-changelog -p --config .auto-changelog.json --unreleased && git add CHANGELOG.md",
     "prestart-mock": "export $(grep -v '^#' .env.development | xargs) && chmod +x env.sh && source env.sh",
@@ -110,33 +113,5 @@
     "lodash": "^4.17.21",
     "glob-parent": "^5.1.2",
     "source-map": "^0.8.0-beta.0"
-  },
-  "jest": {
-    "transform": {
-      "^.+\\.(ts|tsx)$": "ts-jest"
-    },
-    "testRegex": "./*unit.test\\.ts$",
-    "testEnvironment": "jsdom",
-    "testPathIgnorePatterns": [
-      "/dist",
-      "/node_modules"
-    ],
-    "coverageReporters": [
-      "cobertura",
-      "lcov",
-      "html",
-      "text"
-    ],
-    "collectCoverage": true,
-    "coveragePathIgnorePatterns": [
-      "generated"
-    ],
-    "coverageDirectory": "<rootDir>/coverage/"
-  },
-  "jestSonar": {
-    "sonar56x": true,
-    "reportPath": "test_reports",
-    "reportFile": "sonar-report.xml",
-    "indent": 4
   }
 }
