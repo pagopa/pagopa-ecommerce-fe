@@ -1,9 +1,12 @@
 module.exports = {
   launch: {
     dumpio: true,
-    headless: false,
-    product: 'chrome',
-    args: ["--no-sandbox"] // to fix
+    headless: "new",
+    product: "chrome",
+    args: [
+      "--no-sandbox",
+      "--disable-setuid-sandbox"
+    ],
   },
-  browserContext: 'incognito'
-}
+  browserContext: "incognito",
+};
