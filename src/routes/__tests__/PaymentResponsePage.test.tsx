@@ -9,24 +9,20 @@ import { render, act } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import * as O from "fp-ts/Option";
 
-// stub react-i18next for the embedded <CheckoutLoader />
 jest.mock("react-i18next", () => ({
   useTranslation: () => ({ t: (k: string) => k }),
 }));
 
-// 1) stub config so no window._env_ access
 jest.mock("../../utils/config/config", () => ({
   getConfigOrThrow: () => ({
     ECOMMERCE_SHOW_CONTINUE_IO_BTN_DELAY_MILLIS: 100,
   }),
 }));
 
-// 2) stub react-router
 jest.mock("react-router-dom", () => ({
   useNavigate: () => jest.fn(),
 }));
 
-// 3) stub URL utils
 const mockGetFragments = jest.fn();
 const mockRedirect = jest.fn();
 jest.mock("../../utils/urlUtilities", () => ({
@@ -34,13 +30,11 @@ jest.mock("../../utils/urlUtilities", () => ({
   redirectToClient: mockRedirect,
 }));
 
-// 4) stub sessionStorage
 jest.mock("../../utils/storage/sessionStorage", () => ({
   SessionItems: { sessionToken: "sessionToken" },
   getSessionItem: jest.fn(),
 }));
 
-// 5) stub the two back-end calls
 const mockIOGet = jest.fn();
 const mockCheckoutGet = jest.fn();
 jest.mock("../../utils/api/transactions/getTransactionInfo", () => ({
@@ -48,7 +42,6 @@ jest.mock("../../utils/api/transactions/getTransactionInfo", () => ({
   ecommerceCHECKOUTGetTransaction: mockCheckoutGet,
 }));
 
-// 6) stub the outcome mapper (numeric enum!)
 const mockOutcome = jest.fn();
 jest.mock("../../utils/api/transactions/TransactionResultUtil", () => ({
   getOnboardingPaymentOutcome: mockOutcome,
@@ -93,7 +86,7 @@ describe("PaymentResponsePage", () => {
     mockIOGet.mockResolvedValue(O.none);
     render(<PaymentResponsePage />);
 
-    await act(async () => {}); // let the effect run
+    await act(async () => {});
 
     expect(mockIOGet).toHaveBeenCalledWith("tx1", "tok1");
     expect(mockRedirect).toHaveBeenCalledWith({
@@ -103,7 +96,7 @@ describe("PaymentResponsePage", () => {
     });
   });
 
-  it("on SUCCESS shows continue button only after the delay", async () => {
+  it("on SUCCESS shows continue button only after the delay (IO)", async () => {
     jest.useFakeTimers();
 
     mockGetFragments.mockReturnValue({
@@ -123,18 +116,67 @@ describe("PaymentResponsePage", () => {
     render(<PaymentResponsePage />);
     await act(async () => {});
 
-    +(
-      // button should _not_ yet exist in the DOM
-      (+expect(document.getElementById("continueToIOBtn")).toBeNull())
-    );
+    expect(document.getElementById("continueToIOBtn")).toBeNull();
 
-    // after the 100ms fake timer...
     act(() => {
       jest.advanceTimersByTime(100);
     });
 
-    // now our button (with that id) has been rendered
-    +expect(document.getElementById("continueToIOBtn")).toBeInTheDocument();
+    expect(document.getElementById("continueToIOBtn")).toBeInTheDocument();
+
+    jest.useRealTimers();
+  });
+
+  it("calls CHECKOUT-get + redirects to GENERIC_ERROR when API yields none (CHECKOUT)", async () => {
+    mockGetFragments.mockReturnValue({
+      clientId: "CHECKOUT",
+      transactionId: "txC1",
+      sessionToken: "ftok",
+    });
+    (
+      require("../../utils/storage/sessionStorage").getSessionItem as jest.Mock
+    ).mockReturnValue(null);
+
+    mockCheckoutGet.mockResolvedValue(O.none);
+    render(<PaymentResponsePage />);
+
+    await act(async () => {});
+
+    expect(mockCheckoutGet).toHaveBeenCalledWith("txC1", "ftok");
+    expect(mockRedirect).toHaveBeenCalledWith({
+      clientId: "CHECKOUT",
+      transactionId: "txC1",
+      outcome: ViewOutcomeEnum.GENERIC_ERROR,
+    });
+  });
+
+  it("calls CHECKOUT-get + redirects to SUCCESS when API yields some (CHECKOUT)", async () => {
+    jest.useFakeTimers();
+
+    mockGetFragments.mockReturnValue({
+      clientId: "CHECKOUT",
+      transactionId: "txC2",
+      sessionToken: "ftok2",
+    });
+    (
+      require("../../utils/storage/sessionStorage").getSessionItem as jest.Mock
+    ).mockReturnValue(null);
+
+    mockCheckoutGet.mockResolvedValue(
+      O.some({ status: "NOTIFIED_OK", gatewayInfo: {}, nodeInfo: {} })
+    );
+    mockOutcome.mockReturnValue(ViewOutcomeEnum.SUCCESS);
+
+    render(<PaymentResponsePage />);
+    await act(async () => {});
+
+    expect(mockCheckoutGet).toHaveBeenCalledWith("txC2", "ftok2");
+    expect(mockRedirect).toHaveBeenCalledWith({
+      clientId: "CHECKOUT",
+      transactionId: "txC2",
+      outcome: ViewOutcomeEnum.SUCCESS,
+    });
+    expect(document.getElementById("continueToIOBtn")).toBeNull();
 
     jest.useRealTimers();
   });
