@@ -21,7 +21,7 @@ import {
 
 const config = getConfigOrThrow();
 
-const pollingConfig = {
+export const pollingConfig = {
   retries: config.ECOMMERCE_GET_TRANSACTION_POLLING_RETRIES,
   delay: config.ECOMMERCE_GET_TRANSACTION_POLLING_DELAY_MILLIS,
   timeout: config.ECOMMERCE_API_TIMEOUT as Millisecond,
@@ -29,7 +29,7 @@ const pollingConfig = {
 };
 
 /** This function return true when polling on GET transaction must be interrupted */
-const interruptTransactionPolling = (
+export const interruptTransactionPolling = (
   transactionStatus: TransactionInfo["status"],
   gatewayInfo?: TransactionInfoGatewayInfo,
   nodeInfo?: TransactionInfoNodeInfo
@@ -45,7 +45,9 @@ const interruptTransactionPolling = (
   ) &&
     !wasAuthorizedByGateway(gatewayInfo));
 
-const decodeFinalStatusResult = async (r: Response): Promise<boolean> => {
+export const decodeFinalStatusResult = async (
+  r: Response
+): Promise<boolean> => {
   pollingConfig.counter.increment();
   if (pollingConfig.counter.getValue() === pollingConfig.retries) {
     pollingConfig.counter.reset();

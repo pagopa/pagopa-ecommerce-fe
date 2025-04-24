@@ -1,12 +1,12 @@
-import { getOnboardingPaymentOutcome } from "../api/transactions/TransactionResultUtil";
+import { getOnboardingPaymentOutcome } from "../TransactionResultUtil";
 import {
   NpgResultCodeEnum,
   PaymentGateway,
   RedirectResultCodeEnum,
   ViewOutcomeEnum,
-} from "../api/transactions/types";
-import { TransactionStatusEnum } from "../../../generated/definitions/payment-ecommerce-webview-v2/TransactionStatus";
-import { SendPaymentResultOutcomeEnum } from "../../../generated/definitions/payment-ecommerce-webview-v2/TransactionInfo";
+} from "../types";
+import { TransactionStatusEnum } from "../../../../../generated/definitions/payment-ecommerce-webview-v2/TransactionStatus";
+import { SendPaymentResultOutcomeEnum } from "../../../../../generated/definitions/payment-ecommerce-webview-v2/TransactionInfo";
 
 describe("Onboarding Payment Outcome mapping", () => {
   it.each([

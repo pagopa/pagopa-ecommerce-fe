@@ -15,7 +15,7 @@ export enum IdFields {
 
 export type FieldId = keyof typeof IdFields;
 
-enum NpgEvtDataErroCode {
+export enum NpgEvtDataErroCode {
   HF0001 = "HF0001",
   HF0002 = "HF0002",
   HF0003 = "HF0003",
