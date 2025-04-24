@@ -43,7 +43,11 @@ module.exports = {
     "\\.module\\.ts$",
     "<rootDir>/src/translations/",
     "<rootDir>/src/generated/",
-    "global\\.d\\.ts$"
+    "global\\.d\\.ts$",
+    "<rootDir>/src/models/",
+    "<rootDir>/src/routes/models/",
+    "<rootDir>/src/hooks/",
+    "<rootDir>/src/utils/config/fetch.ts"
   ],
   coverageDirectory: "<rootDir>/coverage/",
   coverageReporters: ["cobertura", "lcov", "html", "text"],
