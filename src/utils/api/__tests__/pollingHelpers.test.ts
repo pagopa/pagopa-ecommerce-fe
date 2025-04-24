@@ -94,7 +94,7 @@ describe("interruptTransactionPolling", () => {
 });
 
 describe("decodeFinalStatusResult", () => {
-  const makeResp = (status: number, body: object): Response =>
+  const makeResp = (status: number, body: Record<string, unknown>): Response =>
     ({
       status,
       clone() {

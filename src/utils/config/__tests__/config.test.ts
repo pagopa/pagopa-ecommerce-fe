@@ -1,6 +1,8 @@
 /* eslint-disable 
     @typescript-eslint/no-var-requires,
-    no-underscore-dangle
+    @typescript-eslint/dot-notation,
+    no-underscore-dangle,
+    functional/immutable-data
 */
 
 describe("config module", () => {
@@ -24,8 +26,7 @@ describe("config module", () => {
 
   beforeEach(() => {
     jest.resetModules();
-    // write into window._env_ via string index access
-    (window as any)["_env_"] = { ...validEnv };
+    (window as any)._env_ = { ...validEnv };
   });
 
   it("getConfig() should decode a valid environment", () => {
@@ -44,21 +45,20 @@ describe("config module", () => {
   });
 
   it("getConfig() should return Left when required vars are missing", () => {
-    (window as any)["_env_"] = { ECOMMERCE_ENV: "" };
+    (window as any)._env_ = { ECOMMERCE_ENV: "" };
     const { getConfig } = require("../config");
     const result = getConfig();
     expect(result._tag).toBe("Left");
   });
 
   it("getConfigOrThrow() should throw on invalid config", () => {
-    (window as any)["_env_"] = {};
+    (window as any)._env_ = {};
     const { getConfigOrThrow } = require("../config");
     expect(() => getConfigOrThrow()).toThrowError(/Invalid configuration/);
   });
 
   it("getConfigOrThrow() should return IConfig on valid env", () => {
-    // restore valid env
-    (window as any)["_env_"] = { ...validEnv };
+    (window as any)._env_ = { ...validEnv };
     const { getConfigOrThrow } = require("../config");
     const cfg = getConfigOrThrow();
     expect(cfg.ECOMMERCE_API_HOST).toBe(validEnv.ECOMMERCE_API_HOST);
