@@ -21,7 +21,7 @@
     "test": "jest --config=jest.config.js",
     "test:integration": "jest --config=jest.integration.config.js",
     "test:noredirect": "jest --config=jest.noredirect.config.js",
-    "test:coverage": "jest --coverage --passWithNoTests --config=jest.config.js --testResultsProcessor ./node_modules/jest-sonar-reporter/index.js",
+    "test:coverage": "jest --coverage --passWithNoTests --config=jest.config.js",
     "test:components:coverage": "jest src/components --coverage --passWithNoTests --config=jest.config.js --collectCoverageFrom='src/components/**/*.{ts,tsx}'",
     "test:routes:coverage": "jest src/routes --coverage --passWithNoTests --config=jest.config.js --collectCoverageFrom='src/routes/**/*.{ts,tsx}'",
     "test:utils:coverage": "jest src/utils --coverage --passWithNoTests --config=jest.config.js --collectCoverageFrom='src/utils/**/*.{ts,tsx}'",
