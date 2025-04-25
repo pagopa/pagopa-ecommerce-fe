@@ -104,6 +104,9 @@ stages:
             organization: '$(SONARCLOUD_ORG)'
             scannerMode: 'CLI'
             configMode: 'manual'
+            cliProjectKey: $(SONARCLOUD_PROJECT_KEY)
+            cliProjectName: $(SONARCLOUD_PROJECT_NAME)
+            cliSources: '.'
             extraProperties: |
               sonar.projectKey=$(SONARCLOUD_PROJECT_KEY)
               sonar.projectName=$(SONARCLOUD_PROJECT_NAME)
