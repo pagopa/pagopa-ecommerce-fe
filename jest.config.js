@@ -44,7 +44,7 @@ module.exports = {
     "<rootDir>/src/routes/models/",
     "<rootDir>/src/hooks/",
     "<rootDir>/src/utils/config/fetch.ts",
-    "<rootDir>/src/utils/App.tsx"
+    "<rootDir>/src/App.tsx"
   ],
   coverageDirectory: "<rootDir>/coverage/",
   coverageThreshold: {
