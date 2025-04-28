@@ -13,10 +13,6 @@ module.exports = {
     [ 'jest-junit', {
       outputDirectory: './test_reports',
       outputName: 'ecommerce-unit-TEST.xml',
-    } ],
-    [ 'jest-junit', {
-      outputDirectory: './test_reports',
-      outputName: 'sonar-report.xml',
     } ]
   ],
   globals: {
@@ -47,11 +43,12 @@ module.exports = {
     "<rootDir>/src/models/",
     "<rootDir>/src/routes/models/",
     "<rootDir>/src/hooks/",
-    "<rootDir>/src/utils/config/fetch.ts"
+    "<rootDir>/src/utils/config/fetch.ts",
+    "<rootDir>/src/App.tsx"
   ],
   coverageDirectory: "<rootDir>/coverage/",
-  coverageReporters: ["cobertura", "lcov", "html", "text"],
   coverageThreshold: {
     global: { branches: 80, functions: 80, lines: 80, statements: 80 }
-  }
+  },
+  testResultsProcessor: "jest-sonar-reporter"
 };

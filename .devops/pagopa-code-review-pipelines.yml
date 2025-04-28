@@ -97,17 +97,55 @@ stages:
         steps:
         - template: templates/node-job-setup/template.yaml@pagopaCommons
 
+        - task: SonarCloudPrepare@3
+          displayName: 'Prepare SonarCloud analysis configuration'
+          inputs:
+            SonarCloud: '$(SONARCLOUD_SERVICE_CONN)'
+            organization: '$(SONARCLOUD_ORG)'
+            scannerMode: 'CLI'
+            configMode: 'manual'
+            cliProjectKey: $(SONARCLOUD_PROJECT_KEY)
+            cliProjectName: $(SONARCLOUD_PROJECT_NAME)
+            cliSources: '.'
+            extraProperties: |
+              sonar.projectKey=$(SONARCLOUD_PROJECT_KEY)
+              sonar.projectName=$(SONARCLOUD_PROJECT_NAME)
+              sonar.javascript.lcov.reportPaths=coverage/lcov.info
+              sonar.clover.reportPath=coverage/clover.xml
+              sonar.testExecutionReportPaths=test-report.xml
+              sonar.sourceEncoding=UTF-8
+              sonar.sources=src/
+              sonar.exclusions=src/**/__tests__/**/*,src/**/__test__/**,**/*.js,src/**/index.ts,src/**/__mocks__/**/*,/src/utils/testing/**
+              sonar.tests=src
+              sonar.test.inclusions=src/**/__tests__/**/*,src/**/__test__/**
+              sonar.cpd.exclusions=src/**/__tests__/**,src/**/__test__/**,__mocks__/**,/src/utils/testing/**
+
         - script: yarn generate
           displayName: 'Generate definitions'
 
         - script: yarn test:coverage
           displayName: 'Unit tests exec'
 
+        - task: SonarCloudAnalyze@3
+          displayName: 'Run SonarCloud analysis'
+          
+        - task: SonarCloudPublish@3
+          displayName: 'Publish SonarCloud results on build summary'
+          inputs:
+            pollingTimeoutSec: '300' 
+        - task: PublishTestResults@2
+          displayName: 'Publish test results from Jest tests'
+          inputs:
+            testResultsFormat: 'JUnit'
+            testResultsFiles: '**/*TEST.xml' 
+            searchFolder: '$(System.DefaultWorkingDirectory)'
+            failTaskOnFailedTests: true
+
         - task: PublishCodeCoverageResults@2
           displayName: 'Publish code coverage from Jest tests'
           inputs:
             codeCoverageTool: Cobertura
-            summaryFileLocation: 'coverage/cobertura-coverage.xml'
+            summaryFileLocation: 'coverage/clover.xml'
 
 # B) Run integration tests if there is a push or pull request on any branch.
   - stage: Integration_Tests
