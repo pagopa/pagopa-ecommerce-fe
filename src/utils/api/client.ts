@@ -18,6 +18,7 @@ import {
   EcommerceMaybeInterruptStatusCodeEnumType,
   wasAuthorizedByGateway,
 } from "./transactions/TransactionResultUtil";
+import { TransactionOutcomeInfo } from "../../../generated/definitions/payment-ecommerce-webview-v2/TransactionOutcomeInfo";
 
 const config = getConfigOrThrow();
 
@@ -30,20 +31,9 @@ export const pollingConfig = {
 
 /** This function return true when polling on GET transaction must be interrupted */
 export const interruptTransactionPolling = (
-  transactionStatus: TransactionInfo["status"],
-  gatewayInfo?: TransactionInfoGatewayInfo,
-  nodeInfo?: TransactionInfoNodeInfo
+  isFinalStatus: boolean,
 ) =>
-  pipe(
-    EcommerceInterruptStatusCodeEnumType.decode(transactionStatus),
-    E.isRight
-  ) ||
-  nodeInfo?.closePaymentResultError?.statusCode?.toString().startsWith("4") ||
-  (pipe(
-    EcommerceMaybeInterruptStatusCodeEnumType.decode(transactionStatus),
-    E.isRight
-  ) &&
-    !wasAuthorizedByGateway(gatewayInfo));
+  isFinalStatus;
 
 export const decodeFinalStatusResult = async (
   r: Response
@@ -53,12 +43,12 @@ export const decodeFinalStatusResult = async (
     pollingConfig.counter.reset();
     return false;
   }
-  const { status, gatewayInfo, nodeInfo } = (await r
+  const { isFinalStatus } = (await r
     .clone()
-    .json()) as TransactionInfo;
+    .json()) as TransactionOutcomeInfo;
   return !(
     r.status === 200 &&
-    interruptTransactionPolling(status, gatewayInfo, nodeInfo)
+    interruptTransactionPolling(isFinalStatus)
   );
 };
 

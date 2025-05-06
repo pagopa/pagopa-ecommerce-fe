@@ -18,6 +18,7 @@ import {
   getClosePaymentErrorsMap,
   IClosePaymentErrorItem,
 } from "./transactionClosePaymentErrorUtil";
+import { TransactionOutcomeInfo } from "../../../../generated/definitions/payment-ecommerce-webview-v2/TransactionOutcomeInfo";
 
 export const authorizationStatusMap = new Map<
   gatewayAuthorizationStatusType,
@@ -63,6 +64,14 @@ export const authorizationStatusMap = new Map<
   ["913", ViewOutcomeEnum.PSP_ERROR],
   ["999", ViewOutcomeEnum.PSP_ERROR],
 ]);
+
+export const getOutcome = (
+  transactionOutcomeInfo: TransactionOutcomeInfo
+): ViewOutcomeEnum => {
+    const outcome = transactionOutcomeInfo.outcome.toString();
+    return Object.keys(ViewOutcomeEnum).filter(k => ViewOutcomeEnum[k] == outcome)[0];
+  
+}
 
 // eslint-disable-next-line complexity
 export const getOnboardingPaymentOutcome = (

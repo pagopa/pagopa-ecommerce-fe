@@ -4,8 +4,8 @@ import React, { useEffect } from "react";
 import { Box, Button, CircularProgress, Typography } from "@mui/material";
 import { t } from "i18next";
 import {
-  ecommerceIOGetTransactionInfo,
-  ecommerceCHECKOUTGetTransaction,
+  ecommerceIOGetTransactionOutcomeInfo,
+  ecommerceCHECKOUTGetTransactionOutcomeInfo,
 } from "../utils/api/transactions/getTransactionInfo";
 import {
   transactionInfoStatus,
@@ -17,6 +17,7 @@ import { SessionItems, getSessionItem } from "../utils/storage/sessionStorage";
 import { getFragments, redirectToClient } from "../utils/urlUtilities";
 import { getConfigOrThrow } from "../utils/config/config";
 import { CLIENT_TYPE, ROUTE_FRAGMENT } from "./models/routeModel";
+import { TransactionOutcomeInfo } from "../../generated/definitions/payment-ecommerce-webview-v2/TransactionOutcomeInfo";
 
 export default function PaymentResponsePage() {
   const {
@@ -52,20 +53,20 @@ export default function PaymentResponsePage() {
   const GetTransaction = (token: string) => {
     const manageResp = O.match(redirectWithError, (transactionInfo) => {
       performRedirectToClient(
-        getOnboardingPaymentOutcome(transactionInfo as transactionInfoStatus)
+        getOutcome(transactionInfo as TransactionOutcomeInfo)
       );
     });
 
     void (async () => {
       if (clientId === CLIENT_TYPE.IO) {
         return pipe(
-          await ecommerceIOGetTransactionInfo(transactionId, token),
+          await ecommerceIOGetTransactionOutcomeInfo(transactionId, token),
           manageResp
         );
       }
       if (clientId === CLIENT_TYPE.CHECKOUT) {
         return pipe(
-          await ecommerceCHECKOUTGetTransaction(transactionId, token),
+          await ecommerceCHECKOUTGetTransactionOutcomeInfo(transactionId, token),
           manageResp
         );
       }
