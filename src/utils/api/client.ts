@@ -1,23 +1,11 @@
 import { DeferredPromise } from "@pagopa/ts-commons//lib/promises";
 import { Millisecond } from "@pagopa/ts-commons/lib/units";
-import * as E from "fp-ts/Either";
-import { pipe } from "fp-ts/function";
 import { createCounter } from "../../utils/counter";
 import { createClient as createIOClientV2 } from "../../../generated/definitions/payment-ecommerce-webview-v2/client";
 import { createClient as createCHECKOUTClient } from "../../../generated/definitions/payment-ecommerce-v1/client";
 import { createClient as createCHECKOUTClientV2 } from "../../../generated/definitions/payment-ecommerce-v2/client";
 import { getConfigOrThrow } from "../config/config";
 import { constantPollingWithPromisePredicateFetch } from "../config/fetch";
-import {
-  TransactionInfo,
-  TransactionInfoGatewayInfo,
-} from "../../../generated/definitions/payment-ecommerce-webview-v2/TransactionInfo";
-import { TransactionInfoNodeInfo } from "../../../generated/definitions/payment-ecommerce-v2/TransactionInfo";
-import {
-  EcommerceInterruptStatusCodeEnumType,
-  EcommerceMaybeInterruptStatusCodeEnumType,
-  wasAuthorizedByGateway,
-} from "./transactions/TransactionResultUtil";
 import { TransactionOutcomeInfo } from "../../../generated/definitions/payment-ecommerce-webview-v2/TransactionOutcomeInfo";
 
 const config = getConfigOrThrow();
@@ -30,10 +18,6 @@ export const pollingConfig = {
 };
 
 /** This function return true when polling on GET transaction must be interrupted */
-export const interruptTransactionPolling = (
-  isFinalStatus: boolean,
-) =>
-  isFinalStatus;
 
 export const decodeFinalStatusResult = async (
   r: Response
@@ -43,13 +27,8 @@ export const decodeFinalStatusResult = async (
     pollingConfig.counter.reset();
     return false;
   }
-  const { isFinalStatus } = (await r
-    .clone()
-    .json()) as TransactionOutcomeInfo;
-  return !(
-    r.status === 200 &&
-    interruptTransactionPolling(isFinalStatus)
-  );
+  const { isFinalStatus } = (await r.clone().json()) as TransactionOutcomeInfo;
+  return !(r.status === 200 && isFinalStatus);
 };
 
 export const ecommerceIOClientWithPollingV2 = createIOClientV2({

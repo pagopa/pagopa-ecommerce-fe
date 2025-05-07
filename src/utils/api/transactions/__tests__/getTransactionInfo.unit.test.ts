@@ -1,8 +1,8 @@
 import * as E from "fp-ts/Either";
 import * as O from "fp-ts/Option";
 import {
-  ecommerceIOGetTransactionInfo,
-  ecommerceCHECKOUTGetTransaction,
+  ecommerceIOGetTransactionOutcomeInfo,
+  ecommerceCHECKOUTGetTransactionOutcomeInfo,
 } from "../getTransactionInfo";
 import {
   ecommerceIOClientWithPollingV2,
@@ -21,7 +21,7 @@ describe("ecommerceIOGetTransactionInfo", () => {
     (
       ecommerceIOClientWithPollingV2.getTransactionInfo as jest.Mock
     ).mockResolvedValue(E.right({ status: 200, value: mockResponse }));
-    const result = await ecommerceIOGetTransactionInfo("tx123", "token");
+    const result = await ecommerceIOGetTransactionOutcomeInfo("tx123", "token");
     expect(result).toEqual(O.some(mockResponse));
   });
 
@@ -29,7 +29,7 @@ describe("ecommerceIOGetTransactionInfo", () => {
     (
       ecommerceIOClientWithPollingV2.getTransactionInfo as jest.Mock
     ).mockResolvedValue(E.right({ status: 404, value: mockResponse }));
-    const result = await ecommerceIOGetTransactionInfo("tx123", "token");
+    const result = await ecommerceIOGetTransactionOutcomeInfo("tx123", "token");
     expect(result).toEqual(O.none);
   });
 
@@ -37,7 +37,7 @@ describe("ecommerceIOGetTransactionInfo", () => {
     (
       ecommerceIOClientWithPollingV2.getTransactionInfo as jest.Mock
     ).mockRejectedValue(new Error("network error"));
-    const result = await ecommerceIOGetTransactionInfo("tx123", "token");
+    const result = await ecommerceIOGetTransactionOutcomeInfo("tx123", "token");
     expect(result).toEqual(O.none);
   });
 });
@@ -49,7 +49,10 @@ describe("ecommerceCHECKOUTGetTransaction", () => {
     (
       ecommerceCHECKOUTClientClientWithPollingV2.getTransactionInfo as jest.Mock
     ).mockResolvedValue(E.right({ status: 200, value: mockResponse }));
-    const result = await ecommerceCHECKOUTGetTransaction("tx456", "token");
+    const result = await ecommerceCHECKOUTGetTransactionOutcomeInfo(
+      "tx456",
+      "token"
+    );
     expect(result).toEqual(O.some(mockResponse));
   });
 
@@ -57,7 +60,10 @@ describe("ecommerceCHECKOUTGetTransaction", () => {
     (
       ecommerceCHECKOUTClientClientWithPollingV2.getTransactionInfo as jest.Mock
     ).mockResolvedValue(E.right({ status: 500, value: mockResponse }));
-    const result = await ecommerceCHECKOUTGetTransaction("tx456", "token");
+    const result = await ecommerceCHECKOUTGetTransactionOutcomeInfo(
+      "tx456",
+      "token"
+    );
     expect(result).toEqual(O.none);
   });
 
@@ -65,7 +71,10 @@ describe("ecommerceCHECKOUTGetTransaction", () => {
     (
       ecommerceCHECKOUTClientClientWithPollingV2.getTransactionInfo as jest.Mock
     ).mockRejectedValue(new Error("timeout"));
-    const result = await ecommerceCHECKOUTGetTransaction("tx456", "token");
+    const result = await ecommerceCHECKOUTGetTransactionOutcomeInfo(
+      "tx456",
+      "token"
+    );
     expect(result).toEqual(O.none);
   });
 });

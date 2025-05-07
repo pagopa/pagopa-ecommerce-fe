@@ -29,69 +29,7 @@ jest.mock(
   () => ({ createClient: jest.fn(() => ({ stub: "checkoutV2Client" })) })
 );
 
-import {
-  interruptTransactionPolling,
-  decodeFinalStatusResult,
-} from "../client";
-import type {
-  TransactionInfoGatewayInfo,
-  TransactionInfoNodeInfo,
-} from "../../../../generated/definitions/payment-ecommerce-webview-v2/TransactionInfo";
-
-describe("interruptTransactionPolling", () => {
-  const nodeErrorInfo: TransactionInfoNodeInfo = {
-    closePaymentResultError: { statusCode: 400, description: "err" },
-  } as any;
-  const badGateway: TransactionInfoGatewayInfo = {
-    gateway: "NPG",
-    authorizationStatus: "PENDING",
-  } as any;
-
-  it("true for an interrupt code", () => {
-    expect(interruptTransactionPolling("NOTIFIED_OK" as any)).toBe(true);
-  });
-
-  it('true if nodeInfo.statusCode starts with "4"', () => {
-    expect(
-      interruptTransactionPolling("UNKNOWN" as any, undefined, nodeErrorInfo)
-    ).toBe(true);
-  });
-
-  it("true for maybe-interrupt + not authorized", () => {
-    expect(
-      interruptTransactionPolling(
-        "AUTHORIZATION_COMPLETED" as any,
-        badGateway,
-        {}
-      )
-    ).toBe(true);
-  });
-
-  it("false otherwise", () => {
-    expect(
-      interruptTransactionPolling(
-        "SOME_OTHER" as any,
-        { gateway: "NPG", authorizationStatus: "EXECUTED" } as any,
-        {}
-      )
-    ).toBe(false);
-  });
-
-  it("returns false for MaybeInterrupt when the gateway _is_ authorized", () => {
-    const authorizedInfo: TransactionInfoGatewayInfo = {
-      gateway: "NPG",
-      authorizationStatus: "EXECUTED",
-    } as any;
-
-    expect(
-      interruptTransactionPolling(
-        "AUTHORIZATION_COMPLETED" as any,
-        authorizedInfo,
-        {} as TransactionInfoNodeInfo
-      )
-    ).toBe(false);
-  });
-});
+import { decodeFinalStatusResult } from "../client";
 
 describe("decodeFinalStatusResult", () => {
   const makeResp = (status: number, body: Record<string, unknown>): Response =>
