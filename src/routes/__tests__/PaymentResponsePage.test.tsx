@@ -38,13 +38,13 @@ jest.mock("../../utils/storage/sessionStorage", () => ({
 const mockIOGet = jest.fn();
 const mockCheckoutGet = jest.fn();
 jest.mock("../../utils/api/transactions/getTransactionInfo", () => ({
-  ecommerceIOGetTransactionInfo: mockIOGet,
-  ecommerceCHECKOUTGetTransaction: mockCheckoutGet,
+  ecommerceIOGetTransactionOutcomeInfo: mockIOGet,
+  ecommerceCHECKOUTGetTransactionOutcomeInfo: mockCheckoutGet,
 }));
 
 const mockOutcome = jest.fn();
 jest.mock("../../utils/api/transactions/TransactionResultUtil", () => ({
-  getOnboardingPaymentOutcome: mockOutcome,
+  getOutcome: mockOutcome,
 }));
 
 import PaymentResponsePage from "../PaymentResponsePage";
