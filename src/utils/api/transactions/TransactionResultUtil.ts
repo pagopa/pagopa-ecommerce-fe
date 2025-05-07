@@ -1,9 +1,5 @@
-
 import { TransactionOutcomeInfo } from "../../../../generated/definitions/payment-ecommerce-webview-v2/TransactionOutcomeInfo";
-import {
-  gatewayAuthorizationStatusType,
-  ViewOutcomeEnum,
-} from "./types";
+import { gatewayAuthorizationStatusType, ViewOutcomeEnum } from "./types";
 
 export const authorizationStatusMap = new Map<
   gatewayAuthorizationStatusType,
