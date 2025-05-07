@@ -6,7 +6,7 @@ import {
 } from "../getTransactionInfo";
 import {
   ecommerceIOClientWithPollingV2,
-  ecommerceCHECKOUTClientClientWithPolling
+  ecommerceCHECKOUTClientClientWithPolling,
 } from "../../client";
 
 jest.mock("../../client", () => ({
