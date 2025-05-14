@@ -10,7 +10,11 @@ import {
 import { ViewOutcomeEnum } from "../utils/api/transactions/types";
 import PageContainer from "../components/PageContainer";
 import { getOutcome } from "../utils/api/transactions/TransactionResultUtil";
-import { SessionItems, getSessionItem } from "../utils/storage/sessionStorage";
+import {
+  SessionItems,
+  getSessionItem,
+  setSessionItem,
+} from "../utils/storage/sessionStorage";
 import { getFragments, redirectToClient } from "../utils/urlUtilities";
 import { getConfigOrThrow } from "../utils/config/config";
 import { TransactionOutcomeInfo } from "../../generated/definitions/payment-ecommerce-webview-v2/TransactionOutcomeInfo";
@@ -49,6 +53,10 @@ export default function PaymentResponsePage() {
 
   const getTransactionOutcome = (token: string) => {
     const manageResp = O.match(redirectWithError, (transactionInfo) => {
+      setSessionItem(
+        SessionItems.outcomeInfo,
+        transactionInfo as TransactionOutcomeInfo
+      );
       performRedirectToClient(
         getOutcome(transactionInfo as TransactionOutcomeInfo)
       );

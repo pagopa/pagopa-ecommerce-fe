@@ -4,7 +4,7 @@ import {
   setSessionItem,
   clearStorage,
 } from "../sessionStorage";
-import type { NewTransactionResponse } from "../../../../generated/definitions/payment-ecommerce-v1/NewTransactionResponse";
+import { TransactionOutcomeInfo } from "../../../../generated/definitions/payment-ecommerce-webview-v2/TransactionOutcomeInfo";
 
 describe("sessionStorage utilities", () => {
   beforeEach(() => {
@@ -33,7 +33,7 @@ describe("sessionStorage utilities", () => {
         transactionId: "tx1",
         payments: [] as any,
         status: "OK" as any,
-      } as unknown as NewTransactionResponse;
+      } as unknown as TransactionOutcomeInfo;
 
       setSessionItem(SessionItems.sessionToken, obj);
       expect(sessionStorage.getItem(SessionItems.sessionToken)).toBe(

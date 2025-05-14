@@ -1,7 +1,8 @@
-import { NewTransactionResponse } from "../../../generated/definitions/payment-ecommerce-v1/NewTransactionResponse";
+import { TransactionOutcomeInfo } from "../../../generated/definitions/payment-ecommerce-webview-v2/TransactionOutcomeInfo";
 
 export enum SessionItems {
   sessionToken = "sessionToken",
+  outcomeInfo = "outcomeInfo",
 }
 
 export const getSessionItem = (item: SessionItems) => {
@@ -20,7 +21,7 @@ export const getSessionItem = (item: SessionItems) => {
 
 export function setSessionItem(
   name: SessionItems,
-  item: string | NewTransactionResponse
+  item: string | TransactionOutcomeInfo
 ) {
   sessionStorage.setItem(
     name,

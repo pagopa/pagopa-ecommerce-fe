@@ -74,10 +74,10 @@ describe("Unauthorized npg final status mapping tests", () => {
    * Increase default test timeout (80000ms)
    * to support entire payment flow
     */
-  jest.setTimeout(120000);
+  jest.setTimeout(60000);
   jest.retryTimes(0);
-  page.setDefaultNavigationTimeout(120000);
-  page.setDefaultTimeout(120000);
+  page.setDefaultNavigationTimeout(30000);
+  page.setDefaultTimeout(30000);
 
   beforeAll(async () => {
     await page.goto(ECOMMERCE_FE_ESITO_PAGE);
