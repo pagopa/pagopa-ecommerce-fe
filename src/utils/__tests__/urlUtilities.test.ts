@@ -36,6 +36,7 @@ import {
   redirectToClient,
 } from "../urlUtilities";
 import { ViewOutcomeEnum } from "../api/transactions/types";
+import { AmountEuroCents } from "../../../generated/definitions/payment-ecommerce-webview-v2/AmountEuroCents";
 
 describe("getUrlParameter", () => {
   it("returns empty string when parameter not present", () => {
@@ -128,12 +129,20 @@ describe("redirectToClient", () => {
 
   it("redirects CHECKOUT client", () => {
     jest.spyOn(Date.prototype, "getTime").mockReturnValue(5678);
+    const transactionId = "testingId";
     redirectToClient({
       clientId: "CHECKOUT",
       outcome: ViewOutcomeEnum.SUCCESS,
+      transactionId,
+      totalAmount: 100 as AmountEuroCents,
+      fees: 15 as AmountEuroCents,
     });
     expect(mockLocation.replace).toHaveBeenCalledWith(
-      "/co?t=5678#outcome=" + ViewOutcomeEnum.SUCCESS
+      "/co?t=5678#transactionId=" +
+        transactionId +
+        "&outcome=" +
+        ViewOutcomeEnum.SUCCESS +
+        "&totalAmount=100&fees=15"
     );
   });
 
