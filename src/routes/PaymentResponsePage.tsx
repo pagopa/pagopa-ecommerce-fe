@@ -9,15 +9,11 @@ import {
 } from "../utils/api/transactions/getTransactionInfo";
 import { ViewOutcomeEnum } from "../utils/api/transactions/types";
 import PageContainer from "../components/PageContainer";
-import { getOutcome } from "../utils/api/transactions/TransactionResultUtil";
-import {
-  SessionItems,
-  getSessionItem,
-  setSessionItem,
-} from "../utils/storage/sessionStorage";
+import { SessionItems, getSessionItem } from "../utils/storage/sessionStorage";
 import { getFragments, redirectToClient } from "../utils/urlUtilities";
 import { getConfigOrThrow } from "../utils/config/config";
 import { TransactionOutcomeInfo } from "../../generated/definitions/payment-ecommerce-webview-v2/TransactionOutcomeInfo";
+import { AmountEuroCents } from "../../generated/definitions/payment-ecommerce-webview-v2/AmountEuroCents";
 import { CLIENT_TYPE, ROUTE_FRAGMENT } from "./models/routeModel";
 
 export default function PaymentResponsePage() {
@@ -38,10 +34,14 @@ export default function PaymentResponsePage() {
     performRedirectToClient(ViewOutcomeEnum.GENERIC_ERROR);
   };
 
-  const performRedirectToClient = (newOutcome?: ViewOutcomeEnum) => {
+  const performRedirectToClient = (
+    newOutcome?: ViewOutcomeEnum,
+    totalAmount?: AmountEuroCents,
+    fees?: AmountEuroCents
+  ) => {
     // if not present new outcome use old one
     const outcome = newOutcome || outcomeState || ViewOutcomeEnum.GENERIC_ERROR;
-    redirectToClient({ transactionId, outcome, clientId });
+    redirectToClient({ transactionId, outcome, clientId, totalAmount, fees });
     // if is new outcome, update state after timeout
     if (newOutcome) {
       setTimeout(
@@ -53,12 +53,11 @@ export default function PaymentResponsePage() {
 
   const getTransactionOutcome = (token: string) => {
     const manageResp = O.match(redirectWithError, (transactionInfo) => {
-      setSessionItem(
-        SessionItems.outcomeInfo,
-        transactionInfo as TransactionOutcomeInfo
-      );
+      const outcomeInfo = transactionInfo as TransactionOutcomeInfo;
       performRedirectToClient(
-        getOutcome(transactionInfo as TransactionOutcomeInfo)
+        outcomeInfo.outcome.toString() as ViewOutcomeEnum,
+        outcomeInfo.totalAmount,
+        outcomeInfo.fees
       );
     });
 

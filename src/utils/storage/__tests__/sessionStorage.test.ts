@@ -4,7 +4,6 @@ import {
   setSessionItem,
   clearStorage,
 } from "../sessionStorage";
-import { TransactionOutcomeInfo } from "../../../../generated/definitions/payment-ecommerce-webview-v2/TransactionOutcomeInfo";
 
 describe("sessionStorage utilities", () => {
   beforeEach(() => {
@@ -26,19 +25,6 @@ describe("sessionStorage utilities", () => {
     it("stores a string value under the given key", () => {
       setSessionItem(SessionItems.sessionToken, "hello");
       expect(sessionStorage.getItem(SessionItems.sessionToken)).toBe("hello");
-    });
-
-    it("stores a JSON string when given an object", () => {
-      const obj = {
-        transactionId: "tx1",
-        payments: [] as any,
-        status: "OK" as any,
-      } as unknown as TransactionOutcomeInfo;
-
-      setSessionItem(SessionItems.sessionToken, obj);
-      expect(sessionStorage.getItem(SessionItems.sessionToken)).toBe(
-        JSON.stringify(obj)
-      );
     });
   });
 

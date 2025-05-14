@@ -1,5 +1,3 @@
-import { TransactionOutcomeInfo } from "../../../generated/definitions/payment-ecommerce-webview-v2/TransactionOutcomeInfo";
-
 export enum SessionItems {
   sessionToken = "sessionToken",
   outcomeInfo = "outcomeInfo",
@@ -19,10 +17,7 @@ export const getSessionItem = (item: SessionItems) => {
   }
 };
 
-export function setSessionItem(
-  name: SessionItems,
-  item: string | TransactionOutcomeInfo
-) {
+export function setSessionItem(name: SessionItems, item: string) {
   sessionStorage.setItem(
     name,
     typeof item === "string" ? item : JSON.stringify(item)
