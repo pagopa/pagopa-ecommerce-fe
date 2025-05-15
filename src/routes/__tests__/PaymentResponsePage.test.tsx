@@ -8,6 +8,9 @@ import React from "react";
 import { render, act } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import * as O from "fp-ts/Option";
+import PaymentResponsePage from "../PaymentResponsePage";
+import { ViewOutcomeEnum } from "../../utils/api/transactions/types";
+import { AmountEuroCents } from "../../../generated/definitions/payment-ecommerce-v2/AmountEuroCents";
 
 jest.mock("react-i18next", () => ({
   useTranslation: () => ({ t: (k: string) => k }),
@@ -41,15 +44,6 @@ jest.mock("../../utils/api/transactions/getTransactionInfo", () => ({
   ecommerceIOGetTransactionOutcomeInfo: mockIOGet,
   ecommerceCHECKOUTGetTransactionOutcomeInfo: mockCheckoutGet,
 }));
-/*
-const mockOutcome = jest.fn();
-jest.mock("../../utils/api/transactions/TransactionResultUtil", () => ({
-  getOutcome: mockOutcome,
-}));
-*/
-import PaymentResponsePage from "../PaymentResponsePage";
-import { ViewOutcomeEnum } from "../../utils/api/transactions/types";
-import { AmountEuroCents } from "../../../generated/definitions/payment-ecommerce-v2/AmountEuroCents";
 
 describe("PaymentResponsePage", () => {
   beforeEach(() => {
