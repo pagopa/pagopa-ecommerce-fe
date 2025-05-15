@@ -1,6 +1,6 @@
 import * as O from "fp-ts/Option";
 import { pipe } from "fp-ts/function";
-import { AmountEuroCents } from "../../generated/definitions/payment-ecommerce-webview-v2/AmountEuroCents";
+import { AmountEuroCents } from "../../generated/definitions/payment-ecommerce-webview-v1/AmountEuroCents";
 import {
   IO_CLIENT_REDIRECT_PATH,
   CHECKOUT_CLIENT_REDIRECT_OUTCOME_PATH,

@@ -7,7 +7,7 @@ const express = require("express");
 const port = 8082;
 const app = express();
 
-app.get("/ecommerce/webview/v2/transactions/:transactionId/outcomes", (req, res) => {
+app.get("/ecommerce/webview/v1/transactions/:transactionId/outcomes", (req, res) => {
 
     const transactionId = req.params.transactionId.replace(/\n|\r/g, "");
     console.log("Transaction ID received: " + transactionId);

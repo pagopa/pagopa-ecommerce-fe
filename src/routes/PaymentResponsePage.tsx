@@ -12,8 +12,8 @@ import PageContainer from "../components/PageContainer";
 import { SessionItems, getSessionItem } from "../utils/storage/sessionStorage";
 import { getFragments, redirectToClient } from "../utils/urlUtilities";
 import { getConfigOrThrow } from "../utils/config/config";
-import { TransactionOutcomeInfo } from "../../generated/definitions/payment-ecommerce-webview-v2/TransactionOutcomeInfo";
-import { AmountEuroCents } from "../../generated/definitions/payment-ecommerce-webview-v2/AmountEuroCents";
+import { TransactionOutcomeInfo } from "../../generated/definitions/payment-ecommerce-webview-v1/TransactionOutcomeInfo";
+import { AmountEuroCents } from "../../generated/definitions/payment-ecommerce-webview-v1/AmountEuroCents";
 import { CLIENT_TYPE, ROUTE_FRAGMENT } from "./models/routeModel";
 
 export default function PaymentResponsePage() {

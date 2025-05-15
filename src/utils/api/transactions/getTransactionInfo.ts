@@ -5,9 +5,9 @@ import { flow, pipe } from "fp-ts/function";
 
 import {
   ecommerceCHECKOUTClientClientWithPolling,
-  ecommerceIOClientWithPollingV2,
+  ecommerceIOClientWithPollingV1,
 } from "../client";
-import { TransactionOutcomeInfo } from "../../../../generated/definitions/payment-ecommerce-webview-v2/TransactionOutcomeInfo";
+import { TransactionOutcomeInfo } from "../../../../generated/definitions/payment-ecommerce-webview-v1/TransactionOutcomeInfo";
 
 export const ecommerceIOGetTransactionOutcomeInfo = (
   transactionId: string,
@@ -16,7 +16,7 @@ export const ecommerceIOGetTransactionOutcomeInfo = (
   pipe(
     TE.tryCatch(
       () =>
-        ecommerceIOClientWithPollingV2.getTransactionOutcomes({
+        ecommerceIOClientWithPollingV1.getTransactionOutcomes({
           eCommerceSessionToken: token,
           transactionId,
         }),

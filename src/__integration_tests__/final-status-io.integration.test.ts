@@ -32,10 +32,10 @@ describe("Check final status on IO mapping tests", () => {
    /**
    * Default test timeout (80000ms)
     */
-  jest.setTimeout(80000);
+  jest.setTimeout(30000);
   jest.retryTimes(3);
-  page.setDefaultNavigationTimeout(80000);
-  page.setDefaultTimeout(80000);
+  page.setDefaultNavigationTimeout(10000);
+  page.setDefaultTimeout(10000);
 
   beforeAll(async () => {
     await page.goto(ECOMMERCE_FE_ESITO_PAGE);

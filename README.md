@@ -69,7 +69,7 @@ Test use cases:
 
 ## IO Mock outcome result
 
-The ecommerce transaction get transaction endpoint `/checkout/webview/v2/transactions/:transactionId` is driven by the following mockFlow values:
+The ecommerce transaction get transaction endpoint `/checkout/webview/v1/transactions/:transactionId/outcomes` is driven by the following mockFlow values:
 
 | MOCK FLOW                                | Transaction Id Suffix | OUTCOME              |
 | ---------------------------------------- | --------------------- | -------------------- |

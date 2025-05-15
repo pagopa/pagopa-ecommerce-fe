@@ -13,7 +13,7 @@ const apiHost = "http://127.0.0.1:8080";
 const apiHostIO = "http://127.0.0.1:8082";
 const ecommerceBasepathV1 = "/ecommerce/checkout/v1";
 const ecommerceBasepathV2 = "/ecommerce/checkout/v2";
-const ecommerceIOBasepathV2 = "/ecommerce/webview/v2";
+const ecommerceIOBasepathV2 = "/ecommerce/webview/v1";
 
 module.exports = function (app) {
     app.use(createProxyMiddleware(ecommerceBasepathV1, {

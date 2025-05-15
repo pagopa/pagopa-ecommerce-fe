@@ -1,12 +1,12 @@
 import { DeferredPromise } from "@pagopa/ts-commons//lib/promises";
 import { Millisecond } from "@pagopa/ts-commons/lib/units";
 import { createCounter } from "../../utils/counter";
-import { createClient as createIOClientV2 } from "../../../generated/definitions/payment-ecommerce-webview-v2/client";
+import { createClient as createIOClientV1 } from "../../../generated/definitions/payment-ecommerce-webview-v1/client";
 import { createClient as createCHECKOUTClient } from "../../../generated/definitions/payment-ecommerce-v1/client";
 import { createClient as createCHECKOUTClientV2 } from "../../../generated/definitions/payment-ecommerce-v2/client";
 import { getConfigOrThrow } from "../config/config";
 import { constantPollingWithPromisePredicateFetch } from "../config/fetch";
-import { TransactionOutcomeInfo } from "../../../generated/definitions/payment-ecommerce-webview-v2/TransactionOutcomeInfo";
+import { TransactionOutcomeInfo } from "../../../generated/definitions/payment-ecommerce-webview-v1/TransactionOutcomeInfo";
 
 const config = getConfigOrThrow();
 
@@ -31,7 +31,7 @@ export const decodeFinalStatusResult = async (
   return !(r.status === 200 && isFinalStatus);
 };
 
-export const ecommerceIOClientWithPollingV2 = createIOClientV2({
+export const ecommerceIOClientWithPollingV1 = createIOClientV1({
   baseUrl: config.ECOMMERCE_API_HOST,
   fetchApi: constantPollingWithPromisePredicateFetch(
     DeferredPromise<boolean>().e1,
@@ -40,7 +40,7 @@ export const ecommerceIOClientWithPollingV2 = createIOClientV2({
     pollingConfig.timeout,
     decodeFinalStatusResult
   ),
-  basePath: config.ECOMMERCE_IO_API_V2_PATH,
+  basePath: config.ECOMMERCE_IO_API_V1_PATH,
 });
 
 export const ecommerceCHECKOUTClientClientWithPolling = createCHECKOUTClient({

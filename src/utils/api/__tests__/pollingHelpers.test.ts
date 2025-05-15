@@ -1,7 +1,7 @@
 jest.mock("../../config/config", () => ({
   getConfigOrThrow: () => ({
     ECOMMERCE_API_HOST: "http://localhost:1234",
-    ECOMMERCE_IO_API_V2_PATH: "/io/v2",
+    ECOMMERCE_IO_API_V1_PATH: "/io/v1",
     ECOMMERCE_CHECKOUT_API_PATH: "/co/1",
     ECOMMERCE_CHECKOUT_API_V2_PATH: "/co/2",
     ECOMMERCE_GET_TRANSACTION_POLLING_RETRIES: 2,
@@ -17,7 +17,7 @@ jest.mock("../../config/fetch", () => ({
 }));
 
 jest.mock(
-  "../../../../generated/definitions/payment-ecommerce-webview-v2/client",
+  "../../../../generated/definitions/payment-ecommerce-webview-v1/client",
   () => ({ createClient: jest.fn(() => ({ stub: "ioClient" })) })
 );
 jest.mock(

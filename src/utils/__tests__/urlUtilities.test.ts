@@ -36,7 +36,7 @@ import {
   redirectToClient,
 } from "../urlUtilities";
 import { ViewOutcomeEnum } from "../api/transactions/types";
-import { AmountEuroCents } from "../../../generated/definitions/payment-ecommerce-webview-v2/AmountEuroCents";
+import { AmountEuroCents } from "../../../generated/definitions/payment-ecommerce-webview-v1/AmountEuroCents";
 
 describe("getUrlParameter", () => {
   it("returns empty string when parameter not present", () => {

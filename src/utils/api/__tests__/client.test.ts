@@ -1,7 +1,7 @@
 jest.mock("../../config/config", () => ({
   getConfigOrThrow: () => ({
     ECOMMERCE_API_HOST: "https://api.example.com",
-    ECOMMERCE_IO_API_V2_PATH: "/io/v2",
+    ECOMMERCE_IO_API_V1_PATH: "/io/v1",
     ECOMMERCE_CHECKOUT_API_PATH: "/checkout/v1",
     ECOMMERCE_CHECKOUT_API_V2_PATH: "/checkout/v2",
     ECOMMERCE_GET_TRANSACTION_POLLING_RETRIES: 5,
@@ -20,7 +20,7 @@ const ioClientMock = {};
 const checkoutClientMock = {};
 const checkoutV2ClientMock = {};
 jest.mock(
-  "../../../../generated/definitions/payment-ecommerce-webview-v2/client",
+  "../../../../generated/definitions/payment-ecommerce-webview-v1/client",
   () => ({
     createClient: jest.fn(() => ioClientMock),
   })
@@ -40,13 +40,13 @@ jest.mock(
 
 import { DeferredPromise } from "@pagopa/ts-commons/lib/promises";
 import {
-  ecommerceIOClientWithPollingV2,
+  ecommerceIOClientWithPollingV1,
   ecommerceCHECKOUTClientClientWithPolling,
   ecommerceCHECKOUTClientClientWithPollingV2,
 } from "../client";
 import { constantPollingWithPromisePredicateFetch } from "../../config/fetch";
 import { getConfigOrThrow } from "../../config/config";
-import * as IOClientPkg from "../../../../generated/definitions/payment-ecommerce-webview-v2/client";
+import * as IOClientPkg from "../../../../generated/definitions/payment-ecommerce-webview-v1/client";
 import * as CheckoutV1Pkg from "../../../../generated/definitions/payment-ecommerce-v1/client";
 import * as CheckoutV2Pkg from "../../../../generated/definitions/payment-ecommerce-v2/client";
 
@@ -58,7 +58,7 @@ describe("clientWithPolling module", () => {
     expect(IOClientPkg.createClient).toHaveBeenCalledTimes(1);
     const args = (IOClientPkg.createClient as jest.Mock).mock.calls[0][0];
     expect(args.baseUrl).toBe(config.ECOMMERCE_API_HOST);
-    expect(args.basePath).toBe(config.ECOMMERCE_IO_API_V2_PATH);
+    expect(args.basePath).toBe(config.ECOMMERCE_IO_API_V1_PATH);
     expect(args.fetchApi).toBe("fetchApiMock");
     expect(constantPollingWithPromisePredicateFetch).toHaveBeenCalledWith(
       DeferredPromise<boolean>().e1,
@@ -67,7 +67,7 @@ describe("clientWithPolling module", () => {
       config.ECOMMERCE_API_TIMEOUT,
       predicate
     );
-    expect(ecommerceIOClientWithPollingV2).toBe(ioClientMock);
+    expect(ecommerceIOClientWithPollingV1).toBe(ioClientMock);
   });
 
   it("creates CHECKOUT v1 client with polling", () => {
