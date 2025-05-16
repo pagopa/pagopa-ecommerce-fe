@@ -7,144 +7,67 @@ const express = require("express");
 const port = 8082;
 const app = express();
 
-app.get("/ecommerce/webview/v2/transactions/:transactionId", (req, res) => {
+app.get("/ecommerce/webview/v1/transactions/:transactionId/outcomes", (req, res) => {
 
     const transactionId = req.params.transactionId.replace(/\n|\r/g, "");
     console.log("Transaction ID received: " + transactionId);
-
-    const paymentSuccess =  {
-        status: "NOTIFIED_OK",
-        gateway: "NPG",
-        authorizationStatus: "EXECUTED",
-        outcome: "OK"
-    }
   
     const suffixMap = {
-        "61": {
-            status: "NOTIFICATION_REQUESTED",
-            gateway: "NPG",
-            authorizationStatus: "EXECUTED",
-            outcome: "OK"
+        "000": {
+            outcome: 0
         },
-        "62": {
-            status: "NOTIFICATION_REQUESTED",
-            gateway: "NPG",
-            authorizationStatus: "EXECUTED",
-            outcome: "KO"
+        "001": {
+            outcome: 1
         },
-        "63": {
-            status: "NOTIFICATION_ERROR",
-            gateway: "NPG",
-            authorizationStatus: "EXECUTED",
-            outcome: "OK"
+        "002": {
+            outcome: 2
         },
-        "64": {
-            status: "NOTIFICATION_ERROR",
-            gateway: "NPG",
-            authorizationStatus: "EXECUTED",
-            outcome: "KO"
+        "003": {
+            outcome: 3
         },
-        "65": {
-            status: "NOTIFIED_KO",
-            gateway: "NPG",
-            authorizationStatus: "EXECUTED",
-            outcome: "KO"
+        "004": {
+            outcome: 4
         },
-        "66": {
-            status: "REFUNDED",
-            gateway: "NPG",
-            authorizationStatus: "EXECUTED",
-            outcome: "OK"
+        "007": {
+            outcome: 7
         },
-        "67": {
-            status: "REFUND_REQUESTED",
-            gateway: "NPG",
-            authorizationStatus: "EXECUTED",
-            outcome: "OK"
+        "008": {
+            outcome: 8
         },
-        "68": {
-            status: "REFUND_ERROR",
-            gateway: "NPG",
-            authorizationStatus: "EXECUTED",
-            outcome: "OK"
+        "010": {
+            outcome: 10
         },
-        "69": {
-            status: "EXPIRED_NOT_AUTHORIZED",
-            gateway: "NPG",
-            authorizationStatus: "EXECUTED",
-            outcome: "OK"
+        "017": {
+            outcome: 17
         },
-        "70": {
-            status: "CANCELED",
-            gateway: "NPG",
-            authorizationStatus: "EXECUTED",
-            outcome: "OK"
+        "018": {
+            outcome: 18
         },
-        "71": {
-            status: "CANCELLATION_EXPIRED",
-            gateway: "NPG",
-            authorizationStatus: "EXECUTED",
-            outcome: "OK"
+        "025": {
+            outcome: 25
         },
-        "72": {
-            status: "CLOSURE_ERROR",
-            gateway: "NPG",
-            authorizationStatus: "EXECUTED",
-            outcome: undefined
+        "099": {
+            outcome: 99
         },
-        "73": {
-            status: "CLOSURE_REQUESTED",
-            gateway: "NPG",
-            authorizationStatus: "CANCELED",
-            outcome: undefined
+        "116": {
+            outcome: 116
         },
-        "74": {
-            status: "AUTHORIZATION_COMPLETED",
-            gateway: "NPG",
-            authorizationStatus: "AUTHORIZED",
-            outcome: undefined
+        "117": {
+            outcome: 117
         },
-        "75": {
-            status: "UNAUTHORIZED",
-            gateway: "NPG",
-            authorizationStatus: "DENIED_BY_RISK",
-            outcome: undefined
+        "121": {
+            outcome: 121
         },
-        "76": {
-            status: "CLOSED",
-            gateway: "NPG",
-            authorizationStatus: undefined,
-            outcome: "NOT_RECEIVED"
-        },
-        "77": {
-            status: "CLOSED",
-            gateway: "NPG",
-            authorizationStatus: undefined,
-            outcome: "EXECUTED"
-        },
-        "78": {
-            status: "EXPIRED",
-            gateway: "NPG",
-            authorizationStatus: "EXECUTED",
-            outcome: "OK"
-        },
-        "79": {
-            status: "AUTHORIZATION_REQUESTED",
-            gateway: "NPG",
-            authorizationStatus: undefined,
-            outcome: undefined
-        }
     };
 
-    const suffix = transactionId.slice(-2);
-    const params = suffixMap[suffix] || paymentSuccess;
+    const finalStatusSuffix = transactionId.slice(-4,-3);
+    const suffix = transactionId.slice(-3);
+    const params = suffixMap[suffix];
 
     res.send(
         mockTransactionData(
-            params.status, 
-            params.gateway, 
-            params.authorizationStatus,
-            params.outcome
+            params.outcome,
+            finalStatusSuffix === 0 ? true : false
         ));
 
 });
@@ -153,41 +76,14 @@ app.listen(port, () => {
   console.log(`Mock started on port ${port}`)
 });
 
-function mockTransactionData(status, gateway, authorizationStatus, outcome) {
-  return {
-    "clientId": "IO",
-    "feeTotal": 99999999,
-    "payments": [
-        {
-            "amount": 1000,
-            "isAllCCP": false,
-            "paymentToken": "paymentToken1",
-            "reason": "reason1",
-            "rptId": "77777777777302012387654312384",
-            "transferList": [
-                {
-                    "digitalStamp": true,
-                    "paFiscalCode": "66666666666",
-                    "transferAmount": 100,
-                    "transferCategory": "transferCategory1"
-                },
-                {
-                    "digitalStamp": false,
-                    "paFiscalCode": "77777777777",
-                    "transferAmount": 900,
-                    "transferCategory": "transferCategory2"
-                }
-            ]
-        }
-    ],
-    "gatewayInfo":{
-        "gateway": gateway,
-        "authorizationStatus": authorizationStatus
-    },
-    "nodeInfo":{
-        "sendPaymentResultOutcome": outcome,
-    },
-    "status": status,
-    "transactionId": "1234",
-  }
+function mockTransactionData(outcome, isFinalStatus) {
+    const totalAmount = outcome === 0 ? 12000 : undefined;
+    const fees = outcome === 0 ? 100 : undefined;
+    return {
+        outcome,
+        isFinalStatus,
+        totalAmount,
+        fees
+    }
+
 }

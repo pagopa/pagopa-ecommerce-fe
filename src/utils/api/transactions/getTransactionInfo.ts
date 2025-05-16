@@ -2,22 +2,21 @@ import * as E from "fp-ts/Either";
 import * as O from "fp-ts/Option";
 import * as TE from "fp-ts/TaskEither";
 import { flow, pipe } from "fp-ts/function";
-import { TransactionInfo as IOTransactionInfo } from "../../../../generated/definitions/payment-ecommerce-webview-v2/TransactionInfo";
-import { TransactionInfo as CHECKOUTTransactionInfo } from "../../../../generated/definitions/payment-ecommerce-v2/TransactionInfo";
 
 import {
-  ecommerceCHECKOUTClientClientWithPollingV2,
-  ecommerceIOClientWithPollingV2,
+  ecommerceCHECKOUTClientClientWithPolling,
+  ecommerceIOClientWithPollingV1,
 } from "../client";
+import { TransactionOutcomeInfo } from "../../../../generated/definitions/payment-ecommerce-webview-v1/TransactionOutcomeInfo";
 
-export const ecommerceIOGetTransactionInfo = (
+export const ecommerceIOGetTransactionOutcomeInfo = (
   transactionId: string,
   token: string
-): Promise<O.Option<IOTransactionInfo>> =>
+): Promise<O.Option<TransactionOutcomeInfo>> =>
   pipe(
     TE.tryCatch(
       () =>
-        ecommerceIOClientWithPollingV2.getTransactionInfo({
+        ecommerceIOClientWithPollingV1.getTransactionOutcomes({
           eCommerceSessionToken: token,
           transactionId,
         }),
@@ -40,14 +39,14 @@ export const ecommerceIOGetTransactionInfo = (
     )
   )();
 
-export const ecommerceCHECKOUTGetTransaction = (
+export const ecommerceCHECKOUTGetTransactionOutcomeInfo = (
   transactionId: string,
   token: string
-): Promise<O.Option<CHECKOUTTransactionInfo>> =>
+): Promise<O.Option<TransactionOutcomeInfo>> =>
   pipe(
     TE.tryCatch(
       () =>
-        ecommerceCHECKOUTClientClientWithPollingV2.getTransactionInfo({
+        ecommerceCHECKOUTClientClientWithPolling.getTransactionOutcomes({
           bearerAuth: token,
           transactionId,
         }),

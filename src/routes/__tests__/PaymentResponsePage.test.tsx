@@ -38,17 +38,13 @@ jest.mock("../../utils/storage/sessionStorage", () => ({
 const mockIOGet = jest.fn();
 const mockCheckoutGet = jest.fn();
 jest.mock("../../utils/api/transactions/getTransactionInfo", () => ({
-  ecommerceIOGetTransactionInfo: mockIOGet,
-  ecommerceCHECKOUTGetTransaction: mockCheckoutGet,
-}));
-
-const mockOutcome = jest.fn();
-jest.mock("../../utils/api/transactions/TransactionResultUtil", () => ({
-  getOnboardingPaymentOutcome: mockOutcome,
+  ecommerceIOGetTransactionOutcomeInfo: mockIOGet,
+  ecommerceCHECKOUTGetTransactionOutcomeInfo: mockCheckoutGet,
 }));
 
 import PaymentResponsePage from "../PaymentResponsePage";
 import { ViewOutcomeEnum } from "../../utils/api/transactions/types";
+import { AmountEuroCents } from "../../../generated/definitions/payment-ecommerce-v2/AmountEuroCents";
 
 describe("PaymentResponsePage", () => {
   beforeEach(() => {
@@ -109,9 +105,12 @@ describe("PaymentResponsePage", () => {
     ).mockReturnValue("tok42");
 
     mockIOGet.mockResolvedValue(
-      O.some({ status: "NOTIFIED_OK", gatewayInfo: {}, nodeInfo: {} })
+      O.some({
+        outcome: 0,
+        totalAmount: 12000 as AmountEuroCents,
+        fees: 15 as AmountEuroCents,
+      })
     );
-    mockOutcome.mockReturnValue(ViewOutcomeEnum.SUCCESS);
 
     render(<PaymentResponsePage />);
     await act(async () => {});
@@ -163,9 +162,12 @@ describe("PaymentResponsePage", () => {
     ).mockReturnValue(null);
 
     mockCheckoutGet.mockResolvedValue(
-      O.some({ status: "NOTIFIED_OK", gatewayInfo: {}, nodeInfo: {} })
+      O.some({
+        outcome: 0,
+        totalAmount: 12000 as AmountEuroCents,
+        fees: 15 as AmountEuroCents,
+      })
     );
-    mockOutcome.mockReturnValue(ViewOutcomeEnum.SUCCESS);
 
     render(<PaymentResponsePage />);
     await act(async () => {});
@@ -175,6 +177,8 @@ describe("PaymentResponsePage", () => {
       clientId: "CHECKOUT",
       transactionId: "txC2",
       outcome: ViewOutcomeEnum.SUCCESS,
+      totalAmount: 12000,
+      fees: 15,
     });
     expect(document.getElementById("continueToIOBtn")).toBeNull();
 

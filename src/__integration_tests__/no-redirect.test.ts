@@ -2,7 +2,7 @@ import "expect-puppeteer";
 
 describe("Test showing final button for continue to IO", () => {
 
-  const ECOMMERCE_FE_ESITO_PAGE = "http://localhost:1234/ecommerce-fe/esito#clientId=IO&sessionToken=test&transactionId=302054585254587560";
+  const ECOMMERCE_FE_ESITO_PAGE = "http://localhost:1234/ecommerce-fe/esito#clientId=IO&sessionToken=test&transactionId=302054585287560000";
 
   /**
    * Default test timeout (80000ms)

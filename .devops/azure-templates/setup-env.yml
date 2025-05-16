@@ -20,7 +20,7 @@ parameters:
     type: string
     default: ""
 
-  - name: 'io_api_v2_path'
+  - name: 'io_api_v1_path'
     type: string
     default: ''
 
@@ -53,7 +53,7 @@ steps:
       ECOMMERCE_API_HOST=${{ parameters.api_host }} \
       ECOMMERCE_CHECKOUT_API_PATH=${{ parameters.checkout_api_path }} \
       ECOMMERCE_CHECKOUT_API_V2_PATH=${{ parameters.checkout_api_v2_path }} \
-      ECOMMERCE_IO_API_V2_PATH=${{ parameters.io_api_v2_path }} \
+      ECOMMERCE_IO_API_V1_PATH=${{ parameters.io_api_v1_path }} \
       ECOMMERCE_GDI_CHECK_TIMEOUT=${{ parameters.gdi_check_timeout }} \
       ECOMMERCE_NPG_SDK_URL=${{ parameters.npg_sdk_url }} \
       ECOMMERCE_IO_CLIENT_REDIRECT_OUTCOME_PATH=${{ parameters.io_client_redirect_outcome_path }} \

@@ -1,3 +1,6 @@
+import * as O from "fp-ts/Option";
+import { pipe } from "fp-ts/function";
+import { AmountEuroCents } from "../../generated/definitions/payment-ecommerce-webview-v1/AmountEuroCents";
 import {
   IO_CLIENT_REDIRECT_PATH,
   CHECKOUT_CLIENT_REDIRECT_OUTCOME_PATH,
@@ -72,9 +75,13 @@ export function getFragments(
 export const redirectToClient = ({
   transactionId,
   outcome,
+  totalAmount,
+  fees,
   clientId,
 }: {
   transactionId?: string;
+  totalAmount?: AmountEuroCents;
+  fees?: AmountEuroCents;
   outcome: ViewOutcomeEnum;
   clientId: string;
 }) => {
@@ -89,8 +96,19 @@ export const redirectToClient = ({
         }`
       );
     case CLIENT_TYPE.CHECKOUT:
-      return window.location.replace(
-        `${CHECKOUT_CLIENT_REDIRECT_OUTCOME_PATH}?t=${now}#outcome=${outcome}`
+      return pipe(
+        totalAmount,
+        O.fromNullable,
+        O.fold(
+          () =>
+            window.location.replace(
+              `${CHECKOUT_CLIENT_REDIRECT_OUTCOME_PATH}?t=${now}#transactionId=${transactionId}&outcome=${outcome}`
+            ),
+          () =>
+            window.location.replace(
+              `${CHECKOUT_CLIENT_REDIRECT_OUTCOME_PATH}?t=${now}#transactionId=${transactionId}&outcome=${outcome}&totalAmount=${totalAmount}&fees=${fees}`
+            )
+        )
       );
     // eslint-disable-next-line sonarjs/no-duplicated-branches
     default:
