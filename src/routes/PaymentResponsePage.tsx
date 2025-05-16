@@ -31,10 +31,10 @@ export default function PaymentResponsePage() {
   const config = getConfigOrThrow();
 
   const redirectWithError = () => {
-    performRedirectToClient(ViewOutcomeEnum.GENERIC_ERROR);
+    performRedirectToTouchpoint(ViewOutcomeEnum.GENERIC_ERROR);
   };
 
-  const performRedirectToClient = (
+  const performRedirectToTouchpoint = (
     newOutcome?: ViewOutcomeEnum,
     totalAmount?: AmountEuroCents,
     fees?: AmountEuroCents
@@ -54,7 +54,7 @@ export default function PaymentResponsePage() {
   const getTransactionOutcome = (token: string) => {
     const manageResp = O.match(redirectWithError, (transactionInfo) => {
       const outcomeInfo = transactionInfo as TransactionOutcomeInfo;
-      performRedirectToClient(
+      performRedirectToTouchpoint(
         outcomeInfo.outcome.toString() as ViewOutcomeEnum,
         outcomeInfo.totalAmount,
         outcomeInfo.fees
@@ -129,7 +129,7 @@ export default function PaymentResponsePage() {
                 mt: 2,
               }}
               variant="outlined"
-              onClick={() => performRedirectToClient()}
+              onClick={() => performRedirectToTouchpoint()}
               id="continueToIOBtn"
             >
               {t("resultPage.continueToIO")}
