@@ -71,25 +71,22 @@ Test use cases:
 
 The ecommerce transaction get transaction endpoint `/checkout/webview/v1/transactions/:transactionId/outcomes` is driven by the following mockFlow values:
 
-| MOCK FLOW                                | Transaction Id Suffix | OUTCOME              |
-| ---------------------------------------- | --------------------- | -------------------- |
-| NOTIFIED_OK                              | other                 | SUCCESS (0)          |
-| NOTIFICATION_REQUESTED - Outcome OK      | 61                    | SUCCESS (0)          |
-| NOTIFICATION_REQUESTED - Outcome KO      | 62                    | PSP_ERROR (25)       |
-| NOTIFICATION_ERROR - Outcome OK          | 63                    | SUCCESS (0)          |
-| NOTIFICATION_ERROR - Outcome KO          | 64                    | PSP_ERROR (25)       |
-| NOTIFIED_KO                              | 65                    | PSP_ERROR (25)       |
-| REFUNDED                                 | 66                    | PSP_ERROR (25)       |
-| REFUND_REQUESTED                         | 67                    | GENERIC_ERROR (1)    |
-| REFUND_ERROR                             | 68                    | GENERIC_ERROR (1)    |
-| EXPIRED_NOT_AUTHORIZED                   | 69                    | TIMEOUT (4)          |
-| CANCELED                                 | 70                    | CANCELED_BY_USER (8) |
-| CANCELLATION_EXPIRED                     | 71                    | CANCELED_BY_USER (8) |
-| CLOSURE_ERROR - NPG EXECUTED             | 72                    | GENERIC_ERROR (1)    |
-| CLOSURE_REQUESTED - NPG CANCELED         | 73                    | CANCELED_BY_USER (8) |
-| AUTHORIZATION_COMPLETED - NPG AUTHORIZED | 74                    | PSP_ERROR (25)       |
-| UNAUTHORIZED - NPG DENIED_BY_RISK        | 75                    | AUTH_ERROR (2)       |
-| CLOSED - Outcome NOT_RECEIVED            | 76                    | TAKE_IN_CHARGE (17)  |
-| CLOSED - Other                           | 77                    | GENERIC_ERROR (1)    |
-| EXPIRED - Outcome OK                     | 78                    | SUCCESS (0)          |
-| AUTHORIZATION_REQUESTED                  | 79                    | TAKE_IN_CHARGE (17)  |
+| MOCK FLOW                                | Transaction Id Suffix | OUTCOME                     |
+| ---------------------------------------- | --------------------- | ----------------------------|
+| Succes                                   | 000                   | SUCCESS (0)                 |
+| Generic error                            | 001                   | GENERIC_ERROR (1)           |
+| Auth error                               | 002                   | AUTH_ERROR (2)              |
+| Invalid data                             | 003                   | INVALID_DATA (3)            |
+| Timeout                                  | 004                   | TIMEOUT (4)                 |
+| Invalid card                             | 007                   | INVALIDA_CARD (7)           |
+| Canceled by user                         | 008                   | CANCELED_BY_USER (8)        |
+| Excessive amount                         | 010                   | EXCESSIVE_AMOUNT (10)       |
+| Taken in charge                          | 017                   | TAKE_IN_CHARGE (17)         |
+| Refunded                                 | 018                   | REFUNDED (18)               |
+| Psp Error                                | 025                   | PSP ERROR (25)              |
+| Backend Error                            | 099                   | REFUNDED (99)               |
+| Balance not available                    | 116                   | BALANCE_NOT_AVAILABLE (116) |
+| CVV Error                                | 117                   | CVV_ERROR (117)             |
+| Limit exceeded                           | 121                   | LIMIT EXCEEDED (121)        |
+
+
