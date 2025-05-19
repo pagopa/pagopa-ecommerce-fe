@@ -12,7 +12,7 @@ describe("config module", () => {
     ECOMMERCE_API_HOST: "http://localhost:1234",
     ECOMMERCE_CHECKOUT_API_PATH: "/ecommerce/checkout/v1",
     ECOMMERCE_CHECKOUT_API_V2_PATH: "/ecommerce/checkout/v2",
-    ECOMMERCE_IO_API_V2_PATH: "/ecommerce/webview/v2",
+    ECOMMERCE_IO_API_V1_PATH: "/ecommerce/webview/v1",
     ECOMMERCE_GDI_CHECK_TIMEOUT: "12000",
     ECOMMERCE_NPG_SDK_URL: "https://example.com/sdk.js",
     ECOMMERCE_IO_CLIENT_REDIRECT_OUTCOME_PATH:

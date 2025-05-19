@@ -1,23 +1,12 @@
 import { DeferredPromise } from "@pagopa/ts-commons//lib/promises";
 import { Millisecond } from "@pagopa/ts-commons/lib/units";
-import * as E from "fp-ts/Either";
-import { pipe } from "fp-ts/function";
 import { createCounter } from "../../utils/counter";
-import { createClient as createIOClientV2 } from "../../../generated/definitions/payment-ecommerce-webview-v2/client";
+import { createClient as createIOClientV1 } from "../../../generated/definitions/payment-ecommerce-webview-v1/client";
 import { createClient as createCHECKOUTClient } from "../../../generated/definitions/payment-ecommerce-v1/client";
 import { createClient as createCHECKOUTClientV2 } from "../../../generated/definitions/payment-ecommerce-v2/client";
 import { getConfigOrThrow } from "../config/config";
 import { constantPollingWithPromisePredicateFetch } from "../config/fetch";
-import {
-  TransactionInfo,
-  TransactionInfoGatewayInfo,
-} from "../../../generated/definitions/payment-ecommerce-webview-v2/TransactionInfo";
-import { TransactionInfoNodeInfo } from "../../../generated/definitions/payment-ecommerce-v2/TransactionInfo";
-import {
-  EcommerceInterruptStatusCodeEnumType,
-  EcommerceMaybeInterruptStatusCodeEnumType,
-  wasAuthorizedByGateway,
-} from "./transactions/TransactionResultUtil";
+import { TransactionOutcomeInfo } from "../../../generated/definitions/payment-ecommerce-webview-v1/TransactionOutcomeInfo";
 
 const config = getConfigOrThrow();
 
@@ -29,21 +18,6 @@ export const pollingConfig = {
 };
 
 /** This function return true when polling on GET transaction must be interrupted */
-export const interruptTransactionPolling = (
-  transactionStatus: TransactionInfo["status"],
-  gatewayInfo?: TransactionInfoGatewayInfo,
-  nodeInfo?: TransactionInfoNodeInfo
-) =>
-  pipe(
-    EcommerceInterruptStatusCodeEnumType.decode(transactionStatus),
-    E.isRight
-  ) ||
-  nodeInfo?.closePaymentResultError?.statusCode?.toString().startsWith("4") ||
-  (pipe(
-    EcommerceMaybeInterruptStatusCodeEnumType.decode(transactionStatus),
-    E.isRight
-  ) &&
-    !wasAuthorizedByGateway(gatewayInfo));
 
 export const decodeFinalStatusResult = async (
   r: Response
@@ -53,16 +27,11 @@ export const decodeFinalStatusResult = async (
     pollingConfig.counter.reset();
     return false;
   }
-  const { status, gatewayInfo, nodeInfo } = (await r
-    .clone()
-    .json()) as TransactionInfo;
-  return !(
-    r.status === 200 &&
-    interruptTransactionPolling(status, gatewayInfo, nodeInfo)
-  );
+  const { isFinalStatus } = (await r.clone().json()) as TransactionOutcomeInfo;
+  return !(r.status === 200 && isFinalStatus);
 };
 
-export const ecommerceIOClientWithPollingV2 = createIOClientV2({
+export const ecommerceIOClientWithPollingV1 = createIOClientV1({
   baseUrl: config.ECOMMERCE_API_HOST,
   fetchApi: constantPollingWithPromisePredicateFetch(
     DeferredPromise<boolean>().e1,
@@ -71,7 +40,7 @@ export const ecommerceIOClientWithPollingV2 = createIOClientV2({
     pollingConfig.timeout,
     decodeFinalStatusResult
   ),
-  basePath: config.ECOMMERCE_IO_API_V2_PATH,
+  basePath: config.ECOMMERCE_IO_API_V1_PATH,
 });
 
 export const ecommerceCHECKOUTClientClientWithPolling = createCHECKOUTClient({
