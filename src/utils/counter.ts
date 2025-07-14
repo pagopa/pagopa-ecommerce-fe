@@ -9,9 +9,12 @@ export const createCounter = (
   storageKey = "counterPolling"
 ) => {
   const savedValue = sessionStorage.getItem(storageKey);
-  
+  const parsed = savedValue !== null ? Number(savedValue) : null;
+
   // eslint-disable-next-line functional/no-let
-  let counter = savedValue !== null ? Number(savedValue) : initialValue;
+  let counter = parsed !== null && Number.isInteger(parsed) && parsed >= 0
+  ? parsed
+  : initialValue;
 
   const saveValue = () => {
     sessionStorage.setItem(storageKey, counter.toString());
