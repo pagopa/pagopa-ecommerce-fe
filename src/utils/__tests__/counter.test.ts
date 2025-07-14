@@ -1,7 +1,7 @@
 import { createCounter } from "../counter";
 
 beforeEach(() => {
-    sessionStorage.clear();
+  sessionStorage.clear();
 });
 
 describe("createCounter", () => {
@@ -102,6 +102,7 @@ describe("createCounter with sessionStorage", () => {
 
   test("should retain value after re-creating the counter (simulating refresh)", () => {
     const storageKey = "testCounterKey";
+    /* eslint-disable functional/no-let */
     let counter = createCounter(0, storageKey);
     counter.increment(7);
     // Simulate a page refresh with re-create the counter using the same storage key
