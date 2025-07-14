@@ -7,13 +7,14 @@ jest.mock("../../config/config", () => ({
     ECOMMERCE_GET_TRANSACTION_POLLING_RETRIES: 2,
     ECOMMERCE_GET_TRANSACTION_POLLING_DELAY_MILLIS: 50,
     ECOMMERCE_API_TIMEOUT: 500,
-    ECOMMERCE_API_RETRY_NUMBERS_NORMAL: 2,      // <--- aggiunti
-    ECOMMERCE_API_RETRY_NUMBERS_EXPONENT: 3,  
   }),
 }));
 
 jest.mock("../../config/fetch", () => ({
   exponetialPollingWithPromisePredicateFetch: jest
+    .fn()
+    .mockReturnValue((_fetch: any) => Promise.resolve(true)),
+  constantPollingWithPromisePredicateFetch: jest
     .fn()
     .mockReturnValue((_fetch: any) => Promise.resolve(true)),
 }));
