@@ -1,6 +1,7 @@
 export enum SessionItems {
   sessionToken = "sessionToken",
   outcomeInfo = "outcomeInfo",
+  counterPolling = "counterPolling",
 }
 
 export const getSessionItem = (item: SessionItems) => {

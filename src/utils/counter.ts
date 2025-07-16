@@ -1,14 +1,17 @@
+import {
+  getSessionItem,
+  SessionItems,
+  setSessionItem,
+} from "./storage/sessionStorage";
+
 /**
  * Creates a counter object with initial value.
  * @param {number} [initialValue=0] - The initial value of the counter. Defaults to 0 if not provided.
  * @param {string} [storageKey='counterPolling'] - The initial value of sessionStorage key. Deafaults to counterPolling if not provided
  * @returns {Object} - Counter object with methods.
  */
-export const createCounter = (
-  initialValue = 0,
-  storageKey = "counterPolling"
-) => {
-  const savedValue = sessionStorage.getItem(storageKey);
+export const createCounter = (initialValue = 0) => {
+  const savedValue = getSessionItem(SessionItems.counterPolling);
   const parsed = savedValue !== null ? Number(savedValue) : null;
 
   // eslint-disable-next-line functional/no-let
@@ -18,7 +21,7 @@ export const createCounter = (
       : initialValue;
 
   const saveValue = () => {
-    sessionStorage.setItem(storageKey, counter.toString());
+    setSessionItem(SessionItems.counterPolling, counter.toString());
   };
 
   /**
