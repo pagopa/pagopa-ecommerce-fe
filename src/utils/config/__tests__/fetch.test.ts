@@ -24,7 +24,6 @@ Object.defineProperty(global, "window", {
   writable: true,
 });
 
-
 const generateExpectedDelays = (
   baseDelay: number,
   exponent: number,
@@ -58,7 +57,7 @@ describe("exponetialPollingWithPromisePredicateFetch backoff behavior", () => {
     json: jest.fn().mockResolvedValue({}),
     status: 503,
   };
-it("should increase delay exponentially after RETRY_NUMBERS_LINEAR attempts", async () => {
+  it("should increase delay exponentially after RETRY_NUMBERS_LINEAR attempts", async () => {
     const condition = jest
       .fn()
       .mockResolvedValueOnce(true)

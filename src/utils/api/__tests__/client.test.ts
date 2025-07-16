@@ -11,7 +11,7 @@ jest.mock("../../config/config", () => ({
 }));
 
 jest.mock("../../config/fetch", () => ({
-  exponetialPollingWithPromisePredicateFetch : jest.fn(
+  exponetialPollingWithPromisePredicateFetch: jest.fn(
     (_abort, _retries, _delay, _timeout, _predicate) => "fetchApiMock"
   ),
   constantPollingWithPromisePredicateFetch: jest.fn(
@@ -47,7 +47,10 @@ import {
   ecommerceCHECKOUTClientClientWithPolling,
   ecommerceCHECKOUTClientClientWithPollingV2,
 } from "../client";
-import { constantPollingWithPromisePredicateFetch,exponetialPollingWithPromisePredicateFetch  } from "../../config/fetch";
+import {
+  constantPollingWithPromisePredicateFetch,
+  exponetialPollingWithPromisePredicateFetch,
+} from "../../config/fetch";
 import { getConfigOrThrow } from "../../config/config";
 import * as IOClientPkg from "../../../../generated/definitions/payment-ecommerce-webview-v1/client";
 import * as CheckoutV1Pkg from "../../../../generated/definitions/payment-ecommerce-v1/client";
@@ -63,14 +66,14 @@ describe("clientWithPolling module", () => {
     expect(args.baseUrl).toBe(config.ECOMMERCE_API_HOST);
     expect(args.basePath).toBe(config.ECOMMERCE_IO_API_V1_PATH);
     expect(args.fetchApi).toBe("fetchApiMock");
-    expect(exponetialPollingWithPromisePredicateFetch ).toHaveBeenCalledWith(
+    expect(exponetialPollingWithPromisePredicateFetch).toHaveBeenCalledWith(
       DeferredPromise<boolean>().e1,
       config.ECOMMERCE_GET_TRANSACTION_POLLING_RETRIES,
       config.ECOMMERCE_GET_TRANSACTION_POLLING_DELAY_MILLIS,
       config.ECOMMERCE_API_TIMEOUT,
       predicate
     );
-    expect(constantPollingWithPromisePredicateFetch ).toHaveBeenCalledWith(
+    expect(constantPollingWithPromisePredicateFetch).toHaveBeenCalledWith(
       DeferredPromise<boolean>().e1,
       config.ECOMMERCE_GET_TRANSACTION_POLLING_RETRIES,
       config.ECOMMERCE_GET_TRANSACTION_POLLING_DELAY_MILLIS,

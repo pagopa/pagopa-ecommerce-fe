@@ -5,7 +5,10 @@ import { createClient as createIOClientV1 } from "../../../generated/definitions
 import { createClient as createCHECKOUTClient } from "../../../generated/definitions/payment-ecommerce-v1/client";
 import { createClient as createCHECKOUTClientV2 } from "../../../generated/definitions/payment-ecommerce-v2/client";
 import { getConfigOrThrow } from "../config/config";
-import { constantPollingWithPromisePredicateFetch, exponetialPollingWithPromisePredicateFetch } from "../config/fetch";
+import {
+  constantPollingWithPromisePredicateFetch,
+  exponetialPollingWithPromisePredicateFetch,
+} from "../config/fetch";
 import { TransactionOutcomeInfo } from "../../../generated/definitions/payment-ecommerce-webview-v1/TransactionOutcomeInfo";
 
 const config = getConfigOrThrow();
