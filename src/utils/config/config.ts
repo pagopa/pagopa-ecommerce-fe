@@ -60,7 +60,7 @@ const errorOrConfig: t.Validation<IConfig> = IConfig.decode({
         (window as any)._env_.ECOMMERCE_GET_TRANSACTION_POLLING_RETRIES,
         10
       )
-    : 20,
+    : 10,
   // eslint-disable-next-line no-underscore-dangle
   ECOMMERCE_GET_TRANSACTION_POLLING_DELAY_MILLIS: (window as any)._env_
     .ECOMMERCE_GET_TRANSACTION_POLLING_DELAY_MILLIS
