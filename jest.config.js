@@ -43,7 +43,6 @@ module.exports = {
     "<rootDir>/src/models/",
     "<rootDir>/src/routes/models/",
     "<rootDir>/src/hooks/",
-    "<rootDir>/src/utils/config/fetch.ts",
     "<rootDir>/src/App.tsx"
   ],
   coverageDirectory: "<rootDir>/coverage/",
