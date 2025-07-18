@@ -90,9 +90,9 @@ The ecommerce transaction get transaction endpoint `/checkout/webview/v1/transac
 | Limit exceeded                           | 121                   | LIMIT EXCEEDED (121)        |
 
 
-| Variable name | Description | type |
-|----------------|-------------|------|
-|ECOMMERCE_API_RETRY_NUMBERS_LINEAR| number of calls at regular intervals| number
+| Variable name                    | Description                         | type   | default |
+|----------------------------------|-------------------------------------|--------|---------|
+|ECOMMERCE_API_RETRY_NUMBERS_LINEAR| number of calls at regular intervals| number | 5       |
 
 ## Polling
 
