@@ -106,7 +106,7 @@ export const exponetialPollingWithPromisePredicateFetch = (
       return delay as Millisecond;
     }
 
-     return (delay * (attempt - RETRY_NUMBERS_LINEAR)) as Millisecond;
+    return (delay * (attempt - RETRY_NUMBERS_LINEAR)) as Millisecond;
   };
   const retryLogic = withRetries<Error, Response>(retries, variableBackoff);
 
