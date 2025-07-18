@@ -120,5 +120,4 @@ export const exponetialPollingWithPromisePredicateFetch = (
     retryWithPromisePredicate,
     shouldAbort
   )(timeoutFetch as any);
-
 };
