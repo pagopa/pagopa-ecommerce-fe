@@ -27,23 +27,21 @@ export const IConfig = t.interface({
   ECOMMERCE_GET_TRANSACTION_POLLING_DELAY_MILLIS: t.number,
   ECOMMERCE_SHOW_CONTINUE_IO_BTN_DELAY_MILLIS: t.number,
   ECOMMERCE_API_RETRY_NUMBERS_LINEAR: t.number,
-  ECOMMERCE_API_RETRY_NUMBERS_EXPONENT: t.number,
 });
 
 // No need to re-evaluate this object for each call
 const errorOrConfig: t.Validation<IConfig> = IConfig.decode({
   // eslint-disable-next-line no-underscore-dangle
   ...(window as any)._env_,
-  ECOMMERCE_API_RETRY_NUMBERS_LINEAR: parseInt(
-    // eslint-disable-next-line no-underscore-dangle
-    (window as any)._env_.ECOMMERCE_API_RETRY_NUMBERS_LINEAR,
-    10
-  ),
-  ECOMMERCE_API_RETRY_NUMBERS_EXPONENT: parseInt(
-    // eslint-disable-next-line no-underscore-dangle
-    (window as any)._env_.ECOMMERCE_API_RETRY_NUMBERS_EXPONENT,
-    10
-  ),
+  // eslint-disable-next-line no-underscore-dangle
+  ECOMMERCE_API_RETRY_NUMBERS_LINEAR: (window as any)._env_
+    .ECOMMERCE_API_RETRY_NUMBERS_LINEAR
+    ? parseInt(
+        // eslint-disable-next-line no-underscore-dangle
+        (window as any)._env_.ECOMMERCE_API_RETRY_NUMBERS_LINEAR,
+        10
+      )
+    : 5,
   ECOMMERCE_API_TIMEOUT: parseInt(
     // eslint-disable-next-line no-underscore-dangle
     (window as any)._env_.ECOMMERCE_API_TIMEOUT,

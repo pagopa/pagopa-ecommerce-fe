@@ -25,8 +25,6 @@ import { getConfigOrThrow } from "./config";
 const API_TIMEOUT = getConfigOrThrow().ECOMMERCE_API_TIMEOUT as Millisecond;
 const RETRY_NUMBERS_LINEAR = getConfigOrThrow()
   .ECOMMERCE_API_RETRY_NUMBERS_LINEAR as number;
-const EXPONENT = getConfigOrThrow()
-  .ECOMMERCE_API_RETRY_NUMBERS_EXPONENT as number;
 
 //
 // Given predicate that return a boolean promise, fetch with transient error handling.
@@ -108,8 +106,7 @@ export const exponetialPollingWithPromisePredicateFetch = (
       return delay as Millisecond;
     }
 
-    return (delay *
-      Math.pow(EXPONENT, attempt - RETRY_NUMBERS_LINEAR)) as Millisecond;
+     return (delay * (attempt - RETRY_NUMBERS_LINEAR)) as Millisecond;
   };
   const retryLogic = withRetries<Error, Response>(retries, variableBackoff);
 
