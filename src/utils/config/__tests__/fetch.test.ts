@@ -29,15 +29,14 @@ const generateExpectedDelays = (
   totalAttempts: number
 ): Array<number> =>
   Array.from({ length: totalAttempts }, (_, i) =>
-    i < normalAttempts
-      ? baseDelay
-      : baseDelay *  (i - normalAttempts)
+    i < normalAttempts ? baseDelay : baseDelay * (i - normalAttempts)
   );
 
 import { Millisecond } from "@pagopa/ts-commons/lib/units";
-import { constantPollingWithPromisePredicateFetch, exponetialPollingWithPromisePredicateFetch } from "../../config/fetch";
-
-
+import {
+  constantPollingWithPromisePredicateFetch,
+  exponetialPollingWithPromisePredicateFetch,
+} from "../../config/fetch";
 
 describe("exponetialPollingWithPromisePredicateFetch backoff behavior", () => {
   beforeAll(() => {
@@ -85,7 +84,7 @@ describe("exponetialPollingWithPromisePredicateFetch backoff behavior", () => {
 
     const promise = fetchWithRetry("https://api.example.com");
 
-    const expectedDelays = generateExpectedDelays(10, 2,  3);
+    const expectedDelays = generateExpectedDelays(10, 2, 3);
     /* eslint-disable functional/no-let */
     for (let i = 0; i < expectedDelays.length; i++) {
       jest.advanceTimersByTime(expectedDelays[i]);
@@ -98,7 +97,7 @@ describe("exponetialPollingWithPromisePredicateFetch backoff behavior", () => {
     expect(response.status).toBe(200);
     expect(fetchMock).toHaveBeenCalledTimes(expectedDelays.length);
   });
-  
+
   it("should increase delay exponentially after RETRY_NUMBERS_LINEAR attempts", async () => {
     const condition = jest
       .fn()
@@ -126,7 +125,7 @@ describe("exponetialPollingWithPromisePredicateFetch backoff behavior", () => {
 
     const promise = fetchWithRetry("https://api.example.com");
 
-    const expectedDelays = generateExpectedDelays(10, 2,  3);
+    const expectedDelays = generateExpectedDelays(10, 2, 3);
     /* eslint-disable functional/no-let */
     for (let i = 0; i < expectedDelays.length; i++) {
       jest.advanceTimersByTime(expectedDelays[i]);
