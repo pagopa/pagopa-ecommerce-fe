@@ -11,6 +11,9 @@ jest.mock("../../config/config", () => ({
 }));
 
 jest.mock("../../config/fetch", () => ({
+  exponetialPollingWithPromisePredicateFetch: jest
+    .fn()
+    .mockReturnValue((_fetch: any) => Promise.resolve(true)),
   constantPollingWithPromisePredicateFetch: jest
     .fn()
     .mockReturnValue((_fetch: any) => Promise.resolve(true)),

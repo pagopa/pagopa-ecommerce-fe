@@ -23,6 +23,8 @@ import { getConfigOrThrow } from "./config";
 // Returns a fetch wrapped with timeout and retry logic
 //
 const API_TIMEOUT = getConfigOrThrow().ECOMMERCE_API_TIMEOUT as Millisecond;
+const RETRY_NUMBERS_LINEAR = getConfigOrThrow()
+  .ECOMMERCE_API_RETRY_NUMBERS_LINEAR as number;
 
 //
 // Given predicate that return a boolean promise, fetch with transient error handling.
@@ -73,6 +75,41 @@ export const constantPollingWithPromisePredicateFetch = (
   // use a constant backoff
   const constantBackoff = () => delay as Millisecond;
   const retryLogic = withRetries<Error, Response>(retries, constantBackoff);
+
+  // use to define transient errors
+  const retryWithPromisePredicate = retryLogicOnPromisePredicate(
+    condition,
+    retryLogic
+  );
+
+  return retriableFetch(
+    retryWithPromisePredicate,
+    shouldAbort
+  )(timeoutFetch as any);
+};
+
+export const exponetialPollingWithPromisePredicateFetch = (
+  shouldAbort: Promise<boolean>,
+  retries: number,
+  delay: number,
+  timeout: Millisecond = API_TIMEOUT,
+  condition: (r: Response) => Promise<boolean>
+) => {
+  // fetch client that can be aborted for timeout
+  const abortableFetch = AbortableFetch((global as any).fetch);
+  const timeoutFetch = toFetch(setFetchTimeout(timeout, abortableFetch));
+
+  // use a exponetial backoff
+  /* eslint-disable functional/no-let */
+  const variableBackoff = (attempt: number): Millisecond => {
+    const totalAttempts = attempt + 1;
+    if (totalAttempts <= RETRY_NUMBERS_LINEAR) {
+      return delay as Millisecond;
+    }
+    const multiplier = totalAttempts - RETRY_NUMBERS_LINEAR + 1;
+    return (delay * multiplier) as Millisecond;
+  };
+  const retryLogic = withRetries<Error, Response>(retries, variableBackoff);
 
   // use to define transient errors
   const retryWithPromisePredicate = retryLogicOnPromisePredicate(

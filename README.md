@@ -90,3 +90,25 @@ The ecommerce transaction get transaction endpoint `/checkout/webview/v1/transac
 | Limit exceeded                           | 121                   | LIMIT EXCEEDED (121)        |
 
 
+| Variable name                    | Description                         | type   | default |
+|----------------------------------|-------------------------------------|--------|---------|
+|ECOMMERCE_API_RETRY_NUMBERS_LINEAR| number of calls at regular intervals| number | 5       |
+
+## Polling
+
+The function exponentialPollingWithPromisePredicateFetch uses the variableBackoff formula to calculate the polling intervals based on the attempt number:
+
+-  For attempts less than or equal to RETRY_NUMBERS_LINEAR, it returns a fixed delay.
+
+-  For attempts greater than that, the delay increases linearly according to the formula.
+
+- 
+```sh
+const variableBackoff = (attempt: number): Millisecond => {
+   if (attempt <= RETRY_NUMBERS_LINEAR) {
+      return delay as Millisecond;
+   }
+
+   return (delay * (attempt - RETRY_NUMBERS_LINEAR)) as Millisecond;
+};
+```
