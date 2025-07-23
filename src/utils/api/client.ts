@@ -27,7 +27,6 @@ export const decodeFinalStatusResult = async (
 ): Promise<boolean> => {
   pollingConfig.counter.increment();
   if (pollingConfig.counter.getValue() === pollingConfig.retries) {
-    pollingConfig.counter.reset();
     return false;
   }
   const { isFinalStatus } = (await r.clone().json()) as TransactionOutcomeInfo;
