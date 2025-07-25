@@ -25,10 +25,10 @@ export const pollingConfig = {
 export const decodeFinalStatusResult = async (
   r: Response
 ): Promise<boolean> => {
-  pollingConfig.counter.increment();
-  if (pollingConfig.counter.getValue() === pollingConfig.retries) {
+  if (pollingConfig.counter.getValue() === pollingConfig.retries - 1) {
     return false;
   }
+  pollingConfig.counter.increment();
   const { isFinalStatus } = (await r.clone().json()) as TransactionOutcomeInfo;
   return !(r.status === 200 && isFinalStatus);
 };
