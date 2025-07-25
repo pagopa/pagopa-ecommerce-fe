@@ -5,7 +5,10 @@ import { createClient as createIOClientV1 } from "../../../generated/definitions
 import { createClient as createCHECKOUTClient } from "../../../generated/definitions/payment-ecommerce-v1/client";
 import { createClient as createCHECKOUTClientV2 } from "../../../generated/definitions/payment-ecommerce-v2/client";
 import { getConfigOrThrow } from "../config/config";
-import { constantPollingWithPromisePredicateFetch } from "../config/fetch";
+import {
+  constantPollingWithPromisePredicateFetch,
+  exponetialPollingWithPromisePredicateFetch,
+} from "../config/fetch";
 import { TransactionOutcomeInfo } from "../../../generated/definitions/payment-ecommerce-webview-v1/TransactionOutcomeInfo";
 
 const config = getConfigOrThrow();
@@ -33,7 +36,7 @@ export const decodeFinalStatusResult = async (
 
 export const ecommerceIOClientWithPollingV1 = createIOClientV1({
   baseUrl: config.ECOMMERCE_API_HOST,
-  fetchApi: constantPollingWithPromisePredicateFetch(
+  fetchApi: exponetialPollingWithPromisePredicateFetch(
     DeferredPromise<boolean>().e1,
     pollingConfig.retries,
     pollingConfig.delay,
@@ -45,7 +48,7 @@ export const ecommerceIOClientWithPollingV1 = createIOClientV1({
 
 export const ecommerceCHECKOUTClientClientWithPolling = createCHECKOUTClient({
   baseUrl: config.ECOMMERCE_API_HOST,
-  fetchApi: constantPollingWithPromisePredicateFetch(
+  fetchApi: exponetialPollingWithPromisePredicateFetch(
     DeferredPromise<boolean>().e1,
     pollingConfig.retries,
     pollingConfig.delay,

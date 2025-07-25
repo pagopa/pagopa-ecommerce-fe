@@ -1,6 +1,6 @@
 {
   "name": "pagopa-ecommerce-fe",
-  "version": "0.7.2",
+  "version": "0.7.3",
   "scripts": {
     "type-check": "tsc",
     "generate": "npm-run-all generate:*",
@@ -60,7 +60,7 @@
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@types/express": "^4.17.9",
-    "@types/jest": "^25.2.1",
+    "@types/jest": "^29.5.14",
     "@types/node-fetch": "^2.5.7",
     "@types/puppeteer": "5.4.2",
     "@types/react": "^18.3.18",

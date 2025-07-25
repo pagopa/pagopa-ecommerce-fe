@@ -22,6 +22,7 @@ describe("config module", () => {
     ECOMMERCE_GET_TRANSACTION_POLLING_RETRIES: "5",
     ECOMMERCE_GET_TRANSACTION_POLLING_DELAY_MILLIS: "100",
     ECOMMERCE_SHOW_CONTINUE_IO_BTN_DELAY_MILLIS: "2000",
+    ECOMMERCE_API_RETRY_NUMBERS_LINEAR: "2",
   };
 
   beforeEach(() => {
@@ -41,6 +42,7 @@ describe("config module", () => {
       expect(result.right.ECOMMERCE_SHOW_CONTINUE_IO_BTN_DELAY_MILLIS).toBe(
         2000
       );
+      expect(result.right.ECOMMERCE_API_RETRY_NUMBERS_LINEAR).toBe(2);
     }
   });
 
