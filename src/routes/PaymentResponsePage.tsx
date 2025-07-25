@@ -3,7 +3,6 @@ import { pipe } from "fp-ts/function";
 import React, { useEffect } from "react";
 import { Box, Button, CircularProgress, Typography } from "@mui/material";
 import { t } from "i18next";
-import { onBrowserUnload } from "../utils/eventListeners";
 import {
   ecommerceIOGetTransactionOutcomeInfo,
   ecommerceCHECKOUTGetTransactionOutcomeInfo,
@@ -83,7 +82,6 @@ export default function PaymentResponsePage() {
   };
 
   useEffect(() => {
-    window.addEventListener("beforeunload", onBrowserUnload);
     const token =
       getSessionItem(SessionItems.sessionToken) ?? fragmentSessionToken;
     if (token && clientId && transactionId) {

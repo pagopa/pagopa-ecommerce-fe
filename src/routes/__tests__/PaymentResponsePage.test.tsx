@@ -23,6 +23,8 @@ jest.mock("react-router-dom", () => ({
   useNavigate: () => jest.fn(),
 }));
 
+jest.mock;
+
 const mockGetFragments = jest.fn();
 const mockRedirect = jest.fn();
 jest.mock("../../utils/urlUtilities", () => ({
