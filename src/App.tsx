@@ -44,7 +44,6 @@ export function App() {
   const { t } = useTranslation();
   // eslint-disable-next-line functional/immutable-data
   document.title = t("app.title");
-
   return (
     <ThemeProvider theme={checkoutTheme}>
       <CssBaseline />
