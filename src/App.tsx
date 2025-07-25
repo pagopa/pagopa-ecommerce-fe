@@ -8,7 +8,6 @@ import { EcommerceRoutes } from "./routes/models/routeModel";
 import PaymentResponsePage from "./routes/PaymentResponsePage";
 import GdiCheckPage from "./routes/GdiCheckPage";
 import "./translations/i18n";
-import { pollingConfig } from "./utils/api/client";
 
 const checkoutTheme = createTheme({
   ...theme,
@@ -45,7 +44,6 @@ export function App() {
   const { t } = useTranslation();
   // eslint-disable-next-line functional/immutable-data
   document.title = t("app.title");
-  pollingConfig.counter.reset();
   return (
     <ThemeProvider theme={checkoutTheme}>
       <CssBaseline />
