@@ -44,9 +44,21 @@ jest.mock("../../utils/api/transactions/getTransactionInfo", () => ({
   ecommerceCHECKOUTGetTransactionOutcomeInfo: mockCheckoutGet,
 }));
 
+const mockPollingConfig = jest.fn();
+mockPollingConfig.mockImplementation(() => {})
+jest.mock("../../utils/api/client", () => ({
+  pollingConfig: {
+    retries: 2,
+    delay: 1000,
+    timeout: 1000 as Millisecond,
+    counter: mockPollingConfig,
+  }
+}));
+
 import PaymentResponsePage from "../PaymentResponsePage";
 import { ViewOutcomeEnum } from "../../utils/api/transactions/types";
 import { AmountEuroCents } from "../../../generated/definitions/payment-ecommerce-v2/AmountEuroCents";
+import { Millisecond } from "@pagopa/ts-commons/lib/units";
 
 describe("PaymentResponsePage", () => {
   beforeEach(() => {
