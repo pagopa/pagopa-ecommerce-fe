@@ -59,7 +59,7 @@ import { Millisecond } from "@pagopa/ts-commons/lib/units";
 import PaymentResponsePage from "../PaymentResponsePage";
 import { ViewOutcomeEnum } from "../../utils/api/transactions/types";
 import { AmountEuroCents } from "../../../generated/definitions/payment-ecommerce-v2/AmountEuroCents";
-import { pollingConfig } from '../../utils/api/client';
+import { pollingConfig } from "../../utils/api/client";
 
 describe("PaymentResponsePage", () => {
   beforeEach(() => {
@@ -71,7 +71,6 @@ describe("PaymentResponsePage", () => {
       isZero: jest.fn(() => false),
       reset: jest.fn(),
     };
-    
   });
 
   it("redirects immediately to GENERIC_ERROR if no fragments", () => {

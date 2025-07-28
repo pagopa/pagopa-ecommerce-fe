@@ -34,10 +34,7 @@ jest.mock(
 
 import { decodeFinalStatusResult, pollingConfig } from "../client";
 
-
-
 describe("decodeFinalStatusResult", () => {
-
   afterEach(() => {
     pollingConfig.counter.reset();
   });
