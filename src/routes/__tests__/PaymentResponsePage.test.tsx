@@ -45,24 +45,33 @@ jest.mock("../../utils/api/transactions/getTransactionInfo", () => ({
 }));
 
 const mockPollingConfig = jest.fn();
-mockPollingConfig.mockImplementation(() => {})
+mockPollingConfig.mockImplementation(() => {});
 jest.mock("../../utils/api/client", () => ({
   pollingConfig: {
     retries: 2,
     delay: 1000,
     timeout: 1000 as Millisecond,
     counter: mockPollingConfig,
-  }
+  },
 }));
 
+import { Millisecond } from "@pagopa/ts-commons/lib/units";
 import PaymentResponsePage from "../PaymentResponsePage";
 import { ViewOutcomeEnum } from "../../utils/api/transactions/types";
 import { AmountEuroCents } from "../../../generated/definitions/payment-ecommerce-v2/AmountEuroCents";
-import { Millisecond } from "@pagopa/ts-commons/lib/units";
+import { pollingConfig } from '../../utils/api/client';
 
 describe("PaymentResponsePage", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    pollingConfig.counter = {
+      getValue: jest.fn(() => 0),
+      increment: jest.fn(),
+      decrement: jest.fn(),
+      isZero: jest.fn(() => false),
+      reset: jest.fn(),
+    };
+    
   });
 
   it("redirects immediately to GENERIC_ERROR if no fragments", () => {

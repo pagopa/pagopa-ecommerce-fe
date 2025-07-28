@@ -32,9 +32,15 @@ jest.mock(
   () => ({ createClient: jest.fn(() => ({ stub: "checkoutV2Client" })) })
 );
 
-import { decodeFinalStatusResult } from "../client";
+import { decodeFinalStatusResult, pollingConfig } from "../client";
+
+
 
 describe("decodeFinalStatusResult", () => {
+
+  afterEach(() => {
+    pollingConfig.counter.reset();
+  });
   const makeResp = (status: number, body: Record<string, unknown>): Response =>
     ({
       status,
