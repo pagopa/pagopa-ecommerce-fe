@@ -64,6 +64,7 @@ import { pollingConfig } from "../../utils/api/client";
 describe("PaymentResponsePage", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    // eslint-disable-next-line functional/immutable-data
     pollingConfig.counter = {
       getValue: jest.fn(() => 0),
       increment: jest.fn(),
