@@ -3,6 +3,7 @@ import { pipe } from "fp-ts/function";
 import React, { useEffect } from "react";
 import { Box, Button, CircularProgress, Typography } from "@mui/material";
 import { t } from "i18next";
+import { pollingConfig } from "../utils/api/client";
 import {
   ecommerceIOGetTransactionOutcomeInfo,
   ecommerceCHECKOUTGetTransactionOutcomeInfo,
@@ -82,9 +83,11 @@ export default function PaymentResponsePage() {
   };
 
   useEffect(() => {
+    const maxRetriesReached =
+      pollingConfig.counter.getValue() >= pollingConfig.retries - 1;
     const token =
       getSessionItem(SessionItems.sessionToken) ?? fragmentSessionToken;
-    if (token && clientId && transactionId) {
+    if (!maxRetriesReached && token && clientId && transactionId) {
       return getTransactionOutcome(token);
     }
     redirectWithError();
