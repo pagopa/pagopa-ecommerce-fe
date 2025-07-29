@@ -1,6 +1,6 @@
 {
   "name": "pagopa-ecommerce-fe",
-  "version": "0.7.3",
+  "version": "0.7.4",
   "scripts": {
     "type-check": "tsc",
     "generate": "npm-run-all generate:*",
