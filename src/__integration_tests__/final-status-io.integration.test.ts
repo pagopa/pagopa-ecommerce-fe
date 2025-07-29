@@ -34,22 +34,18 @@ describe("Check final status on IO mapping tests", () => {
     */
   jest.setTimeout(30000);
   jest.retryTimes(3);
-  page.setDefaultNavigationTimeout(10000);
-  page.setDefaultTimeout(10000);
-
-  beforeAll(async () => {
-    await page.goto(ECOMMERCE_FE_ESITO_PAGE);
-    await page.setViewport({ width: 1200, height: 907 });
-  })
-
 
   for (const [transactionId, expectedOutcome] of mockTransactionIdsWithExpectedResultMap) {
-    it(`TransactionId ${transactionId} with expected outcome: ${expectedOutcome}`, async() => {
+    it(`IO: TransactionId ${transactionId} with expected outcome: ${expectedOutcome}`, async() => {
+      const page = await browser.newPage();
+      page.setDefaultNavigationTimeout(10000);
+      page.setDefaultTimeout(10000);
       console.log(`Executing transactionId: [${transactionId}]. expected outcome: [${expectedOutcome}]`);
       await page.goto(ECOMMERCE_FE_ESITO_PAGE + transactionId);
       await page.waitForFunction("window.location.pathname.includes('ecommerce/io-outcomes/v1/transactions')")
       const pollingOutcome = Number.parseInt(page.url().split("outcome=")[1]);
       expect(pollingOutcome).toBe(Number.parseInt(expectedOutcome));
+      page.close();
     })
   }
 });

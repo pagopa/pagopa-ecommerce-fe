@@ -32,9 +32,12 @@ jest.mock(
   () => ({ createClient: jest.fn(() => ({ stub: "checkoutV2Client" })) })
 );
 
-import { decodeFinalStatusResult } from "../client";
+import { decodeFinalStatusResult, pollingConfig } from "../client";
 
 describe("decodeFinalStatusResult", () => {
+  afterEach(() => {
+    pollingConfig.counter.reset();
+  });
   const makeResp = (status: number, body: Record<string, unknown>): Response =>
     ({
       status,
@@ -47,31 +50,35 @@ describe("decodeFinalStatusResult", () => {
     } as any);
 
   it("returns false when counter reaches retries", async () => {
-    const r1 = makeResp(200, { status: "SOME", gatewayInfo: {}, nodeInfo: {} });
+    const r1 = makeResp(200, {
+      isFinalStatus: false,
+      outcome: 1,
+    });
     await decodeFinalStatusResult(r1);
-    const r2 = makeResp(200, { status: "SOME", gatewayInfo: {}, nodeInfo: {} });
+    const r2 = makeResp(200, {
+      isFinalStatus: false,
+      outcome: 1,
+    });
     expect(await decodeFinalStatusResult(r2)).toBe(false);
   });
 
   it("returns true for non-200 status immediately", async () => {
-    const r = makeResp(500, { status: "XYZ", gatewayInfo: {}, nodeInfo: {} });
+    const r = makeResp(500, {});
     expect(await decodeFinalStatusResult(r)).toBe(true);
   });
 
   it("returns false when 200 + interrupt", async () => {
     const r = makeResp(200, {
-      status: "NOTIFIED_OK",
-      gatewayInfo: {},
-      nodeInfo: {},
+      isFinalStatus: true,
+      outcome: 0,
     });
     expect(await decodeFinalStatusResult(r)).toBe(false);
   });
 
   it("returns true when 200 + no interrupt", async () => {
     const r = makeResp(200, {
-      status: "SOME_OTHER" as any,
-      gatewayInfo: {},
-      nodeInfo: {},
+      isFinalStatus: false,
+      outcome: 1,
     });
     expect(await decodeFinalStatusResult(r)).toBe(true);
   });
