@@ -64,6 +64,10 @@ export function App() {
               path={EcommerceRoutes.ESITO}
               element={<PaymentResponsePage />}
             />
+            <Route
+                path={EcommerceRoutes.ASD``}
+                element={<PaymentResponsePage />}
+            />
           </Route>
         </Routes>
       </BrowserRouter>
