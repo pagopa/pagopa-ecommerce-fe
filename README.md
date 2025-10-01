@@ -67,6 +67,9 @@ Test use cases:
   1. start script `yarn start-io-mock` on other terminal
   2. open on browser http://localhost:1234/ecommerce-fe/esito#clientId=IO&sessionToken=test&transactionId=1234
 
+- _SAVE CARD PAGE_
+   1. start the project through `yarn start-io-mock`
+   2. open on browser http://localhost:1234/ecommerce-fe/salvataggio-carta#clientId=IO&sessionToken=test&transactionId=1234
 ## IO Mock outcome result
 
 The ecommerce transaction get transaction endpoint `/checkout/webview/v1/transactions/:transactionId/outcomes` is driven by the following mockFlow values:
