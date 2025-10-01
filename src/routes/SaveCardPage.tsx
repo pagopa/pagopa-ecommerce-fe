@@ -6,9 +6,16 @@ import InformationModal, {
   InformationModalRef,
 } from "../components/InformationModal";
 import PageContainer from "../components/PageContainer";
+import { getFragments } from "../utils/urlUtilities";
+import { SessionItems, setSessionItem } from "../utils/storage/sessionStorage";
+import { ROUTE_FRAGMENT } from "./models/routeModel";
 export default function SaveCardPage() {
   const moreInfoModalRef = React.useRef<InformationModalRef>(null);
   const { t } = useTranslation();
+
+  const { sessionToken } = getFragments(ROUTE_FRAGMENT.SESSION_TOKEN);
+
+  setSessionItem(SessionItems.sessionToken, sessionToken);
 
   const handleSaveRedirect = function () {
     // #TODO
@@ -25,7 +32,7 @@ export default function SaveCardPage() {
         width: "100vw",
         height: "100vh",
         display: "flex",
-        pb: 20,
+        p: 4,
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",

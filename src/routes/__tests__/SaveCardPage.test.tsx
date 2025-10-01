@@ -25,6 +25,12 @@ jest.mock("../../components/InformationModal", () =>
   })
 );
 
+jest.mock("../../utils/config/config", () => ({
+  getConfigOrThrow: () => ({
+    ECOMMERCE_API_RETRY_NUMBERS_LINEAR: 5,
+  }),
+}));
+
 describe("SaveCardPage", () => {
   beforeEach(() => {
     jest.clearAllMocks();
