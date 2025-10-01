@@ -4,7 +4,6 @@ import "@testing-library/jest-dom";
 import PageContainer from "../PageContainer";
 
 describe("PageContainer", () => {
-
   it("renders a title when provided", () => {
     render(<PageContainer title="Test Title" />);
     expect(screen.getByText("Test Title")).toBeInTheDocument();

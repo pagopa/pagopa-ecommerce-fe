@@ -15,15 +15,15 @@ jest.mock("react-i18next", () => ({
 const mockOpenDialog = jest.fn();
 const mockCloseDialog = jest.fn();
 
-jest.mock("../../components/InformationModal", () => {
-  return React.forwardRef((props: { children: React.ReactNode }, ref: any) => {
+jest.mock("../../components/InformationModal", () =>
+  React.forwardRef((props: { children: React.ReactNode }, ref: any) => {
     React.useImperativeHandle(ref, () => ({
       openDialog: mockOpenDialog,
       closeDialog: mockCloseDialog,
     }));
     return <div data-testid="information-modal">{props.children}</div>;
-  });
-});
+  })
+);
 
 describe("SaveCardPage", () => {
   beforeEach(() => {
@@ -54,7 +54,9 @@ describe("SaveCardPage", () => {
   });
 
   it("renders modal content correctly", () => {
-    expect(screen.getByTestId("modalTitle")).toHaveTextContent("saveCardPage.moreInfo");
+    expect(screen.getByTestId("modalTitle")).toHaveTextContent(
+      "saveCardPage.moreInfo"
+    );
     expect(screen.getByText(/Default text/)).toBeInTheDocument();
   });
 
@@ -68,5 +70,5 @@ describe("SaveCardPage", () => {
     fireEvent.click(noSaveButton);
 
     expect(true).toBe(true);
-  });*/
+  }); */
 });
