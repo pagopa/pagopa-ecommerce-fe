@@ -43,65 +43,45 @@ const initialFieldsState: FormStatus = Object.values(
 export default function IframeCardForm(props: Props) {
   const { onCancel, hideCancel } = props;
   const [loading, setLoading] = React.useState(false);
-  const [buildInstance, setBuildInstance] = React.useState();
   const [form, setForm] = React.useState<CreateSessionResponse>();
   const [activeField, setActiveField] = React.useState<FieldId | undefined>(
-    undefined
+      undefined
   );
   const [formStatus, setFormStatus] =
     React.useState<FormStatus>(initialFieldsState);
   const ref = React.useRef<ReCAPTCHA>(null);
+  const [isAllFieldsLoaded, setIsAllFieldsLoaded] = React.useState(false);
+
+  const buildRef = React.useRef<any>(null);
 
   const formIsValid = (fieldFormStatus: FormStatus) =>
     Object.values(fieldFormStatus).every((el) => el.isValid);
 
-  const [isAllFieldsLoaded, setIsAllFieldsLoaded] = React.useState(false);
-
   const { ECOMMERCE_IO_CARD_DATA_CLIENT_REDIRECT_OUTCOME_PATH } =
     getConfigOrThrow();
 
-  const onError = () => {
+  const onError = React.useCallback(() => {
     // eslint-disable-next-line no-console
     console.log("executing on error ");
     setLoading(false);
-    ref.current?.reset();
+    ref.current?.reset?.();
     // TODO check outcome path
     window.location.replace(
       `${ECOMMERCE_IO_CARD_DATA_CLIENT_REDIRECT_OUTCOME_PATH}/outcomes?outcome=1`
     );
-  };
+  },[ECOMMERCE_IO_CARD_DATA_CLIENT_REDIRECT_OUTCOME_PATH]);
 
-  const onSuccess = (orderId: string, correlationId: string) => {
-    console.log("executing on success");
+  const onSuccess = React.useCallback((orderId: string, correlationId: string) => {
     // TODO check outcome path
     window.location.replace(
       `${ECOMMERCE_IO_CARD_DATA_CLIENT_REDIRECT_OUTCOME_PATH}/outcomes?outcome=0&orderId=${orderId}&correlationId=${correlationId}`
     );
-  };
+  },[ECOMMERCE_IO_CARD_DATA_CLIENT_REDIRECT_OUTCOME_PATH]);
 
-  const onChange = (id: FieldId, status: FieldStatus) => {
-    console.log(
-      `executing on change on field with id: [${id}] and status: [${status}]`
-    );
-    if (Object.keys(IdFields).includes(id)) {
-      setActiveField(id);
-      setFormStatus((fields) => ({
-        ...fields,
-        [id]: status,
-      }));
-    }
-  };
-  const onReadyForPayment = () => {
-    // nothing to do here
-  };
-
-  const onPaymentComplete = () => {
-    alert("onPaymentComplete")
+ const onReadyForPayment = React.useCallback(() => {
     clearNavigationEvents();
     const orderId = getSessionItem(SessionItems.orderId);
     const correlationId = getSessionItem(SessionItems.correlationId);
-    console.log("orderId", orderId);
-    console.log("correlationId. ", correlationId);
     if (orderId && correlationId) {
       onSuccess(orderId, correlationId);
     } else {
@@ -109,69 +89,89 @@ export default function IframeCardForm(props: Props) {
       console.log(`Order id or correlation id null not valid`);
       onError();
     }
-  };
+  },[onError, onSuccess]);
 
-  const onBuildError = () => {
-    onError();
-  };
-
-  const onAllFieldsLoaded = () => {
-    setLoading(false);
-    setIsAllFieldsLoaded(true);
-  };
-
-  const onPaymentRedirect = (_: string) => {
-    // ignored, we will not receive redirected to external domain event
+  const onPaymentRedirect = React.useCallback((_: string) => {
     // eslint-disable-next-line no-console
     console.log(
-      "Unexpected NPG onPaymentRedirect (REDIRECT_TO_EXTERNAL_DOMAIN) callback received!"
+        "Unexpected NPG onPaymentRedirect (REDIRECT_TO_EXTERNAL_DOMAIN) callback received!"
     );
     onError();
-  };
-  const { buildSdk, sdkReady } = useNpgSdk({
+  },[onError]);
+
+
+  const onBuildError = React.useCallback(() => {
+    console.log("onBuildError");
+    onError();
+  }, [onError]);
+
+  const onChange = React.useCallback((id: FieldId, status: FieldStatus) => {
+    if (Object.keys(IdFields).includes(id)) {
+      setActiveField(id);
+      setFormStatus((fields) => ({
+        ...fields,
+        [id]: status,
+      }));
+    }
+  },[]);
+
+  const onAllFieldsLoaded = React.useCallback(() => {
+    setLoading(false);
+    setIsAllFieldsLoaded(true);
+  },[]);
+
+  const { sdkReady, buildSdk } = useNpgSdk({
     onChange,
     onReadyForPayment,
-    onPaymentComplete,
     onPaymentRedirect,
     onBuildError,
     onAllFieldsLoaded,
   });
 
-  const onResponse = (body: CreateSessionResponse) => {
-    console.log(
-      "Executing on response..., received response: ",
-      JSON.stringify(body)
-    );
-    setSessionItem(SessionItems.orderId, body.orderId);
-    setSessionItem(SessionItems.correlationId, body.correlationId);
-    setForm(body);
-  };
-
-  React.useEffect(() => {
-    if (sdkReady) {
-      const sdk = buildSdk();
-      if (sdk) {
-        setBuildInstance(sdk);
-      }
+ React.useEffect(() => {
+    let mounted = true;
+    if (!form) {
+      setLoading(true);
+      (async () => {
+        const res = await npgSessionsFields();
+        if (!mounted) return;
+        pipe(
+          res,
+          O.match(onError, (npgSessionFields: CreateSessionResponse) => {
+            setSessionItem(SessionItems.orderId, npgSessionFields.orderId);
+            setSessionItem(SessionItems.correlationId, npgSessionFields.correlationId);
+            setForm(npgSessionFields);
+          })
+        );
+      })();
     }
-    void (async () => {
-      pipe(
-        await npgSessionsFields(),
-        O.match(onError, (npgSessionFields: CreateSessionResponse) => {
-          onResponse(npgSessionFields);
-        })
-      );
-    })();
-  }, [sdkReady]);
+    return () => {
+      mounted = false;
+    };
+  }, [onError]);
+
+ React.useEffect(() => {
+    if (!sdkReady) return;
+    if (!form) return;
+    if (buildRef.current) return;
+    try {
+      const instance = buildSdk();
+      buildRef.current = instance;
+    } catch (e) {
+      onBuildError();
+    }
+  }, [sdkReady, form, buildSdk, onBuildError]);
 
   const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
     try {
-      e.preventDefault();
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      buildInstance.confirmData(() => setLoading(true));
-    } catch (e) {
-      onError();
+      if (buildRef.current?.confirmData) {
+        buildRef.current.confirmData(() => setLoading(true));
+      } else {
+        onBuildError();
+      }
+    } catch (_e) {
+      onBuildError();
     }
   };
 

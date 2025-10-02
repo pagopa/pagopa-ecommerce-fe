@@ -9,5 +9,56 @@
     "justFewMoments": "Just a few more moments...",
     "completeOperationMsg": "If the device asks to you, give permission to complete the operation.",
     "continueToIO": "Continue on IO app"
+  },
+  "iframeCardPage": {
+    "helpLink": "Where do I find the CVV?",
+    "modalTitle": "Where do I find the CVV?",
+    "modalBodyText": "The CVV code (or CVC) has 3 digits and is located on the back of your card.<br>On American Express cards, the code (CID) has 4 digits and is located on the front.",
+    "buttonClose": "Close"
+  },
+  "inputCardPage": {
+    "formErrors": {
+      "cid": "Enter 4 digits",
+      "cvv": "Enter 3 digits",
+      "expirationDate": "Enter mm/yy",
+      "name": "Enter name as shown on the card",
+      "number": "Enter a valid number",
+      "required": "Required"
+    },
+    "formFields": {
+      "cid": "CID (4 digits)",
+      "cvv": "CVV",
+      "expirationDate": "Expiration date",
+      "name": "Card holder",
+      "number": "Card number",
+      "required": "Required"
+    },
+    "helpLink": "Where can I find the security code?",
+    "modal": {
+      "description": "It is a three-digit code, called CVV or CVS, which you can find on the back of your card.",
+      "descriptionAE": "On American Express cards, the code (CID) has four digits and is located on the front.",
+      "title": "Security code"
+    },
+    "title": "Enter card information"
+  },
+  "paymentNoticePage": {
+    "description": "Enter the data as show on the payment notice.",
+    "exampleModalAltText": "pagoPA payment notice, with the hightlighted section showing the notice code and the tax code of the creditor entity.",
+    "exampleModalTitle": "Example of a pagoPA notice",
+    "formButtons": {
+      "cancel": "Back",
+      "submit": "Continue"
+    },
+    "formErrors": {
+      "minCf": "Enter 11 numbers",
+      "minCode": "Enter 18 numbers",
+      "required": "Required field"
+    },
+    "formFields": {
+      "billCode": "Notice code",
+      "cf": "Payee tax code"
+    },
+    "helpLink": "View an example",
+    "title": "What do you have to pay?"
   }
 }
