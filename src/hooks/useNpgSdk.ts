@@ -28,7 +28,7 @@ export const useNpgSdk = ({
 
   const createBuild = () => {
     try {
-      new Build(
+      return new Build(
         createBuildConfig({
           onChange,
           onReadyForPayment,

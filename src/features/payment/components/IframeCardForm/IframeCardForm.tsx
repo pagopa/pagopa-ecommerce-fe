@@ -43,6 +43,7 @@ const initialFieldsState: FormStatus = Object.values(
 export default function IframeCardForm(props: Props) {
   const { onCancel, hideCancel } = props;
   const [loading, setLoading] = React.useState(false);
+  const [buildInstance, setBuildInstance] = React.useState();
   const [form, setForm] = React.useState<CreateSessionResponse>();
   const [activeField, setActiveField] = React.useState<FieldId | undefined>(
     undefined
@@ -95,6 +96,7 @@ export default function IframeCardForm(props: Props) {
   };
 
   const onPaymentComplete = () => {
+    alert("onPaymentComplete")
     clearNavigationEvents();
     const orderId = getSessionItem(SessionItems.orderId);
     const correlationId = getSessionItem(SessionItems.correlationId);
@@ -147,7 +149,10 @@ export default function IframeCardForm(props: Props) {
 
   React.useEffect(() => {
     if (sdkReady) {
-      buildSdk();
+      const sdk = buildSdk();
+      if (sdk) {
+        setBuildInstance(sdk);
+      }
     }
     void (async () => {
       pipe(

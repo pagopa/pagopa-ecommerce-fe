@@ -4,7 +4,7 @@ export enum EcommerceRoutes {
   ROOT = "ecommerce-fe",
   GDI_CHECK = "gdi-check",
   ESITO = "esito",
-  NOT_ONBOARDED_CARD_PAYMENT = "pagamento-carta-guest",
+  NOT_ONBOARDED_CARD_PAYMENT = "inserimento-carta-no-onboarding",
 }
 
 export enum ROUTE_FRAGMENT {
