@@ -4,6 +4,7 @@ import { theme } from "@pagopa/mui-italia";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import IFrameCardPage from "./routes/IframeCardPage";
 import { EcommerceRoutes } from "./routes/models/routeModel";
 import PaymentResponsePage from "./routes/PaymentResponsePage";
 import GdiCheckPage from "./routes/GdiCheckPage";
@@ -65,8 +66,8 @@ export function App() {
               element={<PaymentResponsePage />}
             />
             <Route
-              path={EcommerceRoutes.PAYMENT_WIDOUTH_ONBOARDING}
-              element={<PaymentResponsePage />}
+              path={EcommerceRoutes.NOT_ONBOARDED_CARD_PAYMENT}
+              element={<IFrameCardPage />}
             />
           </Route>
         </Routes>

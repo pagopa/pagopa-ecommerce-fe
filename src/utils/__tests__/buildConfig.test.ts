@@ -20,6 +20,8 @@ describe("NPG handler factory", () => {
   // eslint-disable-next-line functional/no-let
   let onBuildError: jest.Mock;
   // eslint-disable-next-line functional/no-let
+  let onAllFieldsLoaded: jest.Mock;
+  // eslint-disable-next-line functional/no-let
   let handlers: ReturnType<typeof npgHandlerFactory>;
 
   beforeEach(() => {
@@ -28,6 +30,7 @@ describe("NPG handler factory", () => {
     onPaymentComplete = jest.fn();
     onPaymentRedirect = jest.fn();
     onBuildError = jest.fn();
+    onAllFieldsLoaded = jest.fn();
 
     handlers = npgHandlerFactory({
       onChange,
@@ -35,6 +38,7 @@ describe("NPG handler factory", () => {
       onPaymentComplete,
       onPaymentRedirect,
       onBuildError,
+      onAllFieldsLoaded,
     });
   });
 

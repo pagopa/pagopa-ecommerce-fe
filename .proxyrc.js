@@ -10,7 +10,7 @@
 const {createProxyMiddleware} = require("http-proxy-middleware");
 
 const apiHost = "http://127.0.0.1:8080";
-const apiHostIO = "http://127.0.0.1:8082";
+const apiHostIO = "http://127.0.0.1:8080";
 const ecommerceBasepathV1 = "/ecommerce/checkout/v1";
 const ecommerceBasepathV2 = "/ecommerce/checkout/v2";
 const ecommerceIOBasepathV1 = "/ecommerce/webview/v1";

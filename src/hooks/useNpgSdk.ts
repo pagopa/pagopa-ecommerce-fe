@@ -9,6 +9,7 @@ export type SdkBuild = {
   onPaymentComplete?: () => void;
   onPaymentRedirect?: (urlRedirect: string) => void;
   onBuildError: () => void;
+  onAllFieldsLoaded?: () => void;
 };
 
 const noop = () => {
@@ -21,6 +22,7 @@ export const useNpgSdk = ({
   onPaymentComplete = () => null,
   onPaymentRedirect = () => null,
   onBuildError,
+  onAllFieldsLoaded = () => null,
 }: SdkBuild) => {
   const [sdkReady, setSdkReady] = useState(false);
 
@@ -33,6 +35,7 @@ export const useNpgSdk = ({
           onPaymentRedirect,
           onPaymentComplete,
           onBuildError,
+          onAllFieldsLoaded,
         })
       );
     } catch (_e) {

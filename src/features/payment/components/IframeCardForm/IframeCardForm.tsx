@@ -1,35 +1,20 @@
 import { Box } from "@mui/material";
 import * as O from "fp-ts/Option";
-import * as B from "fp-ts/boolean";
 import { pipe } from "fp-ts/function";
 import React from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
-import { Typography, Button } from "@mui/material";
-import InformationModal from "components/modals/InformationModal";
+import { getConfigOrThrow } from "../../../../utils/config/config";
+import { npgSessionsFields } from "../../../../utils/api/methods/paymentMethodHelper";
 import {
-  getReCaptchaKey,
+  getSessionItem,
   SessionItems,
   setSessionItem,
 } from "../../../../utils/storage/sessionStorage";
-import { CreateSessionResponse } from "../../../../../generated/definitions/payment-ecommerce-v1/CreateSessionResponse";
-import { CheckoutRoutes } from "../../../../routes/models/routeModel";
-import { useAppDispatch } from "../../../../redux/hooks/hooks";
-import { ErrorsType } from "../../../../utils/errors/checkErrorsModel";
-import { setThreshold } from "../../../../redux/slices/threshold";
-import {
-  getFees,
-  npgSessionsFields,
-  retrieveCardData,
-} from "../../../../utils/api/helpers/ecommercePaymentMethodsHelper";
-import { SessionPaymentMethodResponse } from "../../../../../generated/definitions/payment-ecommerce-v1/SessionPaymentMethodResponse";
-import { recaptchaTransaction } from "../../../../utils/api/helpers/ecommerceTransactionsHelper";
-import { onErrorActivate } from "../../../../utils/api/transactionsErrorHelper";
+import { CreateSessionResponse } from "../../../../../generated/definitions/payment-ecommerce-webview-v1/CreateSessionResponse";
 import { clearNavigationEvents } from "../../../../utils/eventListeners";
-import createBuildConfig from "../../../../utils/buildConfig";
 import { FormButtons } from "../../../../components/FormButtons/FormButtons";
-import ErrorModal from "../../../../components/modals/ErrorModal";
+import { useNpgSdk } from "../../../../hooks/useNpgSdk";
 import type { FieldId, FieldStatus, FormStatus } from "./types";
 import { IdFields } from "./types";
 import { IframeCardField } from "./IframeCardField";
@@ -57,10 +42,7 @@ const initialFieldsState: FormStatus = Object.values(
 // eslint-disable-next-line sonarjs/cognitive-complexity
 export default function IframeCardForm(props: Props) {
   const { onCancel, hideCancel } = props;
-  const [errorModalOpen, setErrorModalOpen] = React.useState(false);
-  const [pspNotFoundModal, setPspNotFoundModalOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
-  const [error, setError] = React.useState("");
   const [form, setForm] = React.useState<CreateSessionResponse>();
   const [activeField, setActiveField] = React.useState<FieldId | undefined>(
     undefined
@@ -68,76 +50,38 @@ export default function IframeCardForm(props: Props) {
   const [formStatus, setFormStatus] =
     React.useState<FormStatus>(initialFieldsState);
   const ref = React.useRef<ReCAPTCHA>(null);
-  const dispatch = useAppDispatch();
-
-  const [buildInstance, setBuildInstance] = React.useState();
 
   const formIsValid = (fieldFormStatus: FormStatus) =>
     Object.values(fieldFormStatus).every((el) => el.isValid);
 
   const [isAllFieldsLoaded, setIsAllFieldsLoaded] = React.useState(false);
 
-  const onError = (m: string) => {
-    setLoading(false);
-    setError(m);
-    setErrorModalOpen(true);
-    ref.current?.reset();
-  };
+  const { ECOMMERCE_IO_CARD_DATA_CLIENT_REDIRECT_OUTCOME_PATH } =
+    getConfigOrThrow();
 
-  const onNpgSessionsError = (m: string) => {
-    pipe(
-      m !== ErrorsType.UNAUTHORIZED,
-      B.fold(
-        () => {
-          setSessionItem(
-            SessionItems.loginOriginPage,
-            `${location.pathname}${location.search}`
-          );
-          navigate(`/${CheckoutRoutes.AUTH_EXPIRED}`);
-        },
-        () => onError(m)
-      )
+  const onError = () => {
+    // eslint-disable-next-line no-console
+    console.log("executing on error ");
+    setLoading(false);
+    ref.current?.reset();
+    // TODO check outcome path
+    window.location.replace(
+      `${ECOMMERCE_IO_CARD_DATA_CLIENT_REDIRECT_OUTCOME_PATH}/outcomes?outcome=1`
     );
   };
 
-  const navigate = useNavigate();
-
-  const onSuccess = (belowThreshold: boolean) => {
-    dispatch(setThreshold({ belowThreshold }));
-
-    if (localStorage.getItem(SessionItems.enablePspPage) === "true") {
-      navigate(`/${CheckoutRoutes.LISTA_PSP}`);
-    } else {
-      navigate(`/${CheckoutRoutes.RIEPILOGO_PAGAMENTO}`);
-    }
+  const onSuccess = (orderId: string, correlationId: string) => {
+    console.log("executing on success");
+    // TODO check outcome path
+    window.location.replace(
+      `${ECOMMERCE_IO_CARD_DATA_CLIENT_REDIRECT_OUTCOME_PATH}/outcomes?outcome=0&orderId=${orderId}&correlationId=${correlationId}`
+    );
   };
-
-  const onPspNotFound = () => {
-    setLoading(false);
-    setPspNotFoundModalOpen(true);
-    ref.current?.reset();
-  };
-
-  const retrievePaymentSession = (paymentMethodId: string, orderId: string) =>
-    retrieveCardData({
-      paymentId: paymentMethodId,
-      orderId,
-      onError,
-      onResponseSessionPaymentMethod: (resp) => {
-        pipe(
-          resp,
-          SessionPaymentMethodResponse.decode,
-          O.fromEither,
-          O.chain((resp) => O.fromNullable(resp.bin)),
-          O.fold(
-            () => onError(ErrorsType.GENERIC_ERROR),
-            () => getFees(onSuccess, onPspNotFound, onError, resp.bin)
-          )
-        );
-      },
-    });
 
   const onChange = (id: FieldId, status: FieldStatus) => {
+    console.log(
+      `executing on change on field with id: [${id}] and status: [${status}]`
+    );
     if (Object.keys(IdFields).includes(id)) {
       setActiveField(id);
       setFormStatus((fields) => ({
@@ -146,71 +90,74 @@ export default function IframeCardForm(props: Props) {
       }));
     }
   };
+  const onReadyForPayment = () => {
+    // nothing to do here
+  };
+
+  const onPaymentComplete = () => {
+    clearNavigationEvents();
+    const orderId = getSessionItem(SessionItems.orderId);
+    const correlationId = getSessionItem(SessionItems.correlationId);
+    console.log("orderId", orderId);
+    console.log("correlationId. ", correlationId);
+    if (orderId && correlationId) {
+      onSuccess(orderId, correlationId);
+    } else {
+      // eslint-disable-next-line no-console
+      console.log(`Order id or correlation id null not valid`);
+      onError();
+    }
+  };
+
+  const onBuildError = () => {
+    onError();
+  };
+
+  const onAllFieldsLoaded = () => {
+    setLoading(false);
+    setIsAllFieldsLoaded(true);
+  };
+
+  const onPaymentRedirect = (_: string) => {
+    // ignored, we will not receive redirected to external domain event
+    // eslint-disable-next-line no-console
+    console.log(
+      "Unexpected NPG onPaymentRedirect (REDIRECT_TO_EXTERNAL_DOMAIN) callback received!"
+    );
+    onError();
+  };
+  const { buildSdk, sdkReady } = useNpgSdk({
+    onChange,
+    onReadyForPayment,
+    onPaymentComplete,
+    onPaymentRedirect,
+    onBuildError,
+    onAllFieldsLoaded,
+  });
+
+  const onResponse = (body: CreateSessionResponse) => {
+    console.log(
+      "Executing on response..., received response: ",
+      JSON.stringify(body)
+    );
+    setSessionItem(SessionItems.orderId, body.orderId);
+    setSessionItem(SessionItems.correlationId, body.correlationId);
+    setForm(body);
+  };
 
   React.useEffect(() => {
-    if (!form) {
-      const onResponse = (body: CreateSessionResponse) => {
-        setSessionItem(SessionItems.orderId, body.orderId);
-        setSessionItem(SessionItems.correlationId, body.correlationId);
-        setForm(body);
-        const onReadyForPayment = () => {
-          if (ref.current) {
-            void recaptchaTransaction({
-              recaptchaRef: ref.current,
-              onSuccess: retrievePaymentSession,
-              onError: (faultCodeCategory, faultCodeDetail) =>
-                onErrorActivate(
-                  faultCodeCategory,
-                  faultCodeDetail,
-                  onError,
-                  navigate
-                ),
-            });
-          }
-        };
-
-        const onPaymentComplete = () => {
-          clearNavigationEvents();
-          navigate(`/${CheckoutRoutes.ESITO}`, { replace: true });
-        };
-
-        const onPaymentRedirect = (urlredirect: string) => {
-          clearNavigationEvents();
-          window.location.replace(urlredirect);
-        };
-
-        const onBuildError = () => {
-          setLoading(false);
-          navigate(`/${CheckoutRoutes.ERRORE}`, { replace: true });
-        };
-
-        const onAllFieldsLoaded = () => {
-          setLoading(false);
-          setIsAllFieldsLoaded(true);
-        };
-
-        try {
-          const newBuild = new Build(
-            createBuildConfig({
-              onChange,
-              onReadyForPayment,
-              onPaymentComplete,
-              onPaymentRedirect,
-              onBuildError,
-              onAllFieldsLoaded,
-            })
-          );
-          setBuildInstance(newBuild);
-        } catch {
-          onBuildError();
-        }
-      };
-
-      void (async () => {
-        void npgSessionsFields(onNpgSessionsError, onResponse);
-      })();
+    if (sdkReady) {
+      buildSdk();
     }
-  }, [form?.orderId]);
+    void (async () => {
+      pipe(
+        await npgSessionsFields(),
+        O.match(onError, (npgSessionFields: CreateSessionResponse) => {
+          onResponse(npgSessionFields);
+        })
+      );
+    })();
+  }, [sdkReady]);
 
   const handleSubmit = (e: React.FormEvent) => {
     try {
@@ -219,7 +166,7 @@ export default function IframeCardForm(props: Props) {
       // @ts-ignore
       buildInstance.confirmData(() => setLoading(true));
     } catch (e) {
-      onError(ErrorsType.GENERIC_ERROR);
+      onError();
     }
   };
 
@@ -297,66 +244,6 @@ export default function IframeCardForm(props: Props) {
           hideCancel={hideCancel}
         />
       </form>
-      <Box display="none">
-        <ReCAPTCHA
-          ref={ref}
-          size="invisible"
-          sitekey={getReCaptchaKey() as string}
-        />
-      </Box>
-      {!!errorModalOpen && (
-        <ErrorModal
-          error={error}
-          open={errorModalOpen}
-          onClose={() => {
-            setErrorModalOpen(false);
-            navigate(`/${CheckoutRoutes.ERRORE}`, { replace: true });
-          }}
-          titleId="iframeCardFormErrorTitleId"
-          errorId="iframeCardFormErrorId"
-          bodyId="iframeCardFormErrorBodyId"
-        />
-      )}
-      {!!pspNotFoundModal && (
-        <InformationModal
-          open={pspNotFoundModal}
-          onClose={() => {
-            setPspNotFoundModalOpen(false);
-            navigate(`/${CheckoutRoutes.SCEGLI_METODO}`, { replace: true });
-          }}
-          maxWidth="sm"
-          hideIcon={true}
-        >
-          <Typography
-            variant="h6"
-            component={"div"}
-            sx={{ pb: 2 }}
-            id="pspNotFoundTitleId"
-          >
-            {t("pspUnavailable.title")}
-          </Typography>
-          <Typography
-            variant="body1"
-            component={"div"}
-            sx={{ whiteSpace: "pre-line" }}
-            id="pspNotFoundBodyId"
-          >
-            {t("pspUnavailable.body")}
-          </Typography>
-          <Box display="flex" justifyContent="flex-end" sx={{ mt: 3 }}>
-            <Button
-              variant="contained"
-              onClick={() => {
-                setPspNotFoundModalOpen(false);
-                navigate(`/${CheckoutRoutes.SCEGLI_METODO}`, { replace: true });
-              }}
-              id="pspNotFoundCtaId"
-            >
-              {t("pspUnavailable.cta.primary")}
-            </Button>
-          </Box>
-        </InformationModal>
-      )}
     </>
   );
 }

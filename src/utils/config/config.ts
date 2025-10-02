@@ -27,6 +27,7 @@ export const IConfig = t.interface({
   ECOMMERCE_GET_TRANSACTION_POLLING_DELAY_MILLIS: t.number,
   ECOMMERCE_SHOW_CONTINUE_IO_BTN_DELAY_MILLIS: t.number,
   ECOMMERCE_API_RETRY_NUMBERS_LINEAR: t.number,
+  ECOMMERCE_IO_CARD_DATA_CLIENT_REDIRECT_OUTCOME_PATH: NonEmptyString,
 });
 
 // No need to re-evaluate this object for each call

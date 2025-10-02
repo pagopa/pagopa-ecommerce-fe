@@ -1,62 +1,12 @@
-import { JwtUser } from "@pagopa/mui-italia";
-import * as O from "fp-ts/Option";
-import { pipe } from "fp-ts/function";
-import { NewTransactionResponse } from "../../../generated/definitions/payment-ecommerce-webview-v1/NewTransactionResponse";
-import {
-  Cart,
-  PaymentEmailFormFields,
-  PaymentFormFields,
-  PaymentId,
-  PaymentInfo,
-  PaymentMethod,
-  PaymentMethodInfo,
-} from "../../features/payment/models/paymentModel";
-import { Bundle } from "../../../generated/definitions/payment-ecommerce-v1/Bundle";
-import { SessionPaymentMethodResponse } from "../../../generated/definitions/payment-ecommerce-v1/SessionPaymentMethodResponse";
-import { getConfigOrThrow } from "../config/config";
-
 export enum SessionItems {
   sessionToken = "sessionToken",
   outcomeInfo = "outcomeInfo",
   counterPolling = "counterPolling",
-
-  paymentInfo = "paymentInfo",
-  activeTheme = "activeTheme",
-  noticeInfo = "rptId",
-  useremail = "useremail",
-  enableAuthentication = "enableAuthentication",
-  enablePspPage = "enablePspPage",
-  paymentMethod = "paymentMethod",
-  pspSelected = "pspSelected",
-  cart = "cart",
-  transaction = "transaction",
-  sessionPaymentMethod = "sessionPayment",
-  paymentMethodInfo = "paymentMethodInfo",
   orderId = "orderId",
   correlationId = "correlationId",
-  cartClientId = "cartClientId",
-  loginOriginPage = "loginOriginPage",
-  authToken = "authToken",
-  noticeCodeDataEntry = "noticeCodeDataEntry",
-  enableScheduledMaintenanceBanner = "enableScheduledMaintenanceBanner",
-  enablePaymentMethodsHandler = "enablePaymentMethodsHandler",
-  mixpanelInitialized = "mixpanelInitialized",
+  paymentMethodId = "paymentMethodId",
+  clientId = "clientId",
 }
-const isParsable = (item: SessionItems) =>
-  !(
-    item === SessionItems.sessionToken ||
-    item === SessionItems.useremail ||
-    item === SessionItems.orderId ||
-    item === SessionItems.correlationId ||
-    item === SessionItems.cartClientId ||
-    item === SessionItems.enableAuthentication ||
-    item === SessionItems.loginOriginPage ||
-    item === SessionItems.authToken ||
-    item === SessionItems.noticeCodeDataEntry ||
-    item === SessionItems.enableScheduledMaintenanceBanner ||
-    item === SessionItems.enablePaymentMethodsHandler ||
-    item === SessionItems.mixpanelInitialized
-  );
 
 export const getSessionItem = (item: SessionItems) => {
   try {
@@ -66,118 +16,19 @@ export const getSessionItem = (item: SessionItems) => {
       return undefined;
     }
 
-    return isParsable(item)
-      ? (JSON.parse(serializedState) as
-          | PaymentId
-          | PaymentEmailFormFields
-          | PaymentFormFields
-          | PaymentInfo
-          | NewTransactionResponse
-          | Cart
-          | Bundle
-          | SessionPaymentMethodResponse
-          | PaymentMethodInfo
-          | JwtUser)
-      : serializedState;
+    return serializedState;
   } catch (e) {
     return undefined;
   }
 };
 
-export const getAndClearSessionItem = (item: SessionItems) =>
-  pipe(
-    getSessionItem(item),
-    O.fromNullable,
-    O.fold(
-      () => undefined,
-      (value) => {
-        clearSessionItem(item);
-        return value;
-      }
-    )
-  );
-
-export function setSessionItem(
-  name: SessionItems,
-  item:
-    | string
-    | PaymentInfo
-    | PaymentFormFields
-    | PaymentEmailFormFields
-    | PaymentMethod
-    | PaymentId
-    | NewTransactionResponse
-    | Cart
-    | Bundle
-    | SessionPaymentMethodResponse
-    | PaymentMethodInfo
-    | JwtUser
-) {
+export function setSessionItem(name: SessionItems, item: string) {
   sessionStorage.setItem(
     name,
     typeof item === "string" ? item : JSON.stringify(item)
   );
 }
 
-export function clearSessionItem(name: SessionItems) {
-  sessionStorage.removeItem(name);
-}
-
-export const isStateEmpty = (item: SessionItems) => !getSessionItem(item);
-
 export const clearStorage = () => {
   sessionStorage.clear();
 };
-
-const KEYS_TO_PRESERVE = [
-  SessionItems.authToken,
-  SessionItems.enableAuthentication,
-  SessionItems.enableScheduledMaintenanceBanner,
-  SessionItems.mixpanelInitialized,
-  SessionItems.enablePaymentMethodsHandler,
-] as const;
-
-export const clearStorageAndMaintainAuthData = () => {
-  const snapshot = Object.fromEntries(
-    KEYS_TO_PRESERVE.map((k) => [k, sessionStorage.getItem(k)])
-  ) as Record<typeof KEYS_TO_PRESERVE[number], string | null>;
-
-  sessionStorage.clear();
-
-  for (const [k, v] of Object.entries(snapshot)) {
-    if (v !== null) {
-      sessionStorage.setItem(k, v);
-    }
-  }
-};
-
-export const getRptIdsFromSession = () =>
-  pipe(
-    // use cart if present
-    getSessionItem(SessionItems.cart) as Cart,
-    O.fromNullable,
-    O.fold(
-      // use rptId value if cart not present
-      () =>
-        pipe(
-          getSessionItem(SessionItems.noticeInfo) as PaymentFormFields,
-          O.fromNullable,
-          O.map((noticeInfo) => `${noticeInfo?.cf}${noticeInfo?.billCode}`)
-        ),
-      (cart) =>
-        pipe(
-          cart.paymentNotices,
-          O.fromNullable,
-          O.map((paymentNotices) =>
-            paymentNotices
-              .map((notice) => `${notice.fiscalCode}${notice.noticeNumber}`)
-              .join(",")
-          )
-        )
-    ),
-    O.getOrElse(() => "")
-  );
-
-export function getReCaptchaKey() {
-  return getConfigOrThrow().CHECKOUT_RECAPTCHA_SITE_KEY;
-}
