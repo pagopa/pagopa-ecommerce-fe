@@ -13,13 +13,15 @@ export default function SaveCardPage() {
   const moreInfoModalRef = React.useRef<InformationModalRef>(null);
   const { t } = useTranslation();
 
-  const { sessionToken, clientId } = getFragments(
+  const { sessionToken, clientId, paymentMethodId } = getFragments(
     ROUTE_FRAGMENT.SESSION_TOKEN,
-    ROUTE_FRAGMENT.CLIENT_ID
+    ROUTE_FRAGMENT.CLIENT_ID,
+    ROUTE_FRAGMENT.PAYMENT_METHOD_ID
   );
 
   setSessionItem(SessionItems.sessionToken, sessionToken);
   setSessionItem(SessionItems.clientId, clientId);
+  setSessionItem(SessionItems.paymentMethodId, paymentMethodId);
 
   const handleSaveRedirect = function () {
     // #TODO

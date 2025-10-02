@@ -3,6 +3,7 @@ export enum SessionItems {
   outcomeInfo = "outcomeInfo",
   counterPolling = "counterPolling",
   clientId = "clientId",
+  paymentMethodId = "paymentMethodId",
 }
 
 export const getSessionItem = (item: SessionItems) => {
