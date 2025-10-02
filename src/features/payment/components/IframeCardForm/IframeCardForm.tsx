@@ -1,0 +1,362 @@
+import { Box } from "@mui/material";
+import * as O from "fp-ts/Option";
+import * as B from "fp-ts/boolean";
+import { pipe } from "fp-ts/function";
+import React from "react";
+import ReCAPTCHA from "react-google-recaptcha";
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
+import { Typography, Button } from "@mui/material";
+import InformationModal from "components/modals/InformationModal";
+import {
+  getReCaptchaKey,
+  SessionItems,
+  setSessionItem,
+} from "../../../../utils/storage/sessionStorage";
+import { CreateSessionResponse } from "../../../../../generated/definitions/payment-ecommerce-v1/CreateSessionResponse";
+import { CheckoutRoutes } from "../../../../routes/models/routeModel";
+import { useAppDispatch } from "../../../../redux/hooks/hooks";
+import { ErrorsType } from "../../../../utils/errors/checkErrorsModel";
+import { setThreshold } from "../../../../redux/slices/threshold";
+import {
+  getFees,
+  npgSessionsFields,
+  retrieveCardData,
+} from "../../../../utils/api/helpers/ecommercePaymentMethodsHelper";
+import { SessionPaymentMethodResponse } from "../../../../../generated/definitions/payment-ecommerce-v1/SessionPaymentMethodResponse";
+import { recaptchaTransaction } from "../../../../utils/api/helpers/ecommerceTransactionsHelper";
+import { onErrorActivate } from "../../../../utils/api/transactionsErrorHelper";
+import { clearNavigationEvents } from "../../../../utils/eventListeners";
+import createBuildConfig from "../../../../utils/buildConfig";
+import { FormButtons } from "../../../../components/FormButtons/FormButtons";
+import ErrorModal from "../../../../components/modals/ErrorModal";
+import type { FieldId, FieldStatus, FormStatus } from "./types";
+import { IdFields } from "./types";
+import { IframeCardField } from "./IframeCardField";
+
+interface Props {
+  loading?: boolean;
+  onCancel: () => void;
+  onSubmit?: (bin: string) => void;
+  hideCancel?: boolean;
+}
+
+const initialFieldStatus: FieldStatus = {
+  isValid: undefined,
+  errorCode: null,
+  errorMessage: null,
+};
+
+const initialFieldsState: FormStatus = Object.values(
+  IdFields
+).reduce<FormStatus>(
+  (acc, idField) => ({ ...acc, [idField]: initialFieldStatus }),
+  {} as FormStatus
+);
+
+// eslint-disable-next-line sonarjs/cognitive-complexity
+export default function IframeCardForm(props: Props) {
+  const { onCancel, hideCancel } = props;
+  const [errorModalOpen, setErrorModalOpen] = React.useState(false);
+  const [pspNotFoundModal, setPspNotFoundModalOpen] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState("");
+  const [form, setForm] = React.useState<CreateSessionResponse>();
+  const [activeField, setActiveField] = React.useState<FieldId | undefined>(
+    undefined
+  );
+  const [formStatus, setFormStatus] =
+    React.useState<FormStatus>(initialFieldsState);
+  const ref = React.useRef<ReCAPTCHA>(null);
+  const dispatch = useAppDispatch();
+
+  const [buildInstance, setBuildInstance] = React.useState();
+
+  const formIsValid = (fieldFormStatus: FormStatus) =>
+    Object.values(fieldFormStatus).every((el) => el.isValid);
+
+  const [isAllFieldsLoaded, setIsAllFieldsLoaded] = React.useState(false);
+
+  const onError = (m: string) => {
+    setLoading(false);
+    setError(m);
+    setErrorModalOpen(true);
+    ref.current?.reset();
+  };
+
+  const onNpgSessionsError = (m: string) => {
+    pipe(
+      m !== ErrorsType.UNAUTHORIZED,
+      B.fold(
+        () => {
+          setSessionItem(
+            SessionItems.loginOriginPage,
+            `${location.pathname}${location.search}`
+          );
+          navigate(`/${CheckoutRoutes.AUTH_EXPIRED}`);
+        },
+        () => onError(m)
+      )
+    );
+  };
+
+  const navigate = useNavigate();
+
+  const onSuccess = (belowThreshold: boolean) => {
+    dispatch(setThreshold({ belowThreshold }));
+
+    if (localStorage.getItem(SessionItems.enablePspPage) === "true") {
+      navigate(`/${CheckoutRoutes.LISTA_PSP}`);
+    } else {
+      navigate(`/${CheckoutRoutes.RIEPILOGO_PAGAMENTO}`);
+    }
+  };
+
+  const onPspNotFound = () => {
+    setLoading(false);
+    setPspNotFoundModalOpen(true);
+    ref.current?.reset();
+  };
+
+  const retrievePaymentSession = (paymentMethodId: string, orderId: string) =>
+    retrieveCardData({
+      paymentId: paymentMethodId,
+      orderId,
+      onError,
+      onResponseSessionPaymentMethod: (resp) => {
+        pipe(
+          resp,
+          SessionPaymentMethodResponse.decode,
+          O.fromEither,
+          O.chain((resp) => O.fromNullable(resp.bin)),
+          O.fold(
+            () => onError(ErrorsType.GENERIC_ERROR),
+            () => getFees(onSuccess, onPspNotFound, onError, resp.bin)
+          )
+        );
+      },
+    });
+
+  const onChange = (id: FieldId, status: FieldStatus) => {
+    if (Object.keys(IdFields).includes(id)) {
+      setActiveField(id);
+      setFormStatus((fields) => ({
+        ...fields,
+        [id]: status,
+      }));
+    }
+  };
+
+  React.useEffect(() => {
+    if (!form) {
+      const onResponse = (body: CreateSessionResponse) => {
+        setSessionItem(SessionItems.orderId, body.orderId);
+        setSessionItem(SessionItems.correlationId, body.correlationId);
+        setForm(body);
+        const onReadyForPayment = () => {
+          if (ref.current) {
+            void recaptchaTransaction({
+              recaptchaRef: ref.current,
+              onSuccess: retrievePaymentSession,
+              onError: (faultCodeCategory, faultCodeDetail) =>
+                onErrorActivate(
+                  faultCodeCategory,
+                  faultCodeDetail,
+                  onError,
+                  navigate
+                ),
+            });
+          }
+        };
+
+        const onPaymentComplete = () => {
+          clearNavigationEvents();
+          navigate(`/${CheckoutRoutes.ESITO}`, { replace: true });
+        };
+
+        const onPaymentRedirect = (urlredirect: string) => {
+          clearNavigationEvents();
+          window.location.replace(urlredirect);
+        };
+
+        const onBuildError = () => {
+          setLoading(false);
+          navigate(`/${CheckoutRoutes.ERRORE}`, { replace: true });
+        };
+
+        const onAllFieldsLoaded = () => {
+          setLoading(false);
+          setIsAllFieldsLoaded(true);
+        };
+
+        try {
+          const newBuild = new Build(
+            createBuildConfig({
+              onChange,
+              onReadyForPayment,
+              onPaymentComplete,
+              onPaymentRedirect,
+              onBuildError,
+              onAllFieldsLoaded,
+            })
+          );
+          setBuildInstance(newBuild);
+        } catch {
+          onBuildError();
+        }
+      };
+
+      void (async () => {
+        void npgSessionsFields(onNpgSessionsError, onResponse);
+      })();
+    }
+  }, [form?.orderId]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    try {
+      e.preventDefault();
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      buildInstance.confirmData(() => setLoading(true));
+    } catch (e) {
+      onError(ErrorsType.GENERIC_ERROR);
+    }
+  };
+
+  const { t } = useTranslation();
+
+  return (
+    <>
+      <form id="iframe-card-form" onSubmit={handleSubmit}>
+        <Box>
+          <Box>
+            <IframeCardField
+              label={t("inputCardPage.formFields.number")}
+              fields={form?.paymentMethodData.form}
+              id={"CARD_NUMBER"}
+              errorCode={formStatus.CARD_NUMBER?.errorCode}
+              errorMessage={formStatus.CARD_NUMBER?.errorMessage}
+              isValid={formStatus.CARD_NUMBER?.isValid}
+              activeField={activeField}
+              isAllFieldsLoaded={isAllFieldsLoaded}
+            />
+          </Box>
+          <Box
+            display={"flex"}
+            justifyContent={"space-between"}
+            sx={{ gap: 2 }}
+          >
+            <Box sx={{ flex: "1 1 0" }}>
+              <IframeCardField
+                label={t("inputCardPage.formFields.expirationDate")}
+                fields={form?.paymentMethodData.form}
+                id={"EXPIRATION_DATE"}
+                errorCode={formStatus.EXPIRATION_DATE?.errorCode}
+                errorMessage={formStatus.EXPIRATION_DATE?.errorMessage}
+                isValid={formStatus.EXPIRATION_DATE?.isValid}
+                activeField={activeField}
+                isAllFieldsLoaded={isAllFieldsLoaded}
+              />
+            </Box>
+            <Box width="50%">
+              <IframeCardField
+                label={t("inputCardPage.formFields.cvv")}
+                fields={form?.paymentMethodData.form}
+                id={"SECURITY_CODE"}
+                errorCode={formStatus.SECURITY_CODE?.errorCode}
+                errorMessage={formStatus.SECURITY_CODE?.errorMessage}
+                isValid={formStatus.SECURITY_CODE?.isValid}
+                activeField={activeField}
+                isAllFieldsLoaded={isAllFieldsLoaded}
+              />
+            </Box>
+          </Box>
+          <Box>
+            <IframeCardField
+              label={t("inputCardPage.formFields.name")}
+              fields={form?.paymentMethodData.form}
+              id={"CARDHOLDER_NAME"}
+              errorCode={formStatus.CARDHOLDER_NAME?.errorCode}
+              errorMessage={formStatus.CARDHOLDER_NAME?.errorMessage}
+              isValid={formStatus.CARDHOLDER_NAME?.isValid}
+              activeField={activeField}
+              isAllFieldsLoaded={isAllFieldsLoaded}
+            />
+          </Box>
+        </Box>
+        <FormButtons
+          idCancel="cancel"
+          idSubmit="submit"
+          loadingSubmit={loading}
+          type="submit"
+          submitTitle="paymentNoticePage.formButtons.submit"
+          cancelTitle="paymentNoticePage.formButtons.cancel"
+          disabledSubmit={loading || !formIsValid(formStatus)}
+          handleSubmit={handleSubmit}
+          handleCancel={onCancel}
+          hideCancel={hideCancel}
+        />
+      </form>
+      <Box display="none">
+        <ReCAPTCHA
+          ref={ref}
+          size="invisible"
+          sitekey={getReCaptchaKey() as string}
+        />
+      </Box>
+      {!!errorModalOpen && (
+        <ErrorModal
+          error={error}
+          open={errorModalOpen}
+          onClose={() => {
+            setErrorModalOpen(false);
+            navigate(`/${CheckoutRoutes.ERRORE}`, { replace: true });
+          }}
+          titleId="iframeCardFormErrorTitleId"
+          errorId="iframeCardFormErrorId"
+          bodyId="iframeCardFormErrorBodyId"
+        />
+      )}
+      {!!pspNotFoundModal && (
+        <InformationModal
+          open={pspNotFoundModal}
+          onClose={() => {
+            setPspNotFoundModalOpen(false);
+            navigate(`/${CheckoutRoutes.SCEGLI_METODO}`, { replace: true });
+          }}
+          maxWidth="sm"
+          hideIcon={true}
+        >
+          <Typography
+            variant="h6"
+            component={"div"}
+            sx={{ pb: 2 }}
+            id="pspNotFoundTitleId"
+          >
+            {t("pspUnavailable.title")}
+          </Typography>
+          <Typography
+            variant="body1"
+            component={"div"}
+            sx={{ whiteSpace: "pre-line" }}
+            id="pspNotFoundBodyId"
+          >
+            {t("pspUnavailable.body")}
+          </Typography>
+          <Box display="flex" justifyContent="flex-end" sx={{ mt: 3 }}>
+            <Button
+              variant="contained"
+              onClick={() => {
+                setPspNotFoundModalOpen(false);
+                navigate(`/${CheckoutRoutes.SCEGLI_METODO}`, { replace: true });
+              }}
+              id="pspNotFoundCtaId"
+            >
+              {t("pspUnavailable.cta.primary")}
+            </Button>
+          </Box>
+        </InformationModal>
+      )}
+    </>
+  );
+}

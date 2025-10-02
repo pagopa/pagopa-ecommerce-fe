@@ -4,7 +4,29 @@ export enum EcommerceRoutes {
   ROOT = "ecommerce-fe",
   GDI_CHECK = "gdi-check",
   ESITO = "esito",
-  ASD = "asd",
+  PAYMENT_WIDOUTH_ONBOARDING = "payment-widouth-onboarding",
+}
+
+export enum CheckoutRoutes {
+  ROOT = "",
+  DONA = "dona",
+  AUTH_CALLBACK = "auth-callback",
+  AUTH_EXPIRED = "autenticazione-scaduta",
+  LEGGI_CODICE_QR = "leggi-codice-qr",
+  INSERISCI_DATI_AVVISO = "inserisci-dati-avviso",
+  DATI_PAGAMENTO = "dati-pagamento",
+  INSERISCI_EMAIL = "inserisci-email",
+  INSERISCI_CARTA = "inserisci-carta",
+  SCEGLI_METODO = "scegli-metodo",
+  LISTA_PSP = "lista-psp",
+  RIEPILOGO_PAGAMENTO = "riepilogo-pagamento",
+  GDI_CHECK = "gdi-check",
+  CARRELLO = "c",
+  ESITO = "esito",
+  ANNULLATO = "annullato",
+  SESSIONE_SCADUTA = "sessione-scaduta",
+  ERRORE = "errore",
+  MAINTENANCE = "maintenance",
 }
 
 export enum ROUTE_FRAGMENT {

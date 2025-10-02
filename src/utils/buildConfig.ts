@@ -12,6 +12,7 @@ interface BuildConfig {
   onPaymentComplete: () => void;
   onPaymentRedirect: (urlRedirect: string) => void;
   onBuildError: () => void;
+  onAllFieldsLoaded: () => void;
 }
 
 export default (buildConfig: BuildConfig) => {
@@ -21,6 +22,7 @@ export default (buildConfig: BuildConfig) => {
     onReadyForPayment,
     onPaymentComplete,
     onPaymentRedirect,
+    onAllFieldsLoaded,
   } = buildConfig;
   return {
     onBuildSuccess({ id }: NpgEvtData) {
@@ -84,6 +86,9 @@ export default (buildConfig: BuildConfig) => {
         default:
           onBuildError();
       }
+    },
+    onAllFieldsLoaded() {
+      onAllFieldsLoaded();
     },
     // any dependency will initialize the build instance more than one time
     // and I think it's not a good idea. For the same reason I am not using

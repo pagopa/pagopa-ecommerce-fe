@@ -65,8 +65,8 @@ export function App() {
               element={<PaymentResponsePage />}
             />
             <Route
-                path={EcommerceRoutes.ASD``}
-                element={<PaymentResponsePage />}
+              path={EcommerceRoutes.PAYMENT_WIDOUTH_ONBOARDING}
+              element={<PaymentResponsePage />}
             />
           </Route>
         </Routes>
