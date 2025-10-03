@@ -5,7 +5,7 @@ import { default as React } from "react";
 import { useTranslation } from "react-i18next";
 import { useSmallDevice } from "../../hooks/useSmallDevice";
 
-export function FormButtons(props: {
+type FormButtonsProps = {
   handleSubmit: (e: React.FormEvent) => void;
   handleCancel: () => void;
   type?: "submit" | "button";
@@ -18,7 +18,13 @@ export function FormButtons(props: {
   submitTitle: string;
   cancelTitle: string;
   hideCancel?: boolean;
-}) {
+};
+
+export function FormButtons(formButtonsProps: FormButtonsProps) {
+  const props = {
+    ...formButtonsProps,
+      type: formButtonsProps.type ?? "button",
+  };
   const { t } = useTranslation();
 
   return (
@@ -96,7 +102,3 @@ export function FormButtons(props: {
     </React.Fragment>
   );
 }
-
-FormButtons.defaultProps = {
-  type: "button",
-};

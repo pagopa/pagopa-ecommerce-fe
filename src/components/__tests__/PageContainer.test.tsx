@@ -3,7 +3,15 @@ import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import PageContainer from "../PageContainer";
 
+jest.mock("react-i18next", () => ({
+  useTranslation: () => ({
+    t: (key: string) => `Translated: ${key}`,
+  }),
+}));
+
+
 describe("PageContainer", () => {
+
   it("renders children inside nested Boxes and sets aria-live on the outer Box", () => {
     const { container } = render(
       <PageContainer>
@@ -41,5 +49,13 @@ describe("PageContainer", () => {
 
     const inner = outer.firstElementChild as HTMLElement;
     expect(inner).toBeEmptyDOMElement();
+  });
+
+  it("renders title correctly", () => {
+    render(<PageContainer title="page.title" />);
+
+    // Check if the title is rendered
+    const titleElement = screen.getByText("Translated: page.title");
+    expect(titleElement).toBeInTheDocument();
   });
 });

@@ -12,7 +12,7 @@ import IconButton from "@mui/material/IconButton";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
-function InformationModal(props: {
+type InformationModalProps = {
   open: boolean;
   onClose: () => void;
   id?: string;
@@ -24,7 +24,14 @@ function InformationModal(props: {
   title?: string;
   ctaId?: string;
   bodyId?: string;
-}) {
+};
+
+function InformationModal(informationModalProps: InformationModalProps) {
+  const props = {
+    ...informationModalProps,
+    maxWidth: informationModalProps.maxWidth ?? "lg",
+  };
+
   const theme = useTheme();
   const { t } = useTranslation();
   return (
@@ -74,9 +81,5 @@ function InformationModal(props: {
     </Dialog>
   );
 }
-
-InformationModal.defaultProps = {
-  maxWidth: "lg",
-};
 
 export default InformationModal;
