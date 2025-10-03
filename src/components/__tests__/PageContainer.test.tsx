@@ -9,9 +9,7 @@ jest.mock("react-i18next", () => ({
   }),
 }));
 
-
 describe("PageContainer", () => {
-
   it("renders children inside nested Boxes and sets aria-live on the outer Box", () => {
     const { container } = render(
       <PageContainer>

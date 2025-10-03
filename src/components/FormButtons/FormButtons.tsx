@@ -23,7 +23,7 @@ type FormButtonsProps = {
 export function FormButtons(formButtonsProps: FormButtonsProps) {
   const props = {
     ...formButtonsProps,
-      type: formButtonsProps.type ?? "button",
+    type: formButtonsProps.type ?? "button",
   };
   const { t } = useTranslation();
 
