@@ -4,7 +4,7 @@ export enum EcommerceRoutes {
   ROOT = "ecommerce-fe",
   GDI_CHECK = "gdi-check",
   ESITO = "esito",
-  SALVATAGGIO_CARTA = "salvataggio-carta",
+  SCELTA_SALVATAGGIO_CARTA = "scelta-salvataggio-carta",
 }
 
 export enum ROUTE_FRAGMENT {

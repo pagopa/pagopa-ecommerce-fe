@@ -66,7 +66,7 @@ export function App() {
               element={<PaymentResponsePage />}
             />
             <Route
-              path={EcommerceRoutes.SALVATAGGIO_CARTA}
+              path={EcommerceRoutes.SCELTA_SALVATAGGIO_CARTA}
               element={<SaveCardPage />}
             />
           </Route>
