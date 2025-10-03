@@ -51,6 +51,16 @@ export const useNpgSdk = ({
     npgScriptEl.setAttribute("charset", "UTF-8");
     document.head.appendChild(npgScriptEl);
     npgScriptEl.addEventListener("load", () => setSdkReady(true));
+
+    const cssLink = document.createElement("link");
+    cssLink.setAttribute("rel", "stylesheet");
+    cssLink.setAttribute(
+      "href",
+      `${window.location.protocol}//${window.location.hostname}${
+        process.env.NODE_ENV === "development" ? `:${window.location.port}` : ""
+      }/npg/style.css`
+    );
+    document.head.appendChild(cssLink);
   }, []);
 
   return { sdkReady, buildSdk: sdkReady ? createBuild : noop };

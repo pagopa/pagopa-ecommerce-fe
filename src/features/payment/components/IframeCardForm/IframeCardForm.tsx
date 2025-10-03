@@ -45,7 +45,7 @@ export default function IframeCardForm(props: Props) {
   const [loading, setLoading] = React.useState(false);
   const [form, setForm] = React.useState<CreateSessionResponse>();
   const [activeField, setActiveField] = React.useState<FieldId | undefined>(
-      undefined
+    undefined
   );
   const [formStatus, setFormStatus] =
     React.useState<FormStatus>(initialFieldsState);
@@ -69,16 +69,19 @@ export default function IframeCardForm(props: Props) {
     window.location.replace(
       `${ECOMMERCE_IO_CARD_DATA_CLIENT_REDIRECT_OUTCOME_PATH}/outcomes?outcome=1`
     );
-  },[ECOMMERCE_IO_CARD_DATA_CLIENT_REDIRECT_OUTCOME_PATH]);
+  }, [ECOMMERCE_IO_CARD_DATA_CLIENT_REDIRECT_OUTCOME_PATH]);
 
-  const onSuccess = React.useCallback((orderId: string, correlationId: string) => {
-    // TODO check outcome path
-    window.location.replace(
-      `${ECOMMERCE_IO_CARD_DATA_CLIENT_REDIRECT_OUTCOME_PATH}/outcomes?outcome=0&orderId=${orderId}&correlationId=${correlationId}`
-    );
-  },[ECOMMERCE_IO_CARD_DATA_CLIENT_REDIRECT_OUTCOME_PATH]);
+  const onSuccess = React.useCallback(
+    (orderId: string, correlationId: string) => {
+      // TODO check outcome path
+      window.location.replace(
+        `${ECOMMERCE_IO_CARD_DATA_CLIENT_REDIRECT_OUTCOME_PATH}/outcomes?outcome=0&orderId=${orderId}&correlationId=${correlationId}`
+      );
+    },
+    [ECOMMERCE_IO_CARD_DATA_CLIENT_REDIRECT_OUTCOME_PATH]
+  );
 
- const onReadyForPayment = React.useCallback(() => {
+  const onReadyForPayment = React.useCallback(() => {
     clearNavigationEvents();
     const orderId = getSessionItem(SessionItems.orderId);
     const correlationId = getSessionItem(SessionItems.correlationId);
@@ -89,19 +92,20 @@ export default function IframeCardForm(props: Props) {
       console.log(`Order id or correlation id null not valid`);
       onError();
     }
-  },[onError, onSuccess]);
+  }, [onError, onSuccess]);
 
-  const onPaymentRedirect = React.useCallback((_: string) => {
-    // eslint-disable-next-line no-console
-    console.log(
+  const onPaymentRedirect = React.useCallback(
+    (_: string) => {
+      // eslint-disable-next-line no-console
+      console.log(
         "Unexpected NPG onPaymentRedirect (REDIRECT_TO_EXTERNAL_DOMAIN) callback received!"
-    );
-    onError();
-  },[onError]);
-
+      );
+      onError();
+    },
+    [onError]
+  );
 
   const onBuildError = React.useCallback(() => {
-    console.log("onBuildError");
     onError();
   }, [onError]);
 
@@ -113,12 +117,12 @@ export default function IframeCardForm(props: Props) {
         [id]: status,
       }));
     }
-  },[]);
+  }, []);
 
   const onAllFieldsLoaded = React.useCallback(() => {
     setLoading(false);
     setIsAllFieldsLoaded(true);
-  },[]);
+  }, []);
 
   const { sdkReady, buildSdk } = useNpgSdk({
     onChange,
@@ -128,18 +132,24 @@ export default function IframeCardForm(props: Props) {
     onAllFieldsLoaded,
   });
 
- React.useEffect(() => {
+  React.useEffect(() => {
+    // eslint-disable-next-line functional/no-let
     let mounted = true;
     if (!form) {
       setLoading(true);
-      (async () => {
+      void (async () => {
         const res = await npgSessionsFields();
-        if (!mounted) return;
+        if (!mounted) {
+          return;
+        }
         pipe(
           res,
           O.match(onError, (npgSessionFields: CreateSessionResponse) => {
             setSessionItem(SessionItems.orderId, npgSessionFields.orderId);
-            setSessionItem(SessionItems.correlationId, npgSessionFields.correlationId);
+            setSessionItem(
+              SessionItems.correlationId,
+              npgSessionFields.correlationId
+            );
             setForm(npgSessionFields);
           })
         );
@@ -150,12 +160,19 @@ export default function IframeCardForm(props: Props) {
     };
   }, [onError]);
 
- React.useEffect(() => {
-    if (!sdkReady) return;
-    if (!form) return;
-    if (buildRef.current) return;
+  React.useEffect(() => {
+    if (!sdkReady) {
+      return;
+    }
+    if (!form) {
+      return;
+    }
+    if (buildRef.current) {
+      return;
+    }
     try {
       const instance = buildSdk();
+      // eslint-disable-next-line functional/immutable-data
       buildRef.current = instance;
     } catch (e) {
       onBuildError();

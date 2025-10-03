@@ -16,6 +16,11 @@ interface BuildConfig {
 }
 
 export default (buildConfig: BuildConfig) => {
+  const { hostname, protocol, port } = window.location;
+  const cssPath = `${protocol}//${hostname}${
+    process.env.NODE_ENV === "development" ? `:${port}` : ""
+  }/npg/style.css`;
+
   const {
     onBuildError,
     onChange,
@@ -90,6 +95,9 @@ export default (buildConfig: BuildConfig) => {
     onAllFieldsLoaded() {
       onAllFieldsLoaded();
     },
+    cssLink: cssPath,
+    defaultComponentCssClassName: "npg-component",
+    defaultContainerCssClassName: "npg-container",
     // any dependency will initialize the build instance more than one time
     // and I think it's not a good idea. For the same reason I am not using
     // a react state to track the form status
