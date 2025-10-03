@@ -41,7 +41,7 @@ export default function PageContainer(props: {
   );
 
   return (
-    <Box mb={4} aria-live="polite">
+    <Box mt={3} mb={6} aria-live="polite">
       <Content />
     </Box>
   );
