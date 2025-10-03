@@ -65,17 +65,15 @@ export default function IframeCardForm(props: Props) {
     console.log("executing on error ");
     setLoading(false);
     ref.current?.reset?.();
-    // TODO check outcome path
     window.location.replace(
-      `${ECOMMERCE_IO_CARD_DATA_CLIENT_REDIRECT_OUTCOME_PATH}/outcomes?outcome=1`
+      `${ECOMMERCE_IO_CARD_DATA_CLIENT_REDIRECT_OUTCOME_PATH}?outcome=1`
     );
   }, [ECOMMERCE_IO_CARD_DATA_CLIENT_REDIRECT_OUTCOME_PATH]);
 
   const onSuccess = React.useCallback(
     (orderId: string, correlationId: string) => {
-      // TODO check outcome path
       window.location.replace(
-        `${ECOMMERCE_IO_CARD_DATA_CLIENT_REDIRECT_OUTCOME_PATH}/outcomes?outcome=0&orderId=${orderId}&correlationId=${correlationId}`
+        `${ECOMMERCE_IO_CARD_DATA_CLIENT_REDIRECT_OUTCOME_PATH}?outcome=0&orderId=${orderId}&correlationId=${correlationId}`
       );
     },
     [ECOMMERCE_IO_CARD_DATA_CLIENT_REDIRECT_OUTCOME_PATH]
