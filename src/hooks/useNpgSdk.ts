@@ -52,14 +52,15 @@ export const useNpgSdk = ({
     document.head.appendChild(npgScriptEl);
     npgScriptEl.addEventListener("load", () => setSdkReady(true));
 
+    const { hostname, protocol, port } = window.location;
+
+    const cssPath = `${protocol}//${hostname}${
+      process.env.NODE_ENV === "development" ? `:${port}` : ""
+    }/npg/style.css`;
+
     const cssLink = document.createElement("link");
     cssLink.setAttribute("rel", "stylesheet");
-    cssLink.setAttribute(
-      "href",
-      `${window.location.protocol}//${window.location.hostname}${
-        process.env.NODE_ENV === "development" ? `:${window.location.port}` : ""
-      }/npg/style.css`
-    );
+    cssLink.setAttribute("href", cssPath);
     document.head.appendChild(cssLink);
   }, []);
 
