@@ -32,4 +32,25 @@ describe("PageContainer", () => {
     const childContainer = screen.getByTestId("child").parentElement;
     expect(childContainer).toHaveStyle("background-color: red");
   });
+
+  it("applies margin-bottom when description is present", () => {
+    render(<PageContainer description="Hello world" />);
+    const typography = screen.getByText("Hello world");
+
+    expect(typography).toHaveStyle("margin-bottom: 8px"); // MUI spacing(1) = 8px
+  });
+
+  it("applies margin-bottom when link is present", () => {
+    render(<PageContainer link="http://example.com" />);
+    const typography = screen.getByText("http://example.com");
+
+    expect(typography).toHaveStyle("margin-bottom: 8px");
+  });
+
+  it("does not apply margin-bottom when neither description nor link is present", () => {
+    render(<PageContainer />);
+    const typography = screen.getByText("", { selector: "p" });
+
+    expect(typography).toHaveStyle("margin-bottom: 0px");
+  });
 });
