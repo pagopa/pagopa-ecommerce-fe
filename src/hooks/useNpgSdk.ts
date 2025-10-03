@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { FieldId, FieldStatus } from "models/npgModel";
 import { getConfigOrThrow } from "../utils/config/config";
 import createBuildConfig from "../utils/buildConfig";
+import { EcommerceRoutes } from "../routes/models/routeModel";
 
 export type SdkBuild = {
   onChange?: (field: FieldId, fieldStatus: FieldStatus) => void;
@@ -56,7 +57,7 @@ export const useNpgSdk = ({
 
     const cssPath = `${protocol}//${hostname}${
       process.env.NODE_ENV === "development" ? `:${port}` : ""
-    }/npg/style.css`;
+    }/${EcommerceRoutes.ROOT}/npg/style.css`;
 
     const cssLink = document.createElement("link");
     cssLink.setAttribute("rel", "stylesheet");

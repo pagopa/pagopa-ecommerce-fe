@@ -80,6 +80,12 @@ const errorOrConfig: t.Validation<IConfig> = IConfig.decode({
         10
       )
     : 2000,
+  // eslint-disable-next-line no-underscore-dangle
+  ECOMMERCE_IO_CARD_DATA_CLIENT_REDIRECT_OUTCOME_PATH: (window as any)._env_
+    .ECOMMERCE_IO_CARD_DATA_CLIENT_REDIRECT_OUTCOME_PATH
+    ? // eslint-disable-next-line no-underscore-dangle
+      (window as any)._env_.ECOMMERCE_IO_CARD_DATA_CLIENT_REDIRECT_OUTCOME_PATH
+    : null,
 });
 
 /**
