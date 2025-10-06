@@ -13,6 +13,8 @@ export enum ROUTE_FRAGMENT {
   SESSION_TOKEN = "sessionToken",
   TRANSACTION_ID = "transactionId",
   PAYMENT_METHOD_ID = "paymentMethodId",
+  RPT_ID = "rptId",
+  AMOUNT = "amount",
 }
 
 export enum CLIENT_TYPE {
