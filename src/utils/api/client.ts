@@ -8,6 +8,7 @@ import { getConfigOrThrow } from "../config/config";
 import {
   constantPollingWithPromisePredicateFetch,
   exponetialPollingWithPromisePredicateFetch,
+  retryingFetch,
 } from "../config/fetch";
 import { TransactionOutcomeInfo } from "../../../generated/definitions/payment-ecommerce-webview-v1/TransactionOutcomeInfo";
 
@@ -32,6 +33,16 @@ export const decodeFinalStatusResult = async (
   const { isFinalStatus } = (await r.clone().json()) as TransactionOutcomeInfo;
   return !(r.status === 200 && isFinalStatus);
 };
+
+export const ecommerceIOClient = createIOClientV1({
+  baseUrl: config.ECOMMERCE_API_HOST,
+  basePath: config.ECOMMERCE_IO_API_V1_PATH,
+  fetchApi: retryingFetch(
+    fetch,
+    config.ECOMMERCE_API_TIMEOUT as Millisecond,
+    3
+  ),
+});
 
 export const ecommerceIOClientWithPollingV1 = createIOClientV1({
   baseUrl: config.ECOMMERCE_API_HOST,

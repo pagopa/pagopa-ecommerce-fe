@@ -5,7 +5,6 @@ import React from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 import { useTranslation } from "react-i18next";
 import { getConfigOrThrow } from "../../../../utils/config/config";
-import { npgSessionsFields } from "../../../../utils/api/methods/paymentMethodHelper";
 import {
   getSessionItem,
   SessionItems,
@@ -18,6 +17,7 @@ import { useNpgSdk } from "../../../../hooks/useNpgSdk";
 import type { FieldId, FieldStatus, FormStatus } from "./types";
 import { IdFields } from "./types";
 import { IframeCardField } from "./IframeCardField";
+import {npgSessionsFields} from "../../../../utils/api/methods/paymentMethodHelper";
 
 interface Props {
   loading?: boolean;

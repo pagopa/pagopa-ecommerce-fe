@@ -17,6 +17,7 @@ import {
   withRetries,
 } from "@pagopa/ts-commons/lib/tasks";
 import { Millisecond } from "@pagopa/ts-commons/lib/units";
+import { calculateExponentialBackoffInterval } from "@pagopa/ts-commons/lib/backoff";
 import { getConfigOrThrow } from "./config";
 
 //
@@ -25,6 +26,53 @@ import { getConfigOrThrow } from "./config";
 const API_TIMEOUT = getConfigOrThrow().ECOMMERCE_API_TIMEOUT as Millisecond;
 const RETRY_NUMBERS_LINEAR = getConfigOrThrow()
   .ECOMMERCE_API_RETRY_NUMBERS_LINEAR as number;
+
+export function retryingFetch(
+  fetchApi: typeof fetch,
+  timeout: Millisecond = API_TIMEOUT,
+  maxRetries: number = 3,
+  retryCondition?: (r: Response) => boolean
+): typeof fetch {
+  // a fetch that can be aborted and that gets cancelled after fetchTimeoutMs
+  const abortableFetch = AbortableFetch(fetchApi);
+  const timeoutFetch = toFetch(setFetchTimeout(timeout, abortableFetch));
+  // configure retry logic with default exponential backoff
+  // @see https://github.com/pagopa/io-ts-commons/blob/master/src/backoff.ts
+  const exponentialBackoff = calculateExponentialBackoffInterval();
+  const retryLogic = withRetries<Error, Response>(
+    maxRetries,
+    exponentialBackoff
+  );
+  const retryWithTransient = retryLogicForTransientResponseError(
+    retryCondition != null ? retryCondition : (_: Response) => _.status === 429,
+    retryLogic
+  );
+  return retriableFetch(retryWithTransient)(timeoutFetch as any);
+}
+
+//
+// Fetch with transient error handling. Handle error that occurs once or at unpredictable intervals.
+//
+function retryLogicForTransientResponseError(
+  p: (r: Response) => boolean,
+  retryLogic: (
+    t: RetriableTask<Error, Response>,
+    shouldAbort?: Promise<boolean>
+  ) => TE.TaskEither<Error | "max-retries" | "retry-aborted", Response>
+): typeof retryLogic {
+  return (t: RetriableTask<Error, Response>, shouldAbort?: Promise<boolean>) =>
+    retryLogic(
+      // when the result of the task is a Response that satisfies
+      // the predicate p, map it to a transient error
+      pipe(
+        t,
+        TE.chain((r: Response) =>
+          TE.fromEither(p(r) ? E.left(TransientError) : E.right(r))
+        )
+      ),
+      shouldAbort
+    );
+}
 
 //
 // Given predicate that return a boolean promise, fetch with transient error handling.
