@@ -1,10 +1,9 @@
-/* eslint-disable sonarjs/no-identical-functions */
 import * as E from "fp-ts/Either";
 import { flow, pipe } from "fp-ts/lib/function";
 import * as O from "fp-ts/Option";
 import * as TE from "fp-ts/TaskEither";
 import { CreateSessionResponse } from "../../../../generated/definitions/payment-ecommerce-webview-v1/CreateSessionResponse";
-import { ecommerceIOClient } from "../client";
+import { ecommerceIOClientWithPollingV1 } from "../client";
 import { SessionItems } from "../../storage/sessionStorage";
 
 export const npgSessionsFields = async (): Promise<
@@ -18,7 +17,7 @@ export const npgSessionsFields = async (): Promise<
         const clientId = sessionStorage.getItem(SessionItems.clientId) || "";
         const paymentMethodId =
           sessionStorage.getItem(SessionItems.paymentMethodId) || "";
-        return ecommerceIOClient.createSessionWebview({
+        return ecommerceIOClientWithPollingV1.createSessionWebview({
           eCommerceSessionToken: sessionToken,
           "x-client-id": clientId,
           id: paymentMethodId,

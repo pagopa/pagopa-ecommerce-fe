@@ -16,27 +16,27 @@ export default function PageContainer(props: {
   return (
     <Box mt={3} mb={6} aria-live="polite">
       {!!title && (
-          <Typography
-              variant="h4"
-              component={"div"}
-              mb={2}
-              mt={3}
-              color="text.primary"
-          >
-            {t(title)}
-          </Typography>
+        <Typography
+          variant="h4"
+          component={"div"}
+          mb={2}
+          mt={3}
+          color="text.primary"
+        >
+          {t(title)}
+        </Typography>
       )}
 
       {(description || link) && (
-          <Typography
-              variant="body2"
-              sx={{ mb: 1 }}
-              color="text.light"
-              whiteSpace="pre-line"
-          >
-            {!!description && description}
-            {!!link && link}
-          </Typography>
+        <Typography
+          variant="body2"
+          sx={{ mb: 1 }}
+          color="text.light"
+          whiteSpace="pre-line"
+        >
+          {!!description && description}
+          {!!link && link}
+        </Typography>
       )}
       <Box sx={childrenSx}>{children}</Box>
     </Box>

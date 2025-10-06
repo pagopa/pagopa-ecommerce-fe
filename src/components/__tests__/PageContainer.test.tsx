@@ -12,7 +12,7 @@ jest.mock("react-i18next", () => ({
 describe("PageContainer", () => {
   it("renders a title when provided", () => {
     render(<PageContainer title="Test Title" />);
-    expect(screen.getByText("Test Title")).toBeInTheDocument();
+    expect(screen.getByText("Translated: Test Title")).toBeInTheDocument();
   });
 
   it("does not render a title when not provided", () => {

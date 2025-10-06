@@ -8,7 +8,6 @@ import { getConfigOrThrow } from "../config/config";
 import {
   constantPollingWithPromisePredicateFetch,
   exponetialPollingWithPromisePredicateFetch,
-  retryingFetch,
 } from "../config/fetch";
 import { TransactionOutcomeInfo } from "../../../generated/definitions/payment-ecommerce-webview-v1/TransactionOutcomeInfo";
 
@@ -34,15 +33,26 @@ export const decodeFinalStatusResult = async (
   return !(r.status === 200 && isFinalStatus);
 };
 
-export const ecommerceIOClient = createIOClientV1({
-  baseUrl: config.ECOMMERCE_API_HOST,
-  basePath: config.ECOMMERCE_IO_API_V1_PATH,
-  fetchApi: retryingFetch(
-    fetch,
-    config.ECOMMERCE_API_TIMEOUT as Millisecond,
-    3
-  ),
-});
+export const isResponse200OK = async (r: Response): Promise<boolean> => {
+  if (pollingConfig.counter.getValue() === pollingConfig.retries - 1) {
+    return false;
+  }
+  pollingConfig.counter.increment();
+  return r.status !== 200;
+};
+
+export const ecommerceIOClientWithPollingV1WithFinalStatusDecoder =
+  createIOClientV1({
+    baseUrl: config.ECOMMERCE_API_HOST,
+    fetchApi: exponetialPollingWithPromisePredicateFetch(
+      DeferredPromise<boolean>().e1,
+      pollingConfig.retries,
+      pollingConfig.delay,
+      pollingConfig.timeout,
+      decodeFinalStatusResult
+    ),
+    basePath: config.ECOMMERCE_IO_API_V1_PATH,
+  });
 
 export const ecommerceIOClientWithPollingV1 = createIOClientV1({
   baseUrl: config.ECOMMERCE_API_HOST,
@@ -51,7 +61,7 @@ export const ecommerceIOClientWithPollingV1 = createIOClientV1({
     pollingConfig.retries,
     pollingConfig.delay,
     pollingConfig.timeout,
-    decodeFinalStatusResult
+    isResponse200OK
   ),
   basePath: config.ECOMMERCE_IO_API_V1_PATH,
 });
