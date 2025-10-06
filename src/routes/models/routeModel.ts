@@ -4,6 +4,7 @@ export enum EcommerceRoutes {
   ROOT = "ecommerce-fe",
   GDI_CHECK = "gdi-check",
   ESITO = "esito",
+  SCELTA_SALVATAGGIO_CARTA = "scelta-salvataggio-carta",
 }
 
 export enum ROUTE_FRAGMENT {
@@ -11,6 +12,9 @@ export enum ROUTE_FRAGMENT {
   CLIENT_ID = "clientId",
   SESSION_TOKEN = "sessionToken",
   TRANSACTION_ID = "transactionId",
+  PAYMENT_METHOD_ID = "paymentMethodId",
+  RPT_ID = "rptId",
+  AMOUNT = "amount",
 }
 
 export enum CLIENT_TYPE {
