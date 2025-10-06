@@ -10,43 +10,53 @@ jest.mock("react-i18next", () => ({
 }));
 
 describe("PageContainer", () => {
-  it("renders children inside nested Boxes and sets aria-live on the outer Box", () => {
-    const { container } = render(
-      <PageContainer>
-        <span data-testid="child">Hello World</span>
-      </PageContainer>
-    );
-
-    const outer = container.firstElementChild as HTMLElement;
-    expect(outer).toHaveAttribute("aria-live", "polite");
-
-    const child = screen.getByTestId("child");
-    expect(child).toBeInTheDocument();
-    expect(child).toHaveTextContent("Hello World");
+  it("renders a title when provided", () => {
+    render(<PageContainer title="Test Title" />);
+    expect(screen.getByText("Test Title")).toBeInTheDocument();
   });
 
-  it("applies childrenSx styles to the inner Box", () => {
-    const paddingValue = "42px";
-    const { container } = render(
-      <PageContainer childrenSx={{ padding: paddingValue }}>
-        <div>Styled</div>
-      </PageContainer>
-    );
-
-    const outer = container.firstElementChild as HTMLElement;
-    const inner = outer.firstElementChild as HTMLElement;
-    expect(inner).toHaveStyle({ padding: paddingValue });
-    expect(screen.getByText("Styled")).toBeInTheDocument();
+  it("does not render a title when not provided", () => {
+    render(<PageContainer />);
+    const heading = screen.queryByRole("heading", { level: 4 });
+    expect(heading).not.toBeInTheDocument();
   });
 
-  it("works with no children and no childrenSx without errors", () => {
-    const { container } = render(<PageContainer />);
+  it("renders description and link when provided", () => {
+    const link = <a href="https://example.com">Example Link</a>;
+    render(<PageContainer description="Test Description" link={link} />);
+    expect(screen.getByText("Test Description")).toBeInTheDocument();
+    expect(screen.getByText("Example Link")).toBeInTheDocument();
+  });
 
-    const outer = container.firstElementChild as HTMLElement;
-    expect(outer).toHaveAttribute("aria-live", "polite");
+  it("renders children with provided sx style", () => {
+    const childrenSx = { backgroundColor: "red" };
+    render(
+      <PageContainer childrenSx={childrenSx}>
+        <div data-testid="child">Child Content</div>
+      </PageContainer>
+    );
+    const childContainer = screen.getByTestId("child").parentElement;
+    expect(childContainer).toHaveStyle("background-color: red");
+  });
 
-    const inner = outer.firstElementChild as HTMLElement;
-    expect(inner).toBeEmptyDOMElement();
+  it("renders Typography when description is present", () => {
+    render(<PageContainer description="Hello world" />);
+    const typography = screen.getByText("Hello world");
+
+    expect(typography).toBeInTheDocument();
+  });
+
+  it("renders Typography when link is present", () => {
+    render(<PageContainer link="http://example.com" />);
+    const typography = screen.getByText("http://example.com");
+
+    expect(typography).toBeInTheDocument();
+  });
+
+  it("does not render Typography when neither description nor link is present", () => {
+    render(<PageContainer />);
+    const body2Typography = screen.queryByRole("paragraph");
+    expect(body2Typography).not.toBeInTheDocument();
   });
 
   it("renders title correctly", () => {

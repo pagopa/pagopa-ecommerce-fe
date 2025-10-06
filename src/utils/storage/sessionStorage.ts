@@ -6,6 +6,8 @@ export enum SessionItems {
   correlationId = "correlationId",
   paymentMethodId = "paymentMethodId",
   clientId = "clientId",
+  rptId = "rptId",
+  amount = "amount",
 }
 
 export const getSessionItem = (item: SessionItems) => {

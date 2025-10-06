@@ -14,10 +14,10 @@ import { CreateSessionResponse } from "../../../../../generated/definitions/paym
 import { clearNavigationEvents } from "../../../../utils/eventListeners";
 import { FormButtons } from "../../../../components/FormButtons/FormButtons";
 import { useNpgSdk } from "../../../../hooks/useNpgSdk";
+import { npgSessionsFields } from "../../../../utils/api/methods/paymentMethodHelper";
 import type { FieldId, FieldStatus, FormStatus } from "./types";
 import { IdFields } from "./types";
 import { IframeCardField } from "./IframeCardField";
-import {npgSessionsFields} from "../../../../utils/api/methods/paymentMethodHelper";
 
 interface Props {
   loading?: boolean;

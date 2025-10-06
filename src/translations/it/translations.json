@@ -10,6 +10,17 @@
     "completeOperationMsg": "Se il dispositivo lo chiede, dai il permesso per completare l'operazione.",
     "continueToIO": "Continua sull'app IO"
   },
+  "saveCardPage":{
+    "title": "Vuoi salvare la carta per pagamenti in futuro?",
+    "description": "Facendolo, la prossima volta potrai pagare più velocemente",
+    "moreInfo": "Ulteriori informazioni",
+    "saveTitle": "Sì, salva la carta",
+    "saveDescription": "La carta verrà aggiunta al tuo Portafoglio, se il pagamento va a buon fine",
+    "noSaveTitle": "No, non salvare la carta",
+    "noSaveDescription": "Utile anche se usi carte monouso o “usa e getta”",
+    "modalBodyText": "Le informazioni della tua carta sono crittografate e al sicuro. Per una maggiore sicurezza, la tua banca ti chiederà di autorizzare il pagamento tramite il servizio 3D Secure. Se non l’hai attivato o hai bisogno di aiuto, contatta il Servizio Clienti della tua banca.",
+    "buttonClose": "Chiudi"
+  },
   "iframeCardPage": {
     "helpLink": "Dove trovo il CVV?",
     "modalTitle": "Dove trovo il CVV?",

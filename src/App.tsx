@@ -9,6 +9,7 @@ import { EcommerceRoutes } from "./routes/models/routeModel";
 import PaymentResponsePage from "./routes/PaymentResponsePage";
 import GdiCheckPage from "./routes/GdiCheckPage";
 import "./translations/i18n";
+import SaveCardPage from "./routes/SaveCardPage";
 
 const checkoutTheme = createTheme({
   ...theme,
@@ -68,6 +69,10 @@ export function App() {
             <Route
               path={EcommerceRoutes.NOT_ONBOARDED_CARD_PAYMENT}
               element={<IFrameCardPage />}
+            />
+            <Route
+              path={EcommerceRoutes.SCELTA_SALVATAGGIO_CARTA}
+              element={<SaveCardPage />}
             />
           </Route>
         </Routes>
