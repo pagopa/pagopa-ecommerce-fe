@@ -27,7 +27,7 @@ export const useNpgSdk = ({
 }: SdkBuild) => {
   const [sdkReady, setSdkReady] = useState(false);
 
-  const createBuild = (): any => {
+  const createBuild = (): Build => {
     try {
       return new Build(
         createBuildConfig({
