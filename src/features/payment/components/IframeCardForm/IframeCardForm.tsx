@@ -2,7 +2,6 @@ import { Box } from "@mui/material";
 import * as O from "fp-ts/Option";
 import { pipe } from "fp-ts/function";
 import React from "react";
-import ReCAPTCHA from "react-google-recaptcha";
 import { useTranslation } from "react-i18next";
 import { getConfigOrThrow } from "../../../../utils/config/config";
 import {
@@ -49,7 +48,6 @@ export default function IframeCardForm(props: Props) {
   );
   const [formStatus, setFormStatus] =
     React.useState<FormStatus>(initialFieldsState);
-  const ref = React.useRef<ReCAPTCHA>(null);
   const [isAllFieldsLoaded, setIsAllFieldsLoaded] = React.useState(false);
 
   const buildRef = React.useRef<any>(null);
@@ -64,7 +62,6 @@ export default function IframeCardForm(props: Props) {
     // eslint-disable-next-line no-console
     console.log("executing on error ");
     setLoading(false);
-    ref.current?.reset?.();
     window.location.replace(
       `${ECOMMERCE_IO_CARD_DATA_CLIENT_REDIRECT_OUTCOME_PATH}?outcome=1`
     );
