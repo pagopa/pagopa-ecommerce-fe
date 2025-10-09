@@ -3,6 +3,7 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import * as O from "fp-ts/Option";
 import SaveCardPage from "../SaveCardPage";
+import { EcommerceRoutes } from "../models/routeModel";
 
 // Mock useTranslation
 jest.mock("react-i18next", () => ({
@@ -10,6 +11,11 @@ jest.mock("react-i18next", () => ({
     t: (key: string) => key,
   }),
   Trans: ({ children }: any) => <span>{children}</span>,
+}));
+
+const mockNavigate = jest.fn();
+jest.mock("react-router-dom", () => ({
+  useNavigate: () => mockNavigate,
 }));
 
 // Mock InformationModal to control openDialog/closeDialog
@@ -95,6 +101,13 @@ describe("SaveCardPage", () => {
       "saveCardPage.moreInfo"
     );
     expect(screen.getByText(/Default text/)).toBeInTheDocument();
+  });
+
+  it("navigates to the insert cart route when the noSaveRedirectBtn button is clicked", () => {
+    const noSaveRedirectBtn = screen.getByTestId("noSaveRedirectBtn");
+    fireEvent.click(noSaveRedirectBtn);
+    const redirectPath = `/${EcommerceRoutes.ROOT}/${EcommerceRoutes.NOT_ONBOARDED_CARD_PAYMENT}`;
+    expect(mockNavigate).toHaveBeenCalledWith(redirectPath);
   });
 
   it("redirects to outcome path if transaction fails (None)", async () => {

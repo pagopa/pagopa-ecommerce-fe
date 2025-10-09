@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { pipe } from "fp-ts/function";
 import * as O from "fp-ts/Option";
 import { Box, Button, Divider, Typography } from "@mui/material";
@@ -13,10 +14,12 @@ import { ecommerceIOPostWallet } from "../utils/api/wallet/newWallet";
 import { getFragments } from "../utils/urlUtilities";
 import { SessionItems, setSessionItem } from "../utils/storage/sessionStorage";
 import { getConfigOrThrow } from "../utils/config/config";
-import { ROUTE_FRAGMENT } from "./models/routeModel";
+import { EcommerceRoutes, ROUTE_FRAGMENT } from "./models/routeModel";
+
 export default function SaveCardPage() {
   const moreInfoModalRef = React.useRef<InformationModalRef>(null);
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const { sessionToken, clientId, paymentMethodId, rptId, amount } =
     getFragments(
@@ -70,7 +73,8 @@ export default function SaveCardPage() {
     );
 
   const handleNoSaveRedirect = function () {
-    // #TODO
+    const redirectPath = `/${EcommerceRoutes.ROOT}/${EcommerceRoutes.NOT_ONBOARDED_CARD_PAYMENT}`;
+    navigate(redirectPath);
   };
 
   return (
@@ -125,6 +129,7 @@ export default function SaveCardPage() {
         <Divider />
 
         <Button
+          data-testid="noSaveRedirectBtn"
           sx={{
             display: "flex",
             justifyContent: "space-between",
