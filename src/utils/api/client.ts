@@ -33,6 +33,27 @@ export const decodeFinalStatusResult = async (
   return !(r.status === 200 && isFinalStatus);
 };
 
+export const isResponse200OK = async (r: Response): Promise<boolean> => {
+  if (pollingConfig.counter.getValue() === pollingConfig.retries - 1) {
+    return false;
+  }
+  pollingConfig.counter.increment();
+  return r.status !== 200;
+};
+
+export const ecommerceIOClientWithPollingV1WithFinalStatusDecoder =
+  createIOClientV1({
+    baseUrl: config.ECOMMERCE_API_HOST,
+    fetchApi: exponetialPollingWithPromisePredicateFetch(
+      DeferredPromise<boolean>().e1,
+      pollingConfig.retries,
+      pollingConfig.delay,
+      pollingConfig.timeout,
+      decodeFinalStatusResult
+    ),
+    basePath: config.ECOMMERCE_IO_API_V1_PATH,
+  });
+
 export const ecommerceIOClientWithPollingV1 = createIOClientV1({
   baseUrl: config.ECOMMERCE_API_HOST,
   fetchApi: exponetialPollingWithPromisePredicateFetch(
@@ -40,7 +61,7 @@ export const ecommerceIOClientWithPollingV1 = createIOClientV1({
     pollingConfig.retries,
     pollingConfig.delay,
     pollingConfig.timeout,
-    decodeFinalStatusResult
+    isResponse200OK
   ),
   basePath: config.ECOMMERCE_IO_API_V1_PATH,
 });

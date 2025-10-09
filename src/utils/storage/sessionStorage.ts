@@ -2,8 +2,10 @@ export enum SessionItems {
   sessionToken = "sessionToken",
   outcomeInfo = "outcomeInfo",
   counterPolling = "counterPolling",
-  clientId = "clientId",
+  orderId = "orderId",
+  correlationId = "correlationId",
   paymentMethodId = "paymentMethodId",
+  clientId = "clientId",
   rptId = "rptId",
   amount = "amount",
 }

@@ -1,6 +1,7 @@
 import { Box, Typography } from "@mui/material";
 import { CSSProperties } from "@mui/material/styles/createTypography";
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 export default function PageContainer(props: {
   title?: string;
@@ -9,10 +10,11 @@ export default function PageContainer(props: {
   link?: React.ReactNode;
   childrenSx?: CSSProperties;
 }) {
+  const { t } = useTranslation();
   const { title, description, link, children, childrenSx } = props;
 
-  const Content = () => (
-    <>
+  return (
+    <Box mt={3} mb={6} aria-live="polite">
       {!!title && (
         <Typography
           variant="h4"
@@ -21,7 +23,7 @@ export default function PageContainer(props: {
           mt={3}
           color="text.primary"
         >
-          {props.title}
+          {t(title)}
         </Typography>
       )}
 
@@ -37,12 +39,6 @@ export default function PageContainer(props: {
         </Typography>
       )}
       <Box sx={childrenSx}>{children}</Box>
-    </>
-  );
-
-  return (
-    <Box mt={3} mb={6} aria-live="polite">
-      <Content />
     </Box>
   );
 }
