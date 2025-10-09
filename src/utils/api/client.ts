@@ -4,6 +4,7 @@ import { createCounter } from "../../utils/counter";
 import { createClient as createIOClientV1 } from "../../../generated/definitions/payment-ecommerce-webview-v1/client";
 import { createClient as createCHECKOUTClient } from "../../../generated/definitions/payment-ecommerce-v1/client";
 import { createClient as createCHECKOUTClientV2 } from "../../../generated/definitions/payment-ecommerce-v2/client";
+import { createClient as createIoClientV2 } from "../../../generated/definitions/payment-ecommerce-for-io-v2/client";
 import { getConfigOrThrow } from "../config/config";
 import {
   constantPollingWithPromisePredicateFetch,
@@ -55,6 +56,18 @@ export const ecommerceIOClientWithPollingV1WithFinalStatusDecoder =
   });
 
 export const ecommerceIOClientWithPollingV1 = createIOClientV1({
+  baseUrl: config.ECOMMERCE_API_HOST,
+  fetchApi: exponetialPollingWithPromisePredicateFetch(
+    DeferredPromise<boolean>().e1,
+    pollingConfig.retries,
+    pollingConfig.delay,
+    pollingConfig.timeout,
+    isResponse200OK
+  ),
+  basePath: config.ECOMMERCE_IO_API_V1_PATH,
+});
+
+export const ecommerceIOClientV2 = createIoClientV2({
   baseUrl: config.ECOMMERCE_API_HOST,
   fetchApi: exponetialPollingWithPromisePredicateFetch(
     DeferredPromise<boolean>().e1,

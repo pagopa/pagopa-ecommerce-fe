@@ -1,13 +1,18 @@
 import React from "react";
+import { pipe } from "fp-ts/function";
+import * as O from "fp-ts/Option";
 import { Box, Button, Divider, Typography } from "@mui/material";
 import { Trans, useTranslation } from "react-i18next";
 import { ChevronRight, CreditCard, CreditCardOff } from "@mui/icons-material";
+import PageContainer from "../components/PageContainer";
 import InformationModal, {
   InformationModalRef,
 } from "../components/InformationModal";
-import PageContainer from "../components/PageContainer";
+import { ecommerceIOPostTransaction } from "../utils/api/transactions/newTransaction";
+import { ecommerceIOPostWallet } from "../utils/api/wallet/newWallet";
 import { getFragments } from "../utils/urlUtilities";
 import { SessionItems, setSessionItem } from "../utils/storage/sessionStorage";
+import { getConfigOrThrow } from "../utils/config/config";
 import { ROUTE_FRAGMENT } from "./models/routeModel";
 export default function SaveCardPage() {
   const moreInfoModalRef = React.useRef<InformationModalRef>(null);
@@ -28,9 +33,41 @@ export default function SaveCardPage() {
   setSessionItem(SessionItems.rptId, rptId);
   setSessionItem(SessionItems.amount, amount);
 
-  const handleSaveRedirect = function () {
-    // #TODO
+  const { ECOMMERCE_IO_CARD_DATA_CLIENT_REDIRECT_OUTCOME_PATH } =
+    getConfigOrThrow();
+
+  const redirectOutcome = (outcome: number = 1): void => {
+    window.location.replace(
+      `${ECOMMERCE_IO_CARD_DATA_CLIENT_REDIRECT_OUTCOME_PATH}?outcome=${outcome}`
+    );
   };
+
+  const handleSaveRedirect = async () =>
+    pipe(
+      await ecommerceIOPostTransaction(sessionToken),
+      O.match(
+        () => redirectOutcome(),
+        async ({ transactionId }) => {
+          const maybeRedirectUrl = await ecommerceIOPostWallet(
+            sessionToken,
+            transactionId
+          );
+
+          pipe(
+            maybeRedirectUrl,
+            O.match(
+              () => redirectOutcome(),
+              ({ redirectUrl }) => {
+                const url =
+                  redirectUrl ??
+                  `${ECOMMERCE_IO_CARD_DATA_CLIENT_REDIRECT_OUTCOME_PATH}?outcome=1`;
+                window.location.replace(url);
+              }
+            )
+          );
+        }
+      )
+    );
 
   const handleNoSaveRedirect = function () {
     // #TODO
