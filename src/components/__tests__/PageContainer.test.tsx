@@ -3,10 +3,16 @@ import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import PageContainer from "../PageContainer";
 
+jest.mock("react-i18next", () => ({
+  useTranslation: () => ({
+    t: (key: string) => `Translated: ${key}`,
+  }),
+}));
+
 describe("PageContainer", () => {
   it("renders a title when provided", () => {
     render(<PageContainer title="Test Title" />);
-    expect(screen.getByText("Test Title")).toBeInTheDocument();
+    expect(screen.getByText("Translated: Test Title")).toBeInTheDocument();
   });
 
   it("does not render a title when not provided", () => {
@@ -51,5 +57,13 @@ describe("PageContainer", () => {
     render(<PageContainer />);
     const body2Typography = screen.queryByRole("paragraph");
     expect(body2Typography).not.toBeInTheDocument();
+  });
+
+  it("renders title correctly", () => {
+    render(<PageContainer title="page.title" />);
+
+    // Check if the title is rendered
+    const titleElement = screen.getByText("Translated: page.title");
+    expect(titleElement).toBeInTheDocument();
   });
 });

@@ -43,9 +43,10 @@ jest.mock(
 
 import { DeferredPromise } from "@pagopa/ts-commons/lib/promises";
 import {
-  ecommerceIOClientWithPollingV1,
   ecommerceCHECKOUTClientClientWithPolling,
   ecommerceCHECKOUTClientClientWithPollingV2,
+  ecommerceIOClientWithPollingV1,
+  ecommerceIOClientWithPollingV1WithFinalStatusDecoder,
 } from "../client";
 import {
   constantPollingWithPromisePredicateFetch,
@@ -58,32 +59,31 @@ import * as CheckoutV2Pkg from "../../../../generated/definitions/payment-ecomme
 
 describe("clientWithPolling module", () => {
   const config = getConfigOrThrow();
-  const predicate = expect.any(Function);
 
-  it("creates IO client with polling", () => {
-    expect(IOClientPkg.createClient).toHaveBeenCalledTimes(1);
-    const args = (IOClientPkg.createClient as jest.Mock).mock.calls[0][0];
-    expect(args.baseUrl).toBe(config.ECOMMERCE_API_HOST);
-    expect(args.basePath).toBe(config.ECOMMERCE_IO_API_V1_PATH);
-    expect(args.fetchApi).toBe("fetchApiMock");
-    expect(exponetialPollingWithPromisePredicateFetch).toHaveBeenCalledWith(
-      DeferredPromise<boolean>().e1,
-      config.ECOMMERCE_GET_TRANSACTION_POLLING_RETRIES,
-      config.ECOMMERCE_GET_TRANSACTION_POLLING_DELAY_MILLIS,
-      config.ECOMMERCE_API_TIMEOUT,
-      predicate
+  it("create both client IOs at import time (order: finalStatus then 200OK)", () => {
+    expect(IOClientPkg.createClient).toHaveBeenCalledTimes(2);
+
+    const [ioFinalCall, io200Call] = (IOClientPkg.createClient as jest.Mock)
+      .mock.calls;
+    const ioFinalArgs = ioFinalCall[0];
+    const io200Args = io200Call[0];
+
+    // 1 withFinalStatusDecoder
+    expect(ioFinalArgs.baseUrl).toBe(config.ECOMMERCE_API_HOST);
+    expect(ioFinalArgs.basePath).toBe(config.ECOMMERCE_IO_API_V1_PATH);
+    expect(ioFinalArgs.fetchApi).toBe("fetchApiMock");
+    expect(ecommerceIOClientWithPollingV1WithFinalStatusDecoder).toBe(
+      ioClientMock
     );
-    expect(constantPollingWithPromisePredicateFetch).toHaveBeenCalledWith(
-      DeferredPromise<boolean>().e1,
-      config.ECOMMERCE_GET_TRANSACTION_POLLING_RETRIES,
-      config.ECOMMERCE_GET_TRANSACTION_POLLING_DELAY_MILLIS,
-      config.ECOMMERCE_API_TIMEOUT,
-      predicate
-    );
+
+    // 2 isResponse200OK
+    expect(io200Args.baseUrl).toBe(config.ECOMMERCE_API_HOST);
+    expect(io200Args.basePath).toBe(config.ECOMMERCE_IO_API_V1_PATH);
+    expect(io200Args.fetchApi).toBe("fetchApiMock");
     expect(ecommerceIOClientWithPollingV1).toBe(ioClientMock);
   });
 
-  it("creates CHECKOUT v1 client with polling", () => {
+  it("create CHECKOUT v1 client with polling", () => {
     expect(CheckoutV1Pkg.createClient).toHaveBeenCalledTimes(1);
     const args = (CheckoutV1Pkg.createClient as jest.Mock).mock.calls[0][0];
     expect(args.baseUrl).toBe(config.ECOMMERCE_API_HOST);
@@ -92,7 +92,7 @@ describe("clientWithPolling module", () => {
     expect(ecommerceCHECKOUTClientClientWithPolling).toBe(checkoutClientMock);
   });
 
-  it("creates CHECKOUT v2 client with polling", () => {
+  it("create CHECKOUT v2 client with polling (constant)", () => {
     expect(CheckoutV2Pkg.createClient).toHaveBeenCalledTimes(1);
     const args = (CheckoutV2Pkg.createClient as jest.Mock).mock.calls[0][0];
     expect(args.baseUrl).toBe(config.ECOMMERCE_API_HOST);
@@ -101,5 +101,35 @@ describe("clientWithPolling module", () => {
     expect(ecommerceCHECKOUTClientClientWithPollingV2).toBe(
       checkoutV2ClientMock
     );
+  });
+
+  it("check the global counts of fetch wrappers", () => {
+    expect(exponetialPollingWithPromisePredicateFetch).toHaveBeenCalledTimes(3);
+
+    expect(constantPollingWithPromisePredicateFetch).toHaveBeenCalledTimes(1);
+
+    const expoArgsSample = (
+      exponetialPollingWithPromisePredicateFetch as jest.Mock
+    ).mock.calls[0];
+    expect(expoArgsSample[0]).toEqual(DeferredPromise<boolean>().e1);
+    expect(expoArgsSample[1]).toBe(
+      config.ECOMMERCE_GET_TRANSACTION_POLLING_RETRIES
+    );
+    expect(expoArgsSample[2]).toBe(
+      config.ECOMMERCE_GET_TRANSACTION_POLLING_DELAY_MILLIS
+    );
+    expect(expoArgsSample[3]).toBe(config.ECOMMERCE_API_TIMEOUT);
+    expect(typeof expoArgsSample[4]).toBe("function");
+
+    const constantArgs = (constantPollingWithPromisePredicateFetch as jest.Mock)
+      .mock.calls[0];
+    expect(constantArgs[1]).toBe(
+      config.ECOMMERCE_GET_TRANSACTION_POLLING_RETRIES
+    );
+    expect(constantArgs[2]).toBe(
+      config.ECOMMERCE_GET_TRANSACTION_POLLING_DELAY_MILLIS
+    );
+    expect(constantArgs[3]).toBe(config.ECOMMERCE_API_TIMEOUT);
+    expect(typeof constantArgs[4]).toBe("function");
   });
 });
