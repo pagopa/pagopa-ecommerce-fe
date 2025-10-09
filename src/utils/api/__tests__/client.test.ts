@@ -104,7 +104,7 @@ describe("clientWithPolling module", () => {
   });
 
   it("check the global counts of fetch wrappers", () => {
-    expect(exponetialPollingWithPromisePredicateFetch).toHaveBeenCalledTimes(3);
+    expect(exponetialPollingWithPromisePredicateFetch).toHaveBeenCalledTimes(4);
 
     expect(constantPollingWithPromisePredicateFetch).toHaveBeenCalledTimes(1);
 

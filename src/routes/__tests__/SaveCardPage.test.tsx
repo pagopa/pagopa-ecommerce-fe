@@ -1,7 +1,8 @@
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import SaveCardPage from "../SaveCardPage";
+import * as O from "fp-ts/Option";
 
 // Mock useTranslation
 jest.mock("react-i18next", () => ({
@@ -28,12 +29,41 @@ jest.mock("../../components/InformationModal", () =>
 jest.mock("../../utils/config/config", () => ({
   getConfigOrThrow: () => ({
     ECOMMERCE_API_RETRY_NUMBERS_LINEAR: 5,
+    ECOMMERCE_IO_CARD_DATA_CLIENT_REDIRECT_OUTCOME_PATH: "/done"
   }),
 }));
+
+jest.mock("../../utils/api/transactions/newTransaction", () => ({
+  __esModule: true,
+  ecommerceIOPostTransaction: jest.fn(),
+}));
+
+jest.mock("../../utils/api/wallet/newWallet", () => ({
+  __esModule: true,
+  ecommerceIOPostWallet: jest.fn(),
+}));
+
+import { ecommerceIOPostTransaction } from "../../utils/api/transactions/newTransaction";
+import { ecommerceIOPostWallet } from "../../utils/api/wallet/newWallet";
+import { RptId } from "../../../generated/definitions/payment-ecommerce-webview-v1/RptId";
+import { AmountEuroCents } from "../../../generated/definitions/payment-ecommerce-webview-v1/AmountEuroCents";
+import { TransactionStatusEnum } from "../../../generated/definitions/payment-ecommerce-webview-v1/TransactionStatus";
+
+const mockIOPostTransaction = ecommerceIOPostTransaction as jest.MockedFunction<
+  typeof ecommerceIOPostTransaction
+>;
+const mockIOPostWallet = ecommerceIOPostWallet as jest.MockedFunction<
+  typeof ecommerceIOPostWallet
+>;
 
 describe("SaveCardPage", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+
+    // Mock window.location.replace
+    delete (window as any).location;
+    (window as any).location = { replace: jest.fn() };
+
     render(<SaveCardPage />);
   });
 
@@ -66,15 +96,90 @@ describe("SaveCardPage", () => {
     expect(screen.getByText(/Default text/)).toBeInTheDocument();
   });
 
-  /*
-  #TODO
-  it("calls save and no-save handlers on button click", () => {
+  it("redirects to outcome path if transaction fails (None)", async () => {
+    mockIOPostTransaction.mockResolvedValue(O.none);
+
     const saveButton = screen.getByText("saveCardPage.saveTitle").closest("button")!;
-    const noSaveButton = screen.getByText("saveCardPage.noSaveTitle").closest("button")!;
-
     fireEvent.click(saveButton);
-    fireEvent.click(noSaveButton);
 
-    expect(true).toBe(true);
-  }); */
+    await waitFor(() =>
+      expect(window.location.replace).toHaveBeenCalledWith("/done?outcome=1")
+    );
+    expect(mockIOPostWallet).not.toHaveBeenCalled();
+  });
+
+  it("redirects to wallet URL if transaction succeeds and wallet returns Some({redirectUrl})", async () => {
+    mockIOPostTransaction.mockResolvedValue(
+      O.some({
+        transactionId: "577725a90dfe4b89b434b16ccad69247",
+        payments: [
+          {
+            rptId: "77777777777302012387654312384" as RptId,
+            amount: 600 as AmountEuroCents,
+          },
+        ],
+        status: TransactionStatusEnum.ACTIVATED,
+      })
+    );
+    mockIOPostWallet.mockResolvedValue(O.some({
+      walletId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      redirectUrl: "https://example.com/next"
+    }));
+
+    const saveButton = screen.getByText("saveCardPage.saveTitle").closest("button")!;
+    fireEvent.click(saveButton);
+
+    await waitFor(() =>
+      expect(window.location.replace).toHaveBeenCalledWith("https://example.com/next")
+    );
+  });
+
+  it("redirects to outcome path if wallet returns None", async () => {
+    mockIOPostTransaction.mockResolvedValue(
+      O.some({
+        transactionId: "577725a90dfe4b89b434b16ccad69247",
+        payments: [
+          {
+            rptId: "77777777777302012387654312384" as RptId,
+            amount: 600 as AmountEuroCents,
+          },
+        ],
+        status: TransactionStatusEnum.ACTIVATED,
+      })
+    );
+    mockIOPostWallet.mockResolvedValue(O.none);
+
+    const saveButton = screen.getByText("saveCardPage.saveTitle").closest("button")!;
+    fireEvent.click(saveButton);
+
+    await waitFor(() =>
+      expect(window.location.replace).toHaveBeenCalledWith("/done?outcome=1")
+    );
+  });
+
+  it("redirects to outcome path if wallet returns Some(undefined)", async () => {
+    mockIOPostTransaction.mockResolvedValue(
+      O.some({
+        transactionId: "577725a90dfe4b89b434b16ccad69247",
+        payments: [
+          {
+            rptId: "77777777777302012387654312384" as RptId,
+            amount: 600 as AmountEuroCents,
+          },
+        ],
+        status: TransactionStatusEnum.ACTIVATED,
+      })
+    );
+    mockIOPostWallet.mockResolvedValue(O.some({
+      walletId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      redirectUrl: undefined
+    }));
+
+    const saveButton = screen.getByText("saveCardPage.saveTitle").closest("button")!;
+    fireEvent.click(saveButton);
+
+    await waitFor(() =>
+      expect(window.location.replace).toHaveBeenCalledWith("/done?outcome=1")
+    );
+  });
 });
