@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { Box, Button, Divider, Typography } from "@mui/material";
 import { Trans, useTranslation } from "react-i18next";
 import { ChevronRight, CreditCard, CreditCardOff } from "@mui/icons-material";
@@ -8,10 +9,12 @@ import InformationModal, {
 import PageContainer from "../components/PageContainer";
 import { getFragments } from "../utils/urlUtilities";
 import { SessionItems, setSessionItem } from "../utils/storage/sessionStorage";
-import { ROUTE_FRAGMENT } from "./models/routeModel";
+import { EcommerceRoutes, ROUTE_FRAGMENT } from "./models/routeModel";
+
 export default function SaveCardPage() {
   const moreInfoModalRef = React.useRef<InformationModalRef>(null);
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const { sessionToken, clientId, paymentMethodId, rptId, amount } =
     getFragments(
@@ -33,7 +36,7 @@ export default function SaveCardPage() {
   };
 
   const handleNoSaveRedirect = function () {
-    // #TODO
+    navigate(EcommerceRoutes.NOT_ONBOARDED_CARD_PAYMENT);
   };
 
   return (
@@ -88,6 +91,7 @@ export default function SaveCardPage() {
         <Divider />
 
         <Button
+          data-testid="noSaveRedirectBtn"
           sx={{
             display: "flex",
             justifyContent: "space-between",
