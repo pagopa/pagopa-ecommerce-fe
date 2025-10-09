@@ -1,8 +1,8 @@
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import SaveCardPage from "../SaveCardPage";
 import * as O from "fp-ts/Option";
+import SaveCardPage from "../SaveCardPage";
 
 // Mock useTranslation
 jest.mock("react-i18next", () => ({
@@ -29,7 +29,7 @@ jest.mock("../../components/InformationModal", () =>
 jest.mock("../../utils/config/config", () => ({
   getConfigOrThrow: () => ({
     ECOMMERCE_API_RETRY_NUMBERS_LINEAR: 5,
-    ECOMMERCE_IO_CARD_DATA_CLIENT_REDIRECT_OUTCOME_PATH: "/done"
+    ECOMMERCE_IO_CARD_DATA_CLIENT_REDIRECT_OUTCOME_PATH: "/done",
   }),
 }));
 
@@ -60,8 +60,9 @@ describe("SaveCardPage", () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    // Mock window.location.replace
+    // eslint-disable-next-line functional/immutable-data
     delete (window as any).location;
+    // eslint-disable-next-line functional/immutable-data
     (window as any).location = { replace: jest.fn() };
 
     render(<SaveCardPage />);
@@ -99,7 +100,9 @@ describe("SaveCardPage", () => {
   it("redirects to outcome path if transaction fails (None)", async () => {
     mockIOPostTransaction.mockResolvedValue(O.none);
 
-    const saveButton = screen.getByText("saveCardPage.saveTitle").closest("button")!;
+    const saveButton = screen
+      .getByText("saveCardPage.saveTitle")
+      .closest("button")!;
     fireEvent.click(saveButton);
 
     await waitFor(() =>
@@ -121,16 +124,22 @@ describe("SaveCardPage", () => {
         status: TransactionStatusEnum.ACTIVATED,
       })
     );
-    mockIOPostWallet.mockResolvedValue(O.some({
-      walletId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-      redirectUrl: "https://example.com/next"
-    }));
+    mockIOPostWallet.mockResolvedValue(
+      O.some({
+        walletId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        redirectUrl: "https://example.com/next",
+      })
+    );
 
-    const saveButton = screen.getByText("saveCardPage.saveTitle").closest("button")!;
+    const saveButton = screen
+      .getByText("saveCardPage.saveTitle")
+      .closest("button")!;
     fireEvent.click(saveButton);
 
     await waitFor(() =>
-      expect(window.location.replace).toHaveBeenCalledWith("https://example.com/next")
+      expect(window.location.replace).toHaveBeenCalledWith(
+        "https://example.com/next"
+      )
     );
   });
 
@@ -149,7 +158,9 @@ describe("SaveCardPage", () => {
     );
     mockIOPostWallet.mockResolvedValue(O.none);
 
-    const saveButton = screen.getByText("saveCardPage.saveTitle").closest("button")!;
+    const saveButton = screen
+      .getByText("saveCardPage.saveTitle")
+      .closest("button")!;
     fireEvent.click(saveButton);
 
     await waitFor(() =>
@@ -170,12 +181,16 @@ describe("SaveCardPage", () => {
         status: TransactionStatusEnum.ACTIVATED,
       })
     );
-    mockIOPostWallet.mockResolvedValue(O.some({
-      walletId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-      redirectUrl: undefined
-    }));
+    mockIOPostWallet.mockResolvedValue(
+      O.some({
+        walletId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        redirectUrl: undefined,
+      })
+    );
 
-    const saveButton = screen.getByText("saveCardPage.saveTitle").closest("button")!;
+    const saveButton = screen
+      .getByText("saveCardPage.saveTitle")
+      .closest("button")!;
     fireEvent.click(saveButton);
 
     await waitFor(() =>
