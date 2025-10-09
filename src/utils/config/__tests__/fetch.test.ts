@@ -18,6 +18,8 @@ Object.defineProperty(global, "window", {
       ECOMMERCE_GET_TRANSACTION_POLLING_DELAY_MILLIS: "100",
       ECOMMERCE_SHOW_CONTINUE_IO_BTN_DELAY_MILLIS: "2000",
       ECOMMERCE_API_RETRY_NUMBERS_LINEAR: "2",
+      ECOMMERCE_IO_CARD_DATA_CLIENT_REDIRECT_OUTCOME_PATH:
+        "http://localhost:1234/ecommerce-fe-outcome",
     },
   },
   writable: true,

@@ -5,12 +5,12 @@ import {
   ecommerceCHECKOUTGetTransactionOutcomeInfo,
 } from "../getTransactionInfo";
 import {
-  ecommerceIOClientWithPollingV1,
+  ecommerceIOClientWithPollingV1WithFinalStatusDecoder,
   ecommerceCHECKOUTClientClientWithPolling,
 } from "../../client";
 
 jest.mock("../../client", () => ({
-  ecommerceIOClientWithPollingV1: {
+  ecommerceIOClientWithPollingV1WithFinalStatusDecoder: {
     getTransactionOutcomes: jest.fn(),
   },
   ecommerceCHECKOUTClientClientWithPolling: {
@@ -23,7 +23,7 @@ describe("ecommerceIOGetTransactionInfo", () => {
 
   it("returns Some(value) when client returns Right with status 200", async () => {
     (
-      ecommerceIOClientWithPollingV1.getTransactionOutcomes as jest.Mock
+      ecommerceIOClientWithPollingV1WithFinalStatusDecoder.getTransactionOutcomes as jest.Mock
     ).mockResolvedValue(E.right({ status: 200, value: mockResponse }));
     const result = await ecommerceIOGetTransactionOutcomeInfo("tx123", "token");
     expect(result).toEqual(O.some(mockResponse));
@@ -31,7 +31,7 @@ describe("ecommerceIOGetTransactionInfo", () => {
 
   it("returns None when client returns Right with non-200 status", async () => {
     (
-      ecommerceIOClientWithPollingV1.getTransactionOutcomes as jest.Mock
+      ecommerceIOClientWithPollingV1WithFinalStatusDecoder.getTransactionOutcomes as jest.Mock
     ).mockResolvedValue(E.right({ status: 404, value: mockResponse }));
     const result = await ecommerceIOGetTransactionOutcomeInfo("tx123", "token");
     expect(result).toEqual(O.none);
@@ -39,7 +39,7 @@ describe("ecommerceIOGetTransactionInfo", () => {
 
   it("returns None when client throws an error", async () => {
     (
-      ecommerceIOClientWithPollingV1.getTransactionOutcomes as jest.Mock
+      ecommerceIOClientWithPollingV1WithFinalStatusDecoder.getTransactionOutcomes as jest.Mock
     ).mockRejectedValue(new Error("network error"));
     const result = await ecommerceIOGetTransactionOutcomeInfo("tx123", "token");
     expect(result).toEqual(O.none);
