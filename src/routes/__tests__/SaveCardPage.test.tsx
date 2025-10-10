@@ -36,6 +36,7 @@ jest.mock("../../utils/config/config", () => ({
   getConfigOrThrow: () => ({
     ECOMMERCE_API_RETRY_NUMBERS_LINEAR: 5,
     ECOMMERCE_IO_CARD_DATA_CLIENT_REDIRECT_OUTCOME_PATH: "/done",
+    ECOMMERCE_IO_SAVE_CARD_FAIL_REDIRECT_PATH: "/fail",
   }),
 }));
 
@@ -119,7 +120,7 @@ describe("SaveCardPage", () => {
     fireEvent.click(saveButton);
 
     await waitFor(() =>
-      expect(window.location.replace).toHaveBeenCalledWith("/done?outcome=1")
+      expect(window.location.replace).toHaveBeenCalledWith("/fail")
     );
     expect(mockIOPostWallet).not.toHaveBeenCalled();
   });
@@ -177,7 +178,7 @@ describe("SaveCardPage", () => {
     fireEvent.click(saveButton);
 
     await waitFor(() =>
-      expect(window.location.replace).toHaveBeenCalledWith("/done?outcome=1")
+      expect(window.location.replace).toHaveBeenCalledWith("/fail")
     );
   });
 
@@ -207,7 +208,7 @@ describe("SaveCardPage", () => {
     fireEvent.click(saveButton);
 
     await waitFor(() =>
-      expect(window.location.replace).toHaveBeenCalledWith("/done?outcome=1")
+      expect(window.location.replace).toHaveBeenCalledWith("/fail")
     );
   });
 });

@@ -36,20 +36,28 @@ export default function SaveCardPage() {
   setSessionItem(SessionItems.rptId, rptId);
   setSessionItem(SessionItems.amount, amount);
 
-  const { ECOMMERCE_IO_CARD_DATA_CLIENT_REDIRECT_OUTCOME_PATH } =
-    getConfigOrThrow();
+  const { ECOMMERCE_IO_SAVE_CARD_FAIL_REDIRECT_PATH } = getConfigOrThrow();
 
-  const redirectOutcome = (outcome: number = 1): void => {
-    window.location.replace(
-      `${ECOMMERCE_IO_CARD_DATA_CLIENT_REDIRECT_OUTCOME_PATH}?outcome=${outcome}`
-    );
+  const redirectOutcome = (walletId: string | undefined): void => {
+    if (walletId) {
+      ECOMMERCE_IO_SAVE_CARD_FAIL_REDIRECT_PATH.replace(
+        /\{walletId\}/g,
+        walletId
+      );
+    } else {
+      ECOMMERCE_IO_SAVE_CARD_FAIL_REDIRECT_PATH.replace(
+        /\{walletId\}/g,
+        "undefined"
+      );
+    }
+    window.location.replace(`${ECOMMERCE_IO_SAVE_CARD_FAIL_REDIRECT_PATH}`);
   };
 
   const handleSaveRedirect = async () =>
     pipe(
       await ecommerceIOPostTransaction(sessionToken),
       O.match(
-        () => redirectOutcome(),
+        () => redirectOutcome(undefined),
         async ({ transactionId }) => {
           const maybeRedirectUrl = await ecommerceIOPostWallet(
             sessionToken,
@@ -59,11 +67,14 @@ export default function SaveCardPage() {
           pipe(
             maybeRedirectUrl,
             O.match(
-              () => redirectOutcome(),
+              () => redirectOutcome(undefined),
               ({ redirectUrl }) => {
                 const url =
                   redirectUrl ??
-                  `${ECOMMERCE_IO_CARD_DATA_CLIENT_REDIRECT_OUTCOME_PATH}?outcome=1`;
+                  ECOMMERCE_IO_SAVE_CARD_FAIL_REDIRECT_PATH.replace(
+                    /\{walletId\}/g,
+                    "undefined"
+                  );
                 window.location.replace(url);
               }
             )

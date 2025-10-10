@@ -28,6 +28,7 @@ export const IConfig = t.interface({
   ECOMMERCE_SHOW_CONTINUE_IO_BTN_DELAY_MILLIS: t.number,
   ECOMMERCE_API_RETRY_NUMBERS_LINEAR: t.number,
   ECOMMERCE_IO_CARD_DATA_CLIENT_REDIRECT_OUTCOME_PATH: NonEmptyString,
+  ECOMMERCE_IO_SAVE_CARD_FAIL_REDIRECT_PATH: NonEmptyString,
 });
 
 // No need to re-evaluate this object for each call
@@ -85,6 +86,13 @@ const errorOrConfig: t.Validation<IConfig> = IConfig.decode({
     .ECOMMERCE_IO_CARD_DATA_CLIENT_REDIRECT_OUTCOME_PATH
     ? // eslint-disable-next-line no-underscore-dangle
       (window as any)._env_.ECOMMERCE_IO_CARD_DATA_CLIENT_REDIRECT_OUTCOME_PATH
+    : null,
+
+  // eslint-disable-next-line no-underscore-dangle
+  ECOMMERCE_IO_SAVE_CARD_FAIL_REDIRECT_PATH: (window as any)._env_
+    .ECOMMERCE_IO_SAVE_CARD_FAIL_REDIRECT_PATH
+    ? // eslint-disable-next-line no-underscore-dangle
+      (window as any)._env_.ECOMMERCE_IO_SAVE_CARD_FAIL_REDIRECT_PATH
     : null,
 });
 

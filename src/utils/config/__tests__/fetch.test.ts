@@ -20,6 +20,8 @@ Object.defineProperty(global, "window", {
       ECOMMERCE_API_RETRY_NUMBERS_LINEAR: "2",
       ECOMMERCE_IO_CARD_DATA_CLIENT_REDIRECT_OUTCOME_PATH:
         "http://localhost:1234/ecommerce-fe-outcome",
+      ECOMMERCE_IO_SAVE_CARD_FAIL_REDIRECT_PATH:
+        "http://localhost:1234/ecommerce-fe-card-fail",
     },
   },
   writable: true,
