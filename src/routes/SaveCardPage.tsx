@@ -39,18 +39,15 @@ export default function SaveCardPage() {
   const { ECOMMERCE_IO_SAVE_CARD_FAIL_REDIRECT_PATH } = getConfigOrThrow();
 
   const redirectOutcome = (walletId: string | undefined): void => {
-    if (walletId) {
-      ECOMMERCE_IO_SAVE_CARD_FAIL_REDIRECT_PATH.replace(
-        /\{walletId\}/g,
-        walletId
-      );
-    } else {
-      ECOMMERCE_IO_SAVE_CARD_FAIL_REDIRECT_PATH.replace(
-        /\{walletId\}/g,
-        "undefined"
-      );
-    }
-    window.location.replace(`${ECOMMERCE_IO_SAVE_CARD_FAIL_REDIRECT_PATH}`);
+    const walletIdOption = O.fromNullable(walletId);
+
+    const url = pipe(
+      walletIdOption,
+      O.getOrElse(() => "undefined"),
+      (id) =>
+        ECOMMERCE_IO_SAVE_CARD_FAIL_REDIRECT_PATH.replace(/\{walletId\}/g, id)
+    );
+    window.location.replace(`${url}`);
   };
 
   const handleSaveRedirect = async () =>
