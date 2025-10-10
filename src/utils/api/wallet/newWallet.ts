@@ -2,14 +2,14 @@ import * as E from "fp-ts/Either";
 import * as O from "fp-ts/Option";
 import * as TE from "fp-ts/TaskEither";
 import { flow, pipe } from "fp-ts/function";
+import { ecommerceIOClientWithPollingV1 } from "../client";
 
 import {
   getSessionItem,
   SessionItems,
 } from "../../../utils/storage/sessionStorage";
-import { ecommerceIOClientV2 } from "../client";
-import { WalletTransactionCreateResponse } from "../../../../generated/definitions/payment-ecommerce-for-io-v2/WalletTransactionCreateResponse";
-import { AmountEuroCents } from "../../../../generated/definitions/payment-ecommerce-for-io-v2/AmountEuroCents";
+import { WalletTransactionCreateResponse } from "../../../../generated/definitions/payment-ecommerce-webview-v1/WalletTransactionCreateResponse";
+import { AmountEuroCents } from "../../../../generated/definitions/payment-ecommerce-webview-v1/AmountEuroCents";
 
 export const ecommerceIOPostWallet = (
   token: string,
@@ -21,7 +21,7 @@ export const ecommerceIOPostWallet = (
         const paymentMethodId =
           getSessionItem(SessionItems.paymentMethodId) ?? "";
         const amount = getSessionItem(SessionItems.amount);
-        return ecommerceIOClientV2.createWalletForTransactionsForIO({
+        return ecommerceIOClientWithPollingV1.createWalletForTransactionsForIO({
           pagoPAPlatformSessionToken: token,
           transactionId,
           body: {
