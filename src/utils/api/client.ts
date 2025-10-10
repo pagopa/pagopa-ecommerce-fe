@@ -38,7 +38,7 @@ export const isResponse2xxOK = async (r: Response): Promise<boolean> => {
     return false;
   }
   pollingConfig.counter.increment();
-  return r.status >= 300;
+  return !(r.status >= 200 && r.status <= 299);
 };
 
 export const ecommerceIOClientWithPollingV1WithFinalStatusDecoder =
