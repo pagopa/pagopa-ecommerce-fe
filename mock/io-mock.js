@@ -4,14 +4,18 @@
  */
 
 const express = require("express");
+const O = require("fp-ts/Option");
+
 const port = 8082;
 const app = express();
+
+app.use(express.json());
 
 app.get("/ecommerce/webview/v1/transactions/:transactionId/outcomes", (req, res) => {
 
     const transactionId = req.params.transactionId.replace(/\n|\r/g, "");
     console.log("Transaction ID received: " + transactionId);
-  
+
     const suffixMap = {
         "000": {
             outcome: 0
@@ -60,7 +64,7 @@ app.get("/ecommerce/webview/v1/transactions/:transactionId/outcomes", (req, res)
         },
     };
 
-    const finalStatusSuffix = transactionId.slice(-4,-3);
+    const finalStatusSuffix = transactionId.slice(-4, -3);
     const suffix = transactionId.slice(-3);
     const params = suffixMap[suffix];
 
@@ -72,8 +76,68 @@ app.get("/ecommerce/webview/v1/transactions/:transactionId/outcomes", (req, res)
 
 });
 
+app.post("/ecommerce/webview/v1/transactions", (req, res) => {
+    const notice = req.body?.paymentNotices?.[0];
+    const rptId = notice?.rptId;
+    const amount = notice?.amount;
+
+    if (rptId && amount) {
+        res.status(200).send({
+            transactionId: "577725a90dfe4b89b434b16ccad69247",
+            payments: [
+                {
+                    rptId: "77777777777302012387654312384",
+                    paymentToken: "paymentToken1",
+                    reason: "reason1",
+                    amount: 600,
+                    transferList: [
+                        {
+                            paFiscalCode: "77777777777",
+                            digitalStamp: false,
+                            transferCategory: "transferCategory1",
+                            transferAmount: 500
+                        },
+                        {
+                            paFiscalCode: "11111111111",
+                            digitalStamp: true,
+                            transferCategory: "transferCategory2",
+                            transferAmount: 100
+                        }
+                    ]
+                }
+            ],
+            status: "ACTIVATED",
+            feeTotal: 99999999999,
+            clientId: "IO",
+            sendPaymentResultOutcome: "OK",
+            authorizationCode: "string",
+            errorCode: "string",
+            gateway: "NPG"
+        });
+    } else {
+        res.status(400).json({ error: "Missing rptId or amount" });
+    }
+});
+
+app.post("/ecommerce/webview/v1/transactions/:transactionId/wallets", (req, res) => {
+    const paymentMethodId = req.body.paymentMethodId;
+    const amount = req.body.amount;
+    const transactionId = req.params.transactionId.replace(/\n|\r/g, "");
+    const infoReceived = { paymentMethodId, amount, transactionId }
+    console.log("Info received: " + JSON.stringify(infoReceived));
+
+    if (paymentMethodId && amount && transactionId) {
+        res.status(201).send({
+            walletId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            redirectUrl: "http://google.it"
+        });
+    } else{
+        res.status(400).json({ error: "Missing info" });
+    }
+})
+
 app.listen(port, () => {
-  console.log(`Mock started on port ${port}`)
+    console.log(`Mock started on port ${port}`)
 });
 
 function mockTransactionData(outcome, isFinalStatus) {

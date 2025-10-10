@@ -1,14 +1,19 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { pipe } from "fp-ts/function";
+import * as O from "fp-ts/Option";
 import { Box, Button, Divider, Typography } from "@mui/material";
 import { Trans, useTranslation } from "react-i18next";
 import { ChevronRight, CreditCard, CreditCardOff } from "@mui/icons-material";
+import PageContainer from "../components/PageContainer";
 import InformationModal, {
   InformationModalRef,
 } from "../components/InformationModal";
-import PageContainer from "../components/PageContainer";
+import { ecommerceIOPostTransaction } from "../utils/api/transactions/newTransaction";
+import { ecommerceIOPostWallet } from "../utils/api/wallet/newWallet";
 import { getFragments } from "../utils/urlUtilities";
 import { SessionItems, setSessionItem } from "../utils/storage/sessionStorage";
+import { getConfigOrThrow } from "../utils/config/config";
 import { EcommerceRoutes, ROUTE_FRAGMENT } from "./models/routeModel";
 
 export default function SaveCardPage() {
@@ -31,9 +36,49 @@ export default function SaveCardPage() {
   setSessionItem(SessionItems.rptId, rptId);
   setSessionItem(SessionItems.amount, amount);
 
-  const handleSaveRedirect = function () {
-    // #TODO
+  const { ECOMMERCE_IO_SAVE_CARD_FAIL_REDIRECT_PATH } = getConfigOrThrow();
+
+  const redirectOutcome = (walletId: string | undefined): void => {
+    const walletIdOption = O.fromNullable(walletId);
+
+    const url = pipe(
+      walletIdOption,
+      O.getOrElse(() => "undefined"),
+      (id) =>
+        ECOMMERCE_IO_SAVE_CARD_FAIL_REDIRECT_PATH.replace(/\{walletId\}/g, id)
+    );
+    window.location.replace(`${url}`);
   };
+
+  const handleSaveRedirect = async () =>
+    pipe(
+      await ecommerceIOPostTransaction(sessionToken),
+      O.match(
+        () => redirectOutcome(undefined),
+        async ({ transactionId }) => {
+          const maybeRedirectUrl = await ecommerceIOPostWallet(
+            sessionToken,
+            transactionId
+          );
+
+          pipe(
+            maybeRedirectUrl,
+            O.match(
+              () => redirectOutcome(undefined),
+              ({ redirectUrl }) => {
+                const url =
+                  redirectUrl ??
+                  ECOMMERCE_IO_SAVE_CARD_FAIL_REDIRECT_PATH.replace(
+                    /\{walletId\}/g,
+                    "undefined"
+                  );
+                window.location.replace(url);
+              }
+            )
+          );
+        }
+      )
+    );
 
   const handleNoSaveRedirect = function () {
     const redirectPath = `/${EcommerceRoutes.ROOT}/${EcommerceRoutes.NOT_ONBOARDED_CARD_PAYMENT}`;
