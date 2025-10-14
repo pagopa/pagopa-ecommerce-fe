@@ -11,10 +11,12 @@ import { ecommerceIOClientWithPollingV1 } from "../client";
 import { NewTransactionResponse } from "../../../../generated/definitions/payment-ecommerce-webview-v1/NewTransactionResponse";
 import { RptId } from "../../../../generated/definitions/payment-ecommerce-webview-v1/RptId";
 import { AmountEuroCents } from "../../../../generated/definitions/payment-ecommerce-webview-v1/AmountEuroCents";
+import { FaultCategoryEnum } from "../../../../generated/definitions/payment-ecommerce-v1/FaultCategory";
+import { NodeFaultCode } from "./nodeFaultCode";
 
 export const ecommerceIOPostTransaction = (
   token: string
-): Promise<O.Option<NewTransactionResponse>> =>
+): TE.TaskEither<NodeFaultCode, NewTransactionResponse> =>
   pipe(
     TE.tryCatch(
       () => {
@@ -34,21 +36,50 @@ export const ecommerceIOPostTransaction = (
           }
         );
       },
-      () => E.toError
+      () =>
+        TE.left({
+          faultCodeCategory: FaultCategoryEnum.GENERIC_ERROR as string,
+        })
     ),
-    TE.match(
-      () => O.none,
-      flow(
-        E.match(
-          () => O.none,
-          (responseType) => {
-            if (responseType.status === 200) {
-              return O.some(responseType.value);
-            } else {
-              return O.none;
+    TE.fold(
+      () =>
+        TE.left({
+          faultCodeCategory: FaultCategoryEnum.GENERIC_ERROR as string,
+        }),
+      (r) =>
+        pipe(
+          r,
+          E.fold(
+            () =>
+              TE.left({
+                faultCodeCategory: FaultCategoryEnum.GENERIC_ERROR as string,
+              }),
+            (response) => {
+              // 200 OK
+              if (response.status === 200) {
+                return TE.right(response.value);
+              }
+              if (response.status === 400) {
+                return TE.left({
+                  faultCodeCategory: FaultCategoryEnum.GENERIC_ERROR as string,
+                });
+              }
+              if (response.status === 401) {
+                return TE.left({
+                  faultCodeCategory: "SESSION_EXPIRED",
+                  faultCodeDetail: "Unauthorized",
+                });
+              }
+              // other error cases
+              return TE.left({
+                faultCodeCategory:
+                  response.value?.faultCodeCategory ??
+                  FaultCategoryEnum.GENERIC_ERROR as string,
+                faultCodeDetail:
+                  response.value?.faultCodeDetail ?? "Unknown error",
+              });
             }
-          }
+          )
         )
-      )
     )
-  )();
+  );
