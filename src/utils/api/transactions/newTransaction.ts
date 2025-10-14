@@ -74,7 +74,7 @@ export const ecommerceIOPostTransaction = (
               return TE.left({
                 faultCodeCategory:
                   response.value?.faultCodeCategory ??
-                  FaultCategoryEnum.GENERIC_ERROR as string,
+                  (FaultCategoryEnum.GENERIC_ERROR as string),
                 faultCodeDetail:
                   response.value?.faultCodeDetail ?? "Unknown error",
               });
