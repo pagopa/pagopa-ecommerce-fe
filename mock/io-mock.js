@@ -93,7 +93,7 @@ app.post("/ecommerce/webview/v1/transactions", (req, res) => {
                     }
                 );
             case "00000000000000000000000000001":
-                return res.status(401);
+                return res.sendStatus(401);
             case "00000000000000000000000000002":
                 return res.status(404).json(
                     {
