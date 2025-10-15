@@ -1,7 +1,7 @@
 import * as E from "fp-ts/Either";
 import { pipe } from "fp-ts/function";
 import { getSessionItem, SessionItems } from "../../../storage/sessionStorage";
-import { ecommerceIOClientWithPollingV1 } from "../../../api/client";
+import { ecommerceIOClientV1 } from "../../../api/client";
 import { ecommerceIOPostTransaction } from "../newTransaction";
 import { NodeFaultCode } from "../nodeFaultCode";
 
@@ -15,7 +15,7 @@ jest.mock("../../../storage/sessionStorage", () => ({
 }));
 
 jest.mock("../../../api/client", () => ({
-  ecommerceIOClientWithPollingV1: {
+  ecommerceIOClientV1: {
     newTransactionForEcommerceWebview: jest.fn(),
   },
 }));
@@ -43,7 +43,7 @@ describe("ecommerceIOPostTransaction", () => {
 
     // Wrap the response in Right to match E.match in the function
     (
-      ecommerceIOClientWithPollingV1.newTransactionForEcommerceWebview as jest.Mock
+      ecommerceIOClientV1.newTransactionForEcommerceWebview as jest.Mock
     ).mockResolvedValue(E.right(mockResponse));
 
     const result = await ecommerceIOPostTransaction(mockToken)();
@@ -54,7 +54,7 @@ describe("ecommerceIOPostTransaction", () => {
     const mockResponse = { status: 400, value: {} };
 
     (
-      ecommerceIOClientWithPollingV1.newTransactionForEcommerceWebview as jest.Mock
+      ecommerceIOClientV1.newTransactionForEcommerceWebview as jest.Mock
     ).mockResolvedValue(E.right(mockResponse));
 
     const result = await ecommerceIOPostTransaction(mockToken)();
@@ -66,7 +66,7 @@ describe("ecommerceIOPostTransaction", () => {
     const mockResponse = { status: 401, value: {} };
 
     (
-      ecommerceIOClientWithPollingV1.newTransactionForEcommerceWebview as jest.Mock
+      ecommerceIOClientV1.newTransactionForEcommerceWebview as jest.Mock
     ).mockResolvedValue(E.right(mockResponse));
 
     const result = await ecommerceIOPostTransaction(mockToken)();
@@ -92,7 +92,7 @@ describe("ecommerceIOPostTransaction", () => {
       };
 
       (
-        ecommerceIOClientWithPollingV1.newTransactionForEcommerceWebview as jest.Mock
+        ecommerceIOClientV1.newTransactionForEcommerceWebview as jest.Mock
       ).mockResolvedValue(E.right(mockResponse));
 
       const result = await ecommerceIOPostTransaction(mockToken)();
@@ -112,7 +112,7 @@ describe("ecommerceIOPostTransaction", () => {
       const mockResponse = { status: httpErrorCode, value: {} };
 
       (
-        ecommerceIOClientWithPollingV1.newTransactionForEcommerceWebview as jest.Mock
+        ecommerceIOClientV1.newTransactionForEcommerceWebview as jest.Mock
       ).mockResolvedValue(E.right(mockResponse));
 
       const result = await ecommerceIOPostTransaction(mockToken)();
@@ -128,7 +128,7 @@ describe("ecommerceIOPostTransaction", () => {
 
   it("returns None when the client throws an error", async () => {
     (
-      ecommerceIOClientWithPollingV1.newTransactionForEcommerceWebview as jest.Mock
+      ecommerceIOClientV1.newTransactionForEcommerceWebview as jest.Mock
     ).mockRejectedValue(new Error("Network error"));
 
     const result = await ecommerceIOPostTransaction(mockToken)();
