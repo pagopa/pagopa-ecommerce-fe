@@ -1,7 +1,6 @@
 import * as E from "fp-ts/Either";
-import * as O from "fp-ts/Option";
 import * as TE from "fp-ts/TaskEither";
-import { flow, pipe } from "fp-ts/function";
+import { pipe } from "fp-ts/function";
 
 import {
   getSessionItem,
@@ -13,6 +12,10 @@ import { RptId } from "../../../../generated/definitions/payment-ecommerce-webvi
 import { AmountEuroCents } from "../../../../generated/definitions/payment-ecommerce-webview-v1/AmountEuroCents";
 import { FaultCategoryEnum } from "../../../../generated/definitions/payment-ecommerce-v1/FaultCategory";
 import { NodeFaultCode } from "./nodeFaultCode";
+
+const genericErrorCode = TE.left({
+  faultCodeCategory: FaultCategoryEnum.GENERIC_ERROR as string,
+});
 
 export const ecommerceIOPostTransaction = (
   token: string
@@ -36,33 +39,22 @@ export const ecommerceIOPostTransaction = (
           }
         );
       },
-      () =>
-        TE.left({
-          faultCodeCategory: FaultCategoryEnum.GENERIC_ERROR as string,
-        })
+      () => genericErrorCode
     ),
     TE.fold(
-      () =>
-        TE.left({
-          faultCodeCategory: FaultCategoryEnum.GENERIC_ERROR as string,
-        }),
+      () => genericErrorCode,
       (r) =>
         pipe(
           r,
           E.fold(
-            () =>
-              TE.left({
-                faultCodeCategory: FaultCategoryEnum.GENERIC_ERROR as string,
-              }),
+            () => genericErrorCode,
             (response) => {
               // 200 OK
               if (response.status === 200) {
                 return TE.right(response.value);
               }
               if (response.status === 400) {
-                return TE.left({
-                  faultCodeCategory: FaultCategoryEnum.GENERIC_ERROR as string,
-                });
+                return genericErrorCode;
               }
               if (response.status === 401) {
                 return TE.left({

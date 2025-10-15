@@ -2,8 +2,14 @@ import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import * as O from "fp-ts/Option";
+import * as TE from "fp-ts/TaskEither";
 import SaveCardPage from "../SaveCardPage";
 import { EcommerceRoutes } from "../models/routeModel";
+import { ecommerceIOPostTransaction } from "../../utils/api/transactions/newTransaction";
+import { ecommerceIOPostWallet } from "../../utils/api/wallet/newWallet";
+import { RptId } from "../../../generated/definitions/payment-ecommerce-webview-v1/RptId";
+import { AmountEuroCents } from "../../../generated/definitions/payment-ecommerce-webview-v1/AmountEuroCents";
+import { TransactionStatusEnum } from "../../../generated/definitions/payment-ecommerce-webview-v1/TransactionStatus";
 
 // Mock useTranslation
 jest.mock("react-i18next", () => ({
@@ -50,18 +56,23 @@ jest.mock("../../utils/api/wallet/newWallet", () => ({
   ecommerceIOPostWallet: jest.fn(),
 }));
 
-import { ecommerceIOPostTransaction } from "../../utils/api/transactions/newTransaction";
-import { ecommerceIOPostWallet } from "../../utils/api/wallet/newWallet";
-import { RptId } from "../../../generated/definitions/payment-ecommerce-webview-v1/RptId";
-import { AmountEuroCents } from "../../../generated/definitions/payment-ecommerce-webview-v1/AmountEuroCents";
-import { TransactionStatusEnum } from "../../../generated/definitions/payment-ecommerce-webview-v1/TransactionStatus";
-
 const mockIOPostTransaction = ecommerceIOPostTransaction as jest.MockedFunction<
   typeof ecommerceIOPostTransaction
 >;
 const mockIOPostWallet = ecommerceIOPostWallet as jest.MockedFunction<
   typeof ecommerceIOPostWallet
 >;
+
+const okTransactionResponseOK = TE.of({
+  transactionId: "577725a90dfe4b89b434b16ccad69247",
+  payments: [
+    {
+      rptId: "77777777777302012387654312384" as RptId,
+      amount: 600 as AmountEuroCents,
+    },
+  ],
+  status: TransactionStatusEnum.ACTIVATED,
+});
 
 describe("SaveCardPage", () => {
   beforeEach(() => {
@@ -112,7 +123,9 @@ describe("SaveCardPage", () => {
   });
 
   it("redirects to outcome path if transaction fails (None)", async () => {
-    mockIOPostTransaction.mockResolvedValue(O.none);
+    mockIOPostTransaction.mockImplementation(() =>
+      TE.left({ faultCodeCategory: "TEST" })
+    );
 
     const saveButton = screen
       .getByText("saveCardPage.saveTitle")
@@ -126,18 +139,7 @@ describe("SaveCardPage", () => {
   });
 
   it("redirects to wallet URL if transaction succeeds and wallet returns Some({redirectUrl})", async () => {
-    mockIOPostTransaction.mockResolvedValue(
-      O.some({
-        transactionId: "577725a90dfe4b89b434b16ccad69247",
-        payments: [
-          {
-            rptId: "77777777777302012387654312384" as RptId,
-            amount: 600 as AmountEuroCents,
-          },
-        ],
-        status: TransactionStatusEnum.ACTIVATED,
-      })
-    );
+    mockIOPostTransaction.mockImplementation(() => okTransactionResponseOK);
     mockIOPostWallet.mockResolvedValue(
       O.some({
         walletId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
@@ -158,8 +160,8 @@ describe("SaveCardPage", () => {
   });
 
   it("redirects to outcome path if wallet returns None", async () => {
-    mockIOPostTransaction.mockResolvedValue(
-      O.some({
+    mockIOPostTransaction.mockImplementation(() =>
+      TE.of({
         transactionId: "577725a90dfe4b89b434b16ccad69247",
         payments: [
           {
@@ -183,18 +185,7 @@ describe("SaveCardPage", () => {
   });
 
   it("redirects to outcome path if wallet returns Some(undefined)", async () => {
-    mockIOPostTransaction.mockResolvedValue(
-      O.some({
-        transactionId: "577725a90dfe4b89b434b16ccad69247",
-        payments: [
-          {
-            rptId: "77777777777302012387654312384" as RptId,
-            amount: 600 as AmountEuroCents,
-          },
-        ],
-        status: TransactionStatusEnum.ACTIVATED,
-      })
-    );
+    mockIOPostTransaction.mockImplementation(() => okTransactionResponseOK);
     mockIOPostWallet.mockResolvedValue(
       O.some({
         walletId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",

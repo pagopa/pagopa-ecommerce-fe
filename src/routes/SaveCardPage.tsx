@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { pipe } from "fp-ts/function";
 import * as O from "fp-ts/Option";
+import * as TE from "fp-ts/TaskEither";
 import { Box, Button, Divider, Typography } from "@mui/material";
 import { Trans, useTranslation } from "react-i18next";
 import { ChevronRight, CreditCard, CreditCardOff } from "@mui/icons-material";
@@ -14,6 +15,7 @@ import { ecommerceIOPostWallet } from "../utils/api/wallet/newWallet";
 import { getFragments } from "../utils/urlUtilities";
 import { SessionItems, setSessionItem } from "../utils/storage/sessionStorage";
 import { getConfigOrThrow } from "../utils/config/config";
+import { NodeFaultCode } from "../utils/api/transactions/nodeFaultCode";
 import { EcommerceRoutes, ROUTE_FRAGMENT } from "./models/routeModel";
 
 export default function SaveCardPage() {
@@ -38,47 +40,59 @@ export default function SaveCardPage() {
 
   const { ECOMMERCE_IO_SAVE_CARD_FAIL_REDIRECT_PATH } = getConfigOrThrow();
 
-  const redirectOutcome = (walletId: string | undefined): void => {
-    const walletIdOption = O.fromNullable(walletId);
-
-    const url = pipe(
-      walletIdOption,
-      O.getOrElse(() => "undefined"),
-      (id) =>
-        ECOMMERCE_IO_SAVE_CARD_FAIL_REDIRECT_PATH.replace(/\{walletId\}/g, id)
-    );
+  const redirectOutcomeKO = (
+    walletId?: string,
+    transactionId?: string,
+    nodeFaultCode?: NodeFaultCode
+  ): void => {
+    const nodeFaultCodeQueryParam =
+      (nodeFaultCode &&
+        `&faultCodeCategory=${
+          nodeFaultCode.faultCodeCategory
+        }&faultCodeDetail=${
+          nodeFaultCode.faultCodeDetail || "Unknown error"
+        }`) ||
+      "";
+    const outcomeQueryParam = `?outcome=1${nodeFaultCodeQueryParam}`;
+    const url =
+      ECOMMERCE_IO_SAVE_CARD_FAIL_REDIRECT_PATH.replace(
+        /\{walletId\}/g,
+        walletId || "undefined"
+      ).replace(/\{transactionId\}/g, transactionId || "undefined") +
+      outcomeQueryParam;
     window.location.replace(`${url}`);
   };
 
   const handleSaveRedirect = async () =>
-    pipe(
-      await ecommerceIOPostTransaction(sessionToken),
-      O.match(
-        () => redirectOutcome(undefined),
+    await pipe(
+      ecommerceIOPostTransaction(sessionToken),
+      TE.match(
+        // POST transaction in error, propagate Nodo error code to app IO for proper error message handling
+        (nodeFaultCode) =>
+          redirectOutcomeKO(undefined, undefined, nodeFaultCode),
         async ({ transactionId }) => {
-          const maybeRedirectUrl = await ecommerceIOPostWallet(
+          const postWalletResponse = await ecommerceIOPostWallet(
             sessionToken,
             transactionId
           );
-
           pipe(
-            maybeRedirectUrl,
+            postWalletResponse,
             O.match(
-              () => redirectOutcome(undefined),
-              ({ redirectUrl }) => {
-                const url =
-                  redirectUrl ??
-                  ECOMMERCE_IO_SAVE_CARD_FAIL_REDIRECT_PATH.replace(
-                    /\{walletId\}/g,
-                    "undefined"
-                  );
-                window.location.replace(url);
+              // error creating wallet -> outcome KO to app io
+              () => redirectOutcomeKO(undefined, transactionId),
+              ({ walletId, redirectUrl }) => {
+                if (redirectUrl) {
+                  window.location.replace(redirectUrl);
+                } else {
+                  // wallet created but no redirect url returned by b.e., return error to app IO
+                  redirectOutcomeKO(walletId, transactionId);
+                }
               }
             )
           );
         }
       )
-    );
+    )();
 
   const handleNoSaveRedirect = function () {
     const redirectPath = `/${EcommerceRoutes.ROOT}/${EcommerceRoutes.NOT_ONBOARDED_CARD_PAYMENT}`;
