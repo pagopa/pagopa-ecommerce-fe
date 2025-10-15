@@ -10,6 +10,7 @@ import { ecommerceIOPostWallet } from "../../utils/api/wallet/newWallet";
 import { RptId } from "../../../generated/definitions/payment-ecommerce-webview-v1/RptId";
 import { AmountEuroCents } from "../../../generated/definitions/payment-ecommerce-webview-v1/AmountEuroCents";
 import { TransactionStatusEnum } from "../../../generated/definitions/payment-ecommerce-webview-v1/TransactionStatus";
+import { NodeFaultCode } from "../../utils/api/transactions/nodeFaultCode";
 
 // Mock useTranslation
 jest.mock("react-i18next", () => ({
@@ -123,8 +124,13 @@ describe("SaveCardPage", () => {
   });
 
   it("redirects to outcome path if transaction fails (None)", async () => {
+    const faultCodeCategory = "faultCodeCategory";
+    const faultCodeDetail = "faultCodeDetail";
     mockIOPostTransaction.mockImplementation(() =>
-      TE.left({ faultCodeCategory: "TEST" })
+      TE.left({
+        faultCodeCategory,
+        faultCodeDetail,
+      } as NodeFaultCode)
     );
 
     const saveButton = screen
@@ -133,7 +139,9 @@ describe("SaveCardPage", () => {
     fireEvent.click(saveButton);
 
     await waitFor(() =>
-      expect(window.location.replace).toHaveBeenCalledWith("/fail")
+      expect(window.location.replace).toHaveBeenCalledWith(
+        `/fail?outcome=1&faultCodeCategory=${faultCodeCategory}&faultCodeDetail=${faultCodeDetail}`
+      )
     );
     expect(mockIOPostWallet).not.toHaveBeenCalled();
   });
@@ -180,7 +188,7 @@ describe("SaveCardPage", () => {
     fireEvent.click(saveButton);
 
     await waitFor(() =>
-      expect(window.location.replace).toHaveBeenCalledWith("/fail")
+      expect(window.location.replace).toHaveBeenCalledWith("/fail?outcome=1")
     );
   });
 
@@ -199,7 +207,7 @@ describe("SaveCardPage", () => {
     fireEvent.click(saveButton);
 
     await waitFor(() =>
-      expect(window.location.replace).toHaveBeenCalledWith("/fail")
+      expect(window.location.replace).toHaveBeenCalledWith("/fail?outcome=1")
     );
   });
 });
