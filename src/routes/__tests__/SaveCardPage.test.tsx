@@ -2,8 +2,15 @@ import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import * as O from "fp-ts/Option";
+import * as TE from "fp-ts/TaskEither";
 import SaveCardPage from "../SaveCardPage";
 import { EcommerceRoutes } from "../models/routeModel";
+import { ecommerceIOPostTransaction } from "../../utils/api/transactions/newTransaction";
+import { ecommerceIOPostWallet } from "../../utils/api/wallet/newWallet";
+import { RptId } from "../../../generated/definitions/payment-ecommerce-webview-v1/RptId";
+import { AmountEuroCents } from "../../../generated/definitions/payment-ecommerce-webview-v1/AmountEuroCents";
+import { TransactionStatusEnum } from "../../../generated/definitions/payment-ecommerce-webview-v1/TransactionStatus";
+import { NodeFaultCode } from "../../utils/api/transactions/nodeFaultCode";
 
 // Mock useTranslation
 jest.mock("react-i18next", () => ({
@@ -50,18 +57,23 @@ jest.mock("../../utils/api/wallet/newWallet", () => ({
   ecommerceIOPostWallet: jest.fn(),
 }));
 
-import { ecommerceIOPostTransaction } from "../../utils/api/transactions/newTransaction";
-import { ecommerceIOPostWallet } from "../../utils/api/wallet/newWallet";
-import { RptId } from "../../../generated/definitions/payment-ecommerce-webview-v1/RptId";
-import { AmountEuroCents } from "../../../generated/definitions/payment-ecommerce-webview-v1/AmountEuroCents";
-import { TransactionStatusEnum } from "../../../generated/definitions/payment-ecommerce-webview-v1/TransactionStatus";
-
 const mockIOPostTransaction = ecommerceIOPostTransaction as jest.MockedFunction<
   typeof ecommerceIOPostTransaction
 >;
 const mockIOPostWallet = ecommerceIOPostWallet as jest.MockedFunction<
   typeof ecommerceIOPostWallet
 >;
+const okTransactionResponseBody = {
+  transactionId: "577725a90dfe4b89b434b16ccad69247",
+  payments: [
+    {
+      rptId: "77777777777302012387654312384" as RptId,
+      amount: 600 as AmountEuroCents,
+    },
+  ],
+  status: TransactionStatusEnum.ACTIVATED,
+};
+const okTransactionResponseOKTaskEither = TE.of(okTransactionResponseBody);
 
 describe("SaveCardPage", () => {
   beforeEach(() => {
@@ -112,7 +124,14 @@ describe("SaveCardPage", () => {
   });
 
   it("redirects to outcome path if transaction fails (None)", async () => {
-    mockIOPostTransaction.mockResolvedValue(O.none);
+    const faultCodeCategory = "faultCodeCategory";
+    const faultCodeDetail = "faultCodeDetail";
+    mockIOPostTransaction.mockImplementation(() =>
+      TE.left({
+        faultCodeCategory,
+        faultCodeDetail,
+      } as NodeFaultCode)
+    );
 
     const saveButton = screen
       .getByText("saveCardPage.saveTitle")
@@ -120,23 +139,16 @@ describe("SaveCardPage", () => {
     fireEvent.click(saveButton);
 
     await waitFor(() =>
-      expect(window.location.replace).toHaveBeenCalledWith("/fail")
+      expect(window.location.replace).toHaveBeenCalledWith(
+        `/fail?outcome=1&faultCodeCategory=${faultCodeCategory}&faultCodeDetail=${faultCodeDetail}`
+      )
     );
     expect(mockIOPostWallet).not.toHaveBeenCalled();
   });
 
   it("redirects to wallet URL if transaction succeeds and wallet returns Some({redirectUrl})", async () => {
-    mockIOPostTransaction.mockResolvedValue(
-      O.some({
-        transactionId: "577725a90dfe4b89b434b16ccad69247",
-        payments: [
-          {
-            rptId: "77777777777302012387654312384" as RptId,
-            amount: 600 as AmountEuroCents,
-          },
-        ],
-        status: TransactionStatusEnum.ACTIVATED,
-      })
+    mockIOPostTransaction.mockImplementation(
+      () => okTransactionResponseOKTaskEither
     );
     mockIOPostWallet.mockResolvedValue(
       O.some({
@@ -158,17 +170,8 @@ describe("SaveCardPage", () => {
   });
 
   it("redirects to outcome path if wallet returns None", async () => {
-    mockIOPostTransaction.mockResolvedValue(
-      O.some({
-        transactionId: "577725a90dfe4b89b434b16ccad69247",
-        payments: [
-          {
-            rptId: "77777777777302012387654312384" as RptId,
-            amount: 600 as AmountEuroCents,
-          },
-        ],
-        status: TransactionStatusEnum.ACTIVATED,
-      })
+    mockIOPostTransaction.mockImplementation(
+      () => okTransactionResponseOKTaskEither
     );
     mockIOPostWallet.mockResolvedValue(O.none);
 
@@ -178,26 +181,21 @@ describe("SaveCardPage", () => {
     fireEvent.click(saveButton);
 
     await waitFor(() =>
-      expect(window.location.replace).toHaveBeenCalledWith("/fail")
+      expect(window.location.replace).toHaveBeenCalledWith(
+        `/fail?outcome=1&transactionId=${okTransactionResponseBody.transactionId}`
+      )
     );
   });
 
   it("redirects to outcome path if wallet returns Some(undefined)", async () => {
-    mockIOPostTransaction.mockResolvedValue(
-      O.some({
-        transactionId: "577725a90dfe4b89b434b16ccad69247",
-        payments: [
-          {
-            rptId: "77777777777302012387654312384" as RptId,
-            amount: 600 as AmountEuroCents,
-          },
-        ],
-        status: TransactionStatusEnum.ACTIVATED,
-      })
+    mockIOPostTransaction.mockImplementation(
+      () => okTransactionResponseOKTaskEither
     );
+    const transactionId = okTransactionResponseBody.transactionId;
+    const walletId = "3fa85f64-5717-4562-b3fc-2c963f66afa6";
     mockIOPostWallet.mockResolvedValue(
       O.some({
-        walletId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        walletId,
         redirectUrl: undefined,
       })
     );
@@ -208,7 +206,9 @@ describe("SaveCardPage", () => {
     fireEvent.click(saveButton);
 
     await waitFor(() =>
-      expect(window.location.replace).toHaveBeenCalledWith("/fail")
+      expect(window.location.replace).toHaveBeenCalledWith(
+        `/fail?outcome=1&walletId=${walletId}&transactionId=${transactionId}`
+      )
     );
   });
 });

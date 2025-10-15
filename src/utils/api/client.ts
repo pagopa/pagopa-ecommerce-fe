@@ -33,12 +33,12 @@ export const decodeFinalStatusResult = async (
   return !(r.status === 200 && isFinalStatus);
 };
 
-export const isResponse2xxOK = async (r: Response): Promise<boolean> => {
+export const doRetry = async (r: Response): Promise<boolean> => {
   if (pollingConfig.counter.getValue() === pollingConfig.retries - 1) {
     return false;
   }
   pollingConfig.counter.increment();
-  return !(r.status >= 200 && r.status <= 299);
+  return r.status >= 500;
 };
 
 export const ecommerceIOClientWithPollingV1WithFinalStatusDecoder =
@@ -61,7 +61,7 @@ export const ecommerceIOClientWithPollingV1 = createIOClientV1({
     pollingConfig.retries,
     pollingConfig.delay,
     pollingConfig.timeout,
-    isResponse2xxOK
+    doRetry
   ),
   basePath: config.ECOMMERCE_IO_API_V1_PATH,
 });
