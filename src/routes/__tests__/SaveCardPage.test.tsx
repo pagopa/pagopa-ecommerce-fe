@@ -63,8 +63,7 @@ const mockIOPostTransaction = ecommerceIOPostTransaction as jest.MockedFunction<
 const mockIOPostWallet = ecommerceIOPostWallet as jest.MockedFunction<
   typeof ecommerceIOPostWallet
 >;
-
-const okTransactionResponseOK = TE.of({
+const okTransactionResponseBody = {
   transactionId: "577725a90dfe4b89b434b16ccad69247",
   payments: [
     {
@@ -73,7 +72,8 @@ const okTransactionResponseOK = TE.of({
     },
   ],
   status: TransactionStatusEnum.ACTIVATED,
-});
+};
+const okTransactionResponseOKTaskEither = TE.of(okTransactionResponseBody);
 
 describe("SaveCardPage", () => {
   beforeEach(() => {
@@ -147,7 +147,9 @@ describe("SaveCardPage", () => {
   });
 
   it("redirects to wallet URL if transaction succeeds and wallet returns Some({redirectUrl})", async () => {
-    mockIOPostTransaction.mockImplementation(() => okTransactionResponseOK);
+    mockIOPostTransaction.mockImplementation(
+      () => okTransactionResponseOKTaskEither
+    );
     mockIOPostWallet.mockResolvedValue(
       O.some({
         walletId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
@@ -168,17 +170,8 @@ describe("SaveCardPage", () => {
   });
 
   it("redirects to outcome path if wallet returns None", async () => {
-    mockIOPostTransaction.mockImplementation(() =>
-      TE.of({
-        transactionId: "577725a90dfe4b89b434b16ccad69247",
-        payments: [
-          {
-            rptId: "77777777777302012387654312384" as RptId,
-            amount: 600 as AmountEuroCents,
-          },
-        ],
-        status: TransactionStatusEnum.ACTIVATED,
-      })
+    mockIOPostTransaction.mockImplementation(
+      () => okTransactionResponseOKTaskEither
     );
     mockIOPostWallet.mockResolvedValue(O.none);
 
@@ -188,15 +181,21 @@ describe("SaveCardPage", () => {
     fireEvent.click(saveButton);
 
     await waitFor(() =>
-      expect(window.location.replace).toHaveBeenCalledWith("/fail?outcome=1")
+      expect(window.location.replace).toHaveBeenCalledWith(
+        `/fail?outcome=1&transactionId=${okTransactionResponseBody.transactionId}`
+      )
     );
   });
 
   it("redirects to outcome path if wallet returns Some(undefined)", async () => {
-    mockIOPostTransaction.mockImplementation(() => okTransactionResponseOK);
+    mockIOPostTransaction.mockImplementation(
+      () => okTransactionResponseOKTaskEither
+    );
+    const transactionId = okTransactionResponseBody.transactionId;
+    const walletId = "3fa85f64-5717-4562-b3fc-2c963f66afa6";
     mockIOPostWallet.mockResolvedValue(
       O.some({
-        walletId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        walletId,
         redirectUrl: undefined,
       })
     );
@@ -207,7 +206,9 @@ describe("SaveCardPage", () => {
     fireEvent.click(saveButton);
 
     await waitFor(() =>
-      expect(window.location.replace).toHaveBeenCalledWith("/fail?outcome=1")
+      expect(window.location.replace).toHaveBeenCalledWith(
+        `/fail?outcome=1&walletId=${walletId}&transactionId=${transactionId}`
+      )
     );
   });
 });

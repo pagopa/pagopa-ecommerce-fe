@@ -49,17 +49,14 @@ export default function SaveCardPage() {
       (nodeFaultCode &&
         `&faultCodeCategory=${
           nodeFaultCode.faultCodeCategory
-        }&faultCodeDetail=${
-          nodeFaultCode.faultCodeDetail || "Unknown error"
-        }`) ||
+        }&faultCodeDetail=${nodeFaultCode.faultCodeDetail || ""}`) ||
       "";
-    const outcomeQueryParam = `?outcome=1${nodeFaultCodeQueryParam}`;
+    const walletIdQueryParam = (walletId && `&walletId=${walletId}`) || "";
+    const transactionIdueryParam =
+      (transactionId && `&transactionId=${transactionId}`) || "";
+    const redirectUrlQueryParameters = `?outcome=1${nodeFaultCodeQueryParam}${walletIdQueryParam}${transactionIdueryParam}`;
     const url =
-      ECOMMERCE_IO_SAVE_CARD_FAIL_REDIRECT_PATH.replace(
-        /\{walletId\}/g,
-        walletId || "undefined"
-      ).replace(/\{transactionId\}/g, transactionId || "undefined") +
-      outcomeQueryParam;
+      ECOMMERCE_IO_SAVE_CARD_FAIL_REDIRECT_PATH + redirectUrlQueryParameters;
     window.location.replace(`${url}`);
   };
 
