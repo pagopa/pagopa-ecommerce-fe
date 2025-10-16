@@ -43,10 +43,10 @@ jest.mock(
 
 import { DeferredPromise } from "@pagopa/ts-commons/lib/promises";
 import {
-  ecommerceCHECKOUTClientClientWithPolling,
-  ecommerceCHECKOUTClientClientWithPollingV2,
-  ecommerceIOClientWithPollingV1,
-  ecommerceIOClientWithPollingV1WithFinalStatusDecoder,
+  ecommerceCHECKOUTClientWithFinalStatusDecoderPollingV1,
+  ecommerceCHECKOUTClientWithFinalStatusDecoderPollingV2,
+  ecommerceIOClientV1,
+  ecommerceIOClientWithFinalStatusDecoderPollingV1,
 } from "../client";
 import {
   constantPollingWithPromisePredicateFetch,
@@ -72,15 +72,13 @@ describe("clientWithPolling module", () => {
     expect(ioFinalArgs.baseUrl).toBe(config.ECOMMERCE_API_HOST);
     expect(ioFinalArgs.basePath).toBe(config.ECOMMERCE_IO_API_V1_PATH);
     expect(ioFinalArgs.fetchApi).toBe("fetchApiMock");
-    expect(ecommerceIOClientWithPollingV1WithFinalStatusDecoder).toBe(
-      ioClientMock
-    );
+    expect(ecommerceIOClientWithFinalStatusDecoderPollingV1).toBe(ioClientMock);
 
     // 2 isResponse200OK
     expect(io200Args.baseUrl).toBe(config.ECOMMERCE_API_HOST);
     expect(io200Args.basePath).toBe(config.ECOMMERCE_IO_API_V1_PATH);
     expect(io200Args.fetchApi).toBe("fetchApiMock");
-    expect(ecommerceIOClientWithPollingV1).toBe(ioClientMock);
+    expect(ecommerceIOClientV1).toBe(ioClientMock);
   });
 
   it("create CHECKOUT v1 client with polling", () => {
@@ -89,7 +87,9 @@ describe("clientWithPolling module", () => {
     expect(args.baseUrl).toBe(config.ECOMMERCE_API_HOST);
     expect(args.basePath).toBe(config.ECOMMERCE_CHECKOUT_API_PATH);
     expect(args.fetchApi).toBe("fetchApiMock");
-    expect(ecommerceCHECKOUTClientClientWithPolling).toBe(checkoutClientMock);
+    expect(ecommerceCHECKOUTClientWithFinalStatusDecoderPollingV1).toBe(
+      checkoutClientMock
+    );
   });
 
   it("create CHECKOUT v2 client with polling (constant)", () => {
@@ -98,15 +98,15 @@ describe("clientWithPolling module", () => {
     expect(args.baseUrl).toBe(config.ECOMMERCE_API_HOST);
     expect(args.basePath).toBe(config.ECOMMERCE_CHECKOUT_API_V2_PATH);
     expect(args.fetchApi).toBe("fetchApiMock");
-    expect(ecommerceCHECKOUTClientClientWithPollingV2).toBe(
+    expect(ecommerceCHECKOUTClientWithFinalStatusDecoderPollingV2).toBe(
       checkoutV2ClientMock
     );
   });
 
   it("check the global counts of fetch wrappers", () => {
-    expect(exponetialPollingWithPromisePredicateFetch).toHaveBeenCalledTimes(3);
+    expect(exponetialPollingWithPromisePredicateFetch).toHaveBeenCalledTimes(2);
 
-    expect(constantPollingWithPromisePredicateFetch).toHaveBeenCalledTimes(1);
+    expect(constantPollingWithPromisePredicateFetch).toHaveBeenCalledTimes(2);
 
     const expoArgsSample = (
       exponetialPollingWithPromisePredicateFetch as jest.Mock
@@ -123,12 +123,8 @@ describe("clientWithPolling module", () => {
 
     const constantArgs = (constantPollingWithPromisePredicateFetch as jest.Mock)
       .mock.calls[0];
-    expect(constantArgs[1]).toBe(
-      config.ECOMMERCE_GET_TRANSACTION_POLLING_RETRIES
-    );
-    expect(constantArgs[2]).toBe(
-      config.ECOMMERCE_GET_TRANSACTION_POLLING_DELAY_MILLIS
-    );
+    expect(constantArgs[1]).toBe(3);
+    expect(constantArgs[2]).toBe(1000);
     expect(constantArgs[3]).toBe(config.ECOMMERCE_API_TIMEOUT);
     expect(typeof constantArgs[4]).toBe("function");
   });

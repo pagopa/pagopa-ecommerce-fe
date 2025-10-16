@@ -4,12 +4,12 @@ import { npgSessionsFields } from "../paymentMethodHelper";
 import { CreateSessionResponse } from "../../../../../generated/definitions/payment-ecommerce-v1/CreateSessionResponse";
 
 jest.mock("../../client", () => ({
-  ecommerceIOClientWithPollingV1: {
+  ecommerceIOClientV1: {
     createSessionWebview: jest.fn(),
   },
 }));
 
-import { ecommerceIOClientWithPollingV1 } from "../../client";
+import { ecommerceIOClientV1 } from "../../client";
 
 const asMock = <T extends (...args: Array<any>) => any>(fn: T) =>
   fn as jest.MockedFunction<T>;
@@ -25,9 +25,7 @@ const mkRight = <S extends number, V>(status: S, value?: V) =>
 const mkLeft = (err: unknown) => E.left(err) as any;
 
 describe("npgSessionsFields", () => {
-  const createSessionWebview = asMock(
-    ecommerceIOClientWithPollingV1.createSessionWebview
-  );
+  const createSessionWebview = asMock(ecommerceIOClientV1.createSessionWebview);
 
   const SessionItems = {
     sessionToken: "sessionToken",

@@ -4,8 +4,8 @@ import * as TE from "fp-ts/TaskEither";
 import { flow, pipe } from "fp-ts/function";
 
 import {
-  ecommerceCHECKOUTClientClientWithPolling,
-  ecommerceIOClientWithPollingV1WithFinalStatusDecoder,
+  ecommerceCHECKOUTClientWithFinalStatusDecoderPollingV1,
+  ecommerceIOClientWithFinalStatusDecoderPollingV1,
 } from "../client";
 import { TransactionOutcomeInfo } from "../../../../generated/definitions/payment-ecommerce-webview-v1/TransactionOutcomeInfo";
 
@@ -16,7 +16,7 @@ export const ecommerceIOGetTransactionOutcomeInfo = (
   pipe(
     TE.tryCatch(
       () =>
-        ecommerceIOClientWithPollingV1WithFinalStatusDecoder.getTransactionOutcomes(
+        ecommerceIOClientWithFinalStatusDecoderPollingV1.getTransactionOutcomes(
           {
             eCommerceSessionToken: token,
             transactionId,
@@ -48,10 +48,12 @@ export const ecommerceCHECKOUTGetTransactionOutcomeInfo = (
   pipe(
     TE.tryCatch(
       () =>
-        ecommerceCHECKOUTClientClientWithPolling.getTransactionOutcomes({
-          bearerAuth: token,
-          transactionId,
-        }),
+        ecommerceCHECKOUTClientWithFinalStatusDecoderPollingV1.getTransactionOutcomes(
+          {
+            bearerAuth: token,
+            transactionId,
+          }
+        ),
       () => E.toError
     ),
     TE.match(
