@@ -117,3 +117,11 @@ export const redirectToClient = ({
       );
   }
 };
+
+export interface WalletContextualOnboardOutcomeParams {
+  outcome: "0" | "1";
+  walletId?: string;
+  transactionId?: string;
+  faultCodeCategory?: string;
+  faultCodeDetail?: string;
+}
