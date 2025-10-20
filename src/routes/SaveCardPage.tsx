@@ -12,10 +12,12 @@ import InformationModal, {
 } from "../components/InformationModal";
 import { ecommerceIOPostTransaction } from "../utils/api/transactions/newTransaction";
 import { ecommerceIOPostWallet } from "../utils/api/wallet/newWallet";
-import { getFragments } from "../utils/urlUtilities";
+import {
+  getFragments,
+  WalletContextualOnboardOutcomeParams,
+} from "../utils/urlUtilities";
 import { SessionItems, setSessionItem } from "../utils/storage/sessionStorage";
 import { getConfigOrThrow } from "../utils/config/config";
-import { NodeFaultCode } from "../utils/api/transactions/nodeFaultCode";
 import { EcommerceRoutes, ROUTE_FRAGMENT } from "./models/routeModel";
 
 export default function SaveCardPage() {
@@ -41,22 +43,13 @@ export default function SaveCardPage() {
   const { ECOMMERCE_IO_SAVE_CARD_FAIL_REDIRECT_PATH } = getConfigOrThrow();
 
   const redirectOutcomeKO = (
-    walletId?: string,
-    transactionId?: string,
-    nodeFaultCode?: NodeFaultCode
+    walletContextualOnboardOutcomeParameters: WalletContextualOnboardOutcomeParams
   ): void => {
-    const nodeFaultCodeQueryParam =
-      (nodeFaultCode &&
-        `&faultCodeCategory=${
-          nodeFaultCode.faultCodeCategory
-        }&faultCodeDetail=${nodeFaultCode.faultCodeDetail || ""}`) ||
-      "";
-    const walletIdQueryParam = (walletId && `&walletId=${walletId}`) || "";
-    const transactionIdueryParam =
-      (transactionId && `&transactionId=${transactionId}`) || "";
-    const redirectUrlQueryParameters = `?outcome=1${nodeFaultCodeQueryParam}${walletIdQueryParam}${transactionIdueryParam}`;
-    const url =
-      ECOMMERCE_IO_SAVE_CARD_FAIL_REDIRECT_PATH + redirectUrlQueryParameters;
+    const queryParams = new URLSearchParams();
+    Object.entries(walletContextualOnboardOutcomeParameters).forEach(
+      (paramEntry) => queryParams.append(paramEntry[0], paramEntry[1])
+    );
+    const url = `${ECOMMERCE_IO_SAVE_CARD_FAIL_REDIRECT_PATH}?${queryParams.toString()}`;
     window.location.replace(`${url}`);
   };
 
@@ -66,7 +59,11 @@ export default function SaveCardPage() {
       TE.match(
         // POST transaction in error, propagate Nodo error code to app IO for proper error message handling
         (nodeFaultCode) =>
-          redirectOutcomeKO(undefined, undefined, nodeFaultCode),
+          redirectOutcomeKO({
+            outcome: "1",
+            faultCodeCategory: nodeFaultCode.faultCodeCategory,
+            faultCodeDetail: nodeFaultCode.faultCodeDetail,
+          }),
         async ({ transactionId }) => {
           const postWalletResponse = await ecommerceIOPostWallet(
             sessionToken,
@@ -76,13 +73,21 @@ export default function SaveCardPage() {
             postWalletResponse,
             O.match(
               // error creating wallet -> outcome KO to app io
-              () => redirectOutcomeKO(undefined, transactionId),
+              () =>
+                redirectOutcomeKO({
+                  outcome: "1",
+                  transactionId,
+                }),
               ({ walletId, redirectUrl }) => {
                 if (redirectUrl) {
                   window.location.replace(redirectUrl);
                 } else {
                   // wallet created but no redirect url returned by b.e., return error to app IO
-                  redirectOutcomeKO(walletId, transactionId);
+                  redirectOutcomeKO({
+                    outcome: "1",
+                    walletId,
+                    transactionId,
+                  });
                 }
               }
             )
