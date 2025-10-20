@@ -2,7 +2,7 @@ import * as O from "fp-ts/Option";
 import * as E from "fp-ts/Either";
 import { ecommerceIOPostWallet } from "../newWallet";
 import { getSessionItem, SessionItems } from "../../../storage/sessionStorage";
-import { ecommerceIOClientWithPollingV1 } from "../../../api/client";
+import { ecommerceIOClientV1 } from "../../../api/client";
 
 // Mock dependencies
 jest.mock("../../../storage/sessionStorage", () => ({
@@ -14,7 +14,7 @@ jest.mock("../../../storage/sessionStorage", () => ({
 }));
 
 jest.mock("../../../api/client", () => ({
-  ecommerceIOClientWithPollingV1: {
+  ecommerceIOClientV1: {
     createWalletForTransactionsForIO: jest.fn(),
   },
 }));
@@ -42,7 +42,7 @@ describe("ecommerceIOPostWallet", () => {
     const mockResponse = { status: 201, value: { walletId: "abc123" } };
 
     (
-      ecommerceIOClientWithPollingV1.createWalletForTransactionsForIO as jest.Mock
+      ecommerceIOClientV1.createWalletForTransactionsForIO as jest.Mock
     ).mockResolvedValue(E.right(mockResponse));
 
     const result = await ecommerceIOPostWallet(mockToken, mockTransactionId);
@@ -54,7 +54,7 @@ describe("ecommerceIOPostWallet", () => {
     const mockResponse = { status: 400, value: {} };
 
     (
-      ecommerceIOClientWithPollingV1.createWalletForTransactionsForIO as jest.Mock
+      ecommerceIOClientV1.createWalletForTransactionsForIO as jest.Mock
     ).mockResolvedValue(E.right(mockResponse));
 
     const result = await ecommerceIOPostWallet(mockToken, mockTransactionId);
@@ -64,7 +64,7 @@ describe("ecommerceIOPostWallet", () => {
 
   it("returns None when the client throws an error", async () => {
     (
-      ecommerceIOClientWithPollingV1.createWalletForTransactionsForIO as jest.Mock
+      ecommerceIOClientV1.createWalletForTransactionsForIO as jest.Mock
     ).mockRejectedValue(new Error("Network error"));
 
     const result = await ecommerceIOPostWallet(mockToken, mockTransactionId);

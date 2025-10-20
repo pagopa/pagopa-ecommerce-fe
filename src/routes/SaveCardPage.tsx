@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { pipe } from "fp-ts/function";
 import * as O from "fp-ts/Option";
+import * as TE from "fp-ts/TaskEither";
 import { Box, Button, Divider, Typography } from "@mui/material";
 import { Trans, useTranslation } from "react-i18next";
 import { ChevronRight, CreditCard, CreditCardOff } from "@mui/icons-material";
@@ -11,7 +12,10 @@ import InformationModal, {
 } from "../components/InformationModal";
 import { ecommerceIOPostTransaction } from "../utils/api/transactions/newTransaction";
 import { ecommerceIOPostWallet } from "../utils/api/wallet/newWallet";
-import { getFragments } from "../utils/urlUtilities";
+import {
+  getFragments,
+  WalletContextualOnboardOutcomeParams,
+} from "../utils/urlUtilities";
 import { SessionItems, setSessionItem } from "../utils/storage/sessionStorage";
 import { getConfigOrThrow } from "../utils/config/config";
 import { EcommerceRoutes, ROUTE_FRAGMENT } from "./models/routeModel";
@@ -38,47 +42,59 @@ export default function SaveCardPage() {
 
   const { ECOMMERCE_IO_SAVE_CARD_FAIL_REDIRECT_PATH } = getConfigOrThrow();
 
-  const redirectOutcome = (walletId: string | undefined): void => {
-    const walletIdOption = O.fromNullable(walletId);
-
-    const url = pipe(
-      walletIdOption,
-      O.getOrElse(() => "undefined"),
-      (id) =>
-        ECOMMERCE_IO_SAVE_CARD_FAIL_REDIRECT_PATH.replace(/\{walletId\}/g, id)
+  const redirectOutcomeKO = (
+    walletContextualOnboardOutcomeParameters: WalletContextualOnboardOutcomeParams
+  ): void => {
+    const queryParams = new URLSearchParams();
+    Object.entries(walletContextualOnboardOutcomeParameters).forEach(
+      (paramEntry) => queryParams.append(paramEntry[0], paramEntry[1])
     );
+    const url = `${ECOMMERCE_IO_SAVE_CARD_FAIL_REDIRECT_PATH}?${queryParams.toString()}`;
     window.location.replace(`${url}`);
   };
 
   const handleSaveRedirect = async () =>
-    pipe(
-      await ecommerceIOPostTransaction(sessionToken),
-      O.match(
-        () => redirectOutcome(undefined),
+    await pipe(
+      ecommerceIOPostTransaction(sessionToken),
+      TE.match(
+        // POST transaction in error, propagate Nodo error code to app IO for proper error message handling
+        (nodeFaultCode) =>
+          redirectOutcomeKO({
+            outcome: "1",
+            faultCodeCategory: nodeFaultCode.faultCodeCategory,
+            faultCodeDetail: nodeFaultCode.faultCodeDetail,
+          }),
         async ({ transactionId }) => {
-          const maybeRedirectUrl = await ecommerceIOPostWallet(
+          const postWalletResponse = await ecommerceIOPostWallet(
             sessionToken,
             transactionId
           );
-
           pipe(
-            maybeRedirectUrl,
+            postWalletResponse,
             O.match(
-              () => redirectOutcome(undefined),
-              ({ redirectUrl }) => {
-                const url =
-                  redirectUrl ??
-                  ECOMMERCE_IO_SAVE_CARD_FAIL_REDIRECT_PATH.replace(
-                    /\{walletId\}/g,
-                    "undefined"
-                  );
-                window.location.replace(url);
+              // error creating wallet -> outcome KO to app io
+              () =>
+                redirectOutcomeKO({
+                  outcome: "1",
+                  transactionId,
+                }),
+              ({ walletId, redirectUrl }) => {
+                if (redirectUrl) {
+                  window.location.replace(redirectUrl);
+                } else {
+                  // wallet created but no redirect url returned by b.e., return error to app IO
+                  redirectOutcomeKO({
+                    outcome: "1",
+                    walletId,
+                    transactionId,
+                  });
+                }
               }
             )
           );
         }
       )
-    );
+    )();
 
   const handleNoSaveRedirect = function () {
     const redirectPath = `/${EcommerceRoutes.ROOT}/${EcommerceRoutes.NOT_ONBOARDED_CARD_PAYMENT}`;

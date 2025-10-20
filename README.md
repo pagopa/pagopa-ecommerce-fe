@@ -74,28 +74,28 @@ Test use cases:
 
 The ecommerce transaction get transaction endpoint `/checkout/webview/v1/transactions/:transactionId/outcomes` is driven by the following mockFlow values:
 
-| MOCK FLOW                                | Transaction Id Suffix | OUTCOME                     |
-| ---------------------------------------- | --------------------- | ----------------------------|
-| Succes                                   | 000                   | SUCCESS (0)                 |
-| Generic error                            | 001                   | GENERIC_ERROR (1)           |
-| Auth error                               | 002                   | AUTH_ERROR (2)              |
-| Invalid data                             | 003                   | INVALID_DATA (3)            |
-| Timeout                                  | 004                   | TIMEOUT (4)                 |
-| Invalid card                             | 007                   | INVALIDA_CARD (7)           |
-| Canceled by user                         | 008                   | CANCELED_BY_USER (8)        |
-| Excessive amount                         | 010                   | EXCESSIVE_AMOUNT (10)       |
-| Taken in charge                          | 017                   | TAKE_IN_CHARGE (17)         |
-| Refunded                                 | 018                   | REFUNDED (18)               |
-| Psp Error                                | 025                   | PSP ERROR (25)              |
-| Backend Error                            | 099                   | REFUNDED (99)               |
-| Balance not available                    | 116                   | BALANCE_NOT_AVAILABLE (116) |
-| CVV Error                                | 117                   | CVV_ERROR (117)             |
-| Limit exceeded                           | 121                   | LIMIT EXCEEDED (121)        |
+| MOCK FLOW                           | Transaction Id Suffix | OUTCOME                     |
+|-------------------------------------|-----------------------|-----------------------------|
+| Succes                              | 000                   | SUCCESS (0)                 |
+| Generic error                       | 001                   | GENERIC_ERROR (1)           |
+| Auth error                          | 002                   | AUTH_ERROR (2)              |
+| Invalid data                        | 003                   | INVALID_DATA (3)            |
+| Timeout                             | 004                   | TIMEOUT (4)                 |
+| Invalid card                        | 007                   | INVALIDA_CARD (7)           |
+| Canceled by user                    | 008                   | CANCELED_BY_USER (8)        |
+| Excessive amount                    | 010                   | EXCESSIVE_AMOUNT (10)       |
+| Taken in charge                     | 017                   | TAKE_IN_CHARGE (17)         |
+| Refunded                            | 018                   | REFUNDED (18)               |
+| Psp Error                           | 025                   | PSP ERROR (25)              |
+| Backend Error                       | 099                   | REFUNDED (99)               |
+| Balance not available               | 116                   | BALANCE_NOT_AVAILABLE (116) |
+| CVV Error                           | 117                   | CVV_ERROR (117)             |
+| Limit exceeded                      | 121                   | LIMIT EXCEEDED (121)        |
 
 
-| Variable name                    | Description                         | type   | default |
-|----------------------------------|-------------------------------------|--------|---------|
-|ECOMMERCE_API_RETRY_NUMBERS_LINEAR| number of calls at regular intervals| number | 5       |
+| Variable name                       | Description                           | type   | default |
+|-------------------------------------|---------------------------------------|--------|---------|
+| ECOMMERCE_API_RETRY_NUMBERS_LINEAR  | number of calls at regular intervals  | number | 5       |
 
 ## Polling
 
@@ -115,3 +115,20 @@ const variableBackoff = (attempt: number): Millisecond => {
    return (delay * (attempt - RETRY_NUMBERS_LINEAR)) as Millisecond;
 };
 ```
+
+## eCommerce POST transaction mock
+
+The Save card page perform a transaction activation against eCommerce service.
+An error handling have been add to return errors encoutered during activation with eCommerce to app io through the iowallet:// magic url redirection
+
+Different errors can be emulated using input page rpt id
+
+| Rpt id                        | Transaction activation response                                                     |
+|-------------------------------|-------------------------------------------------------------------------------------|
+| 00000000000000000000000000000 | Returned 400 http response code with problem json response                          |
+| 00000000000000000000000000001 | Returned 401 http response code                                                     |
+| 00000000000000000000000000002 | Returned 404 http response code with PAYMENT_DATA_ERROR fault code category         |
+| 00000000000000000000000000003 | Returned 409 http response code with PAYMENT_ONGOING fault code category error      |
+| 00000000000000000000000000004 | Returned 502 http response code with PAYMENT_UNAVAILABLE  fault code category error |
+| 00000000000000000000000000005 | Returned 503 http response code with DOMAIN_UNKNOWN fault code category error       |
+| any other value               | Return 200 http response OK with valued transaction response                        |

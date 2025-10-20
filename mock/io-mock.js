@@ -82,38 +82,85 @@ app.post("/ecommerce/webview/v1/transactions", (req, res) => {
     const amount = notice?.amount;
 
     if (rptId && amount) {
-        res.status(200).send({
-            transactionId: "577725a90dfe4b89b434b16ccad69247",
-            payments: [
-                {
-                    rptId: "77777777777302012387654312384",
-                    paymentToken: "paymentToken1",
-                    reason: "reason1",
-                    amount: 600,
-                    transferList: [
+        //case 400 bad request
+        switch (rptId) {
+            case "00000000000000000000000000000":
+                return res.status(400).json(
+                    {
+                        title: "Bad request",
+                        status: 400,
+                        detail: "Bad request mocked response",
+                    }
+                );
+            case "00000000000000000000000000001":
+                return res.sendStatus(401);
+            case "00000000000000000000000000002":
+                return res.status(404).json(
+                    {
+                        title: "Node error",
+                        faultCodeCategory: "PAYMENT_DATA_ERROR",
+                        faultCodeDetail: "PPT_DOMINIO_SCONOSCIUTO",
+                    }
+                );
+            case "00000000000000000000000000003":
+                return res.status(409).json(
+                    {
+                        title: "Node error",
+                        faultCodeCategory: "PAYMENT_ONGOING",
+                        faultCodeDetail: "PPT_PAGAMENTO_IN_CORSO",
+                    }
+                );
+            case "00000000000000000000000000004":
+                return res.status(502).json(
+                    {
+                        title: "Node error",
+                        faultCodeCategory: "PAYMENT_UNAVAILABLE",
+                        faultCodeDetail: "PPT_AUTORIZZAZIONE",
+                    }
+                );
+            case "00000000000000000000000000005":
+                return res.status(503).json(
+                    {
+                        title: "Node error",
+                        faultCodeCategory: "DOMAIN_UNKNOWN",
+                        faultCodeDetail: "PAA_ID_INTERMEDIARIO_ERRATO",
+                    }
+                );
+            default:
+                return res.status(200).send({
+                    transactionId: "577725a90dfe4b89b434b16ccad69247",
+                    payments: [
                         {
-                            paFiscalCode: "77777777777",
-                            digitalStamp: false,
-                            transferCategory: "transferCategory1",
-                            transferAmount: 500
-                        },
-                        {
-                            paFiscalCode: "11111111111",
-                            digitalStamp: true,
-                            transferCategory: "transferCategory2",
-                            transferAmount: 100
+                            rptId: "77777777777302012387654312384",
+                            paymentToken: "paymentToken1",
+                            reason: "reason1",
+                            amount: 600,
+                            transferList: [
+                                {
+                                    paFiscalCode: "77777777777",
+                                    digitalStamp: false,
+                                    transferCategory: "transferCategory1",
+                                    transferAmount: 500
+                                },
+                                {
+                                    paFiscalCode: "11111111111",
+                                    digitalStamp: true,
+                                    transferCategory: "transferCategory2",
+                                    transferAmount: 100
+                                }
+                            ]
                         }
-                    ]
-                }
-            ],
-            status: "ACTIVATED",
-            feeTotal: 99999999999,
-            clientId: "IO",
-            sendPaymentResultOutcome: "OK",
-            authorizationCode: "string",
-            errorCode: "string",
-            gateway: "NPG"
-        });
+                    ],
+                    status: "ACTIVATED",
+                    feeTotal: 99999999999,
+                    clientId: "IO",
+                    sendPaymentResultOutcome: "OK",
+                    authorizationCode: "string",
+                    errorCode: "string",
+                    gateway: "NPG"
+                });
+        }
+
     } else {
         res.status(400).json({ error: "Missing rptId or amount" });
     }
@@ -131,7 +178,7 @@ app.post("/ecommerce/webview/v1/transactions/:transactionId/wallets", (req, res)
             walletId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
             redirectUrl: "http://google.it"
         });
-    } else{
+    } else {
         res.status(400).json({ error: "Missing info" });
     }
 })
