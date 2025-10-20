@@ -5,15 +5,15 @@ import {
   ecommerceCHECKOUTGetTransactionOutcomeInfo,
 } from "../getTransactionInfo";
 import {
-  ecommerceIOClientWithPollingV1WithFinalStatusDecoder,
-  ecommerceCHECKOUTClientClientWithPolling,
+  ecommerceIOClientWithFinalStatusDecoderPollingV1,
+  ecommerceCHECKOUTClientWithFinalStatusDecoderPollingV1,
 } from "../../client";
 
 jest.mock("../../client", () => ({
-  ecommerceIOClientWithPollingV1WithFinalStatusDecoder: {
+  ecommerceIOClientWithFinalStatusDecoderPollingV1: {
     getTransactionOutcomes: jest.fn(),
   },
-  ecommerceCHECKOUTClientClientWithPolling: {
+  ecommerceCHECKOUTClientWithFinalStatusDecoderPollingV1: {
     getTransactionOutcomes: jest.fn(),
   },
 }));
@@ -23,7 +23,7 @@ describe("ecommerceIOGetTransactionInfo", () => {
 
   it("returns Some(value) when client returns Right with status 200", async () => {
     (
-      ecommerceIOClientWithPollingV1WithFinalStatusDecoder.getTransactionOutcomes as jest.Mock
+      ecommerceIOClientWithFinalStatusDecoderPollingV1.getTransactionOutcomes as jest.Mock
     ).mockResolvedValue(E.right({ status: 200, value: mockResponse }));
     const result = await ecommerceIOGetTransactionOutcomeInfo("tx123", "token");
     expect(result).toEqual(O.some(mockResponse));
@@ -31,7 +31,7 @@ describe("ecommerceIOGetTransactionInfo", () => {
 
   it("returns None when client returns Right with non-200 status", async () => {
     (
-      ecommerceIOClientWithPollingV1WithFinalStatusDecoder.getTransactionOutcomes as jest.Mock
+      ecommerceIOClientWithFinalStatusDecoderPollingV1.getTransactionOutcomes as jest.Mock
     ).mockResolvedValue(E.right({ status: 404, value: mockResponse }));
     const result = await ecommerceIOGetTransactionOutcomeInfo("tx123", "token");
     expect(result).toEqual(O.none);
@@ -39,7 +39,7 @@ describe("ecommerceIOGetTransactionInfo", () => {
 
   it("returns None when client throws an error", async () => {
     (
-      ecommerceIOClientWithPollingV1WithFinalStatusDecoder.getTransactionOutcomes as jest.Mock
+      ecommerceIOClientWithFinalStatusDecoderPollingV1.getTransactionOutcomes as jest.Mock
     ).mockRejectedValue(new Error("network error"));
     const result = await ecommerceIOGetTransactionOutcomeInfo("tx123", "token");
     expect(result).toEqual(O.none);
@@ -51,7 +51,7 @@ describe("ecommerceCHECKOUTGetTransaction", () => {
 
   it("returns Some(value) when client returns Right with status 200", async () => {
     (
-      ecommerceCHECKOUTClientClientWithPolling.getTransactionOutcomes as jest.Mock
+      ecommerceCHECKOUTClientWithFinalStatusDecoderPollingV1.getTransactionOutcomes as jest.Mock
     ).mockResolvedValue(E.right({ status: 200, value: mockResponse }));
     const result = await ecommerceCHECKOUTGetTransactionOutcomeInfo(
       "tx456",
@@ -62,7 +62,7 @@ describe("ecommerceCHECKOUTGetTransaction", () => {
 
   it("returns None when client returns Right with non-200 status", async () => {
     (
-      ecommerceCHECKOUTClientClientWithPolling.getTransactionOutcomes as jest.Mock
+      ecommerceCHECKOUTClientWithFinalStatusDecoderPollingV1.getTransactionOutcomes as jest.Mock
     ).mockResolvedValue(E.right({ status: 500, value: mockResponse }));
     const result = await ecommerceCHECKOUTGetTransactionOutcomeInfo(
       "tx456",
@@ -73,7 +73,7 @@ describe("ecommerceCHECKOUTGetTransaction", () => {
 
   it("returns None when client throws an error", async () => {
     (
-      ecommerceCHECKOUTClientClientWithPolling.getTransactionOutcomes as jest.Mock
+      ecommerceCHECKOUTClientWithFinalStatusDecoderPollingV1.getTransactionOutcomes as jest.Mock
     ).mockRejectedValue(new Error("timeout"));
     const result = await ecommerceCHECKOUTGetTransactionOutcomeInfo(
       "tx456",

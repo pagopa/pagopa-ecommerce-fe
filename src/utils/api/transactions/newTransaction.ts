@@ -6,7 +6,7 @@ import {
   getSessionItem,
   SessionItems,
 } from "../../../utils/storage/sessionStorage";
-import { ecommerceIOClientWithPollingV1 } from "../client";
+import { ecommerceIOClientV1 } from "../client";
 import { NewTransactionResponse } from "../../../../generated/definitions/payment-ecommerce-webview-v1/NewTransactionResponse";
 import { RptId } from "../../../../generated/definitions/payment-ecommerce-webview-v1/RptId";
 import { AmountEuroCents } from "../../../../generated/definitions/payment-ecommerce-webview-v1/AmountEuroCents";
@@ -25,19 +25,17 @@ export const ecommerceIOPostTransaction = (
       () => {
         const rptId = getSessionItem(SessionItems.rptId);
         const amount = getSessionItem(SessionItems.amount);
-        return ecommerceIOClientWithPollingV1.newTransactionForEcommerceWebview(
-          {
-            eCommerceSessionToken: token,
-            body: {
-              paymentNotices: [
-                {
-                  rptId: rptId as RptId,
-                  amount: amount as unknown as AmountEuroCents,
-                },
-              ],
-            },
-          }
-        );
+        return ecommerceIOClientV1.newTransactionForEcommerceWebview({
+          eCommerceSessionToken: token,
+          body: {
+            paymentNotices: [
+              {
+                rptId: rptId as RptId,
+                amount: amount as unknown as AmountEuroCents,
+              },
+            ],
+          },
+        });
       },
       () => genericErrorCode
     ),

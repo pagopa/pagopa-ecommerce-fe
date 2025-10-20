@@ -33,15 +33,15 @@ export const decodeFinalStatusResult = async (
   return !(r.status === 200 && isFinalStatus);
 };
 
-export const doRetry = async (r: Response): Promise<boolean> => {
+export const transientErrorResponse = async (r: Response): Promise<boolean> => {
   if (pollingConfig.counter.getValue() === pollingConfig.retries - 1) {
     return false;
   }
   pollingConfig.counter.increment();
-  return r.status >= 500;
+  return r.status === 429;
 };
 
-export const ecommerceIOClientWithPollingV1WithFinalStatusDecoder =
+export const ecommerceIOClientWithFinalStatusDecoderPollingV1 =
   createIOClientV1({
     baseUrl: config.ECOMMERCE_API_HOST,
     fetchApi: exponetialPollingWithPromisePredicateFetch(
@@ -54,31 +54,32 @@ export const ecommerceIOClientWithPollingV1WithFinalStatusDecoder =
     basePath: config.ECOMMERCE_IO_API_V1_PATH,
   });
 
-export const ecommerceIOClientWithPollingV1 = createIOClientV1({
+export const ecommerceIOClientV1 = createIOClientV1({
   baseUrl: config.ECOMMERCE_API_HOST,
-  fetchApi: exponetialPollingWithPromisePredicateFetch(
+  fetchApi: constantPollingWithPromisePredicateFetch(
     DeferredPromise<boolean>().e1,
-    pollingConfig.retries,
-    pollingConfig.delay,
-    pollingConfig.timeout,
-    doRetry
+    3,
+    1000,
+    config.ECOMMERCE_API_TIMEOUT as Millisecond,
+    transientErrorResponse
   ),
   basePath: config.ECOMMERCE_IO_API_V1_PATH,
 });
 
-export const ecommerceCHECKOUTClientClientWithPolling = createCHECKOUTClient({
-  baseUrl: config.ECOMMERCE_API_HOST,
-  fetchApi: exponetialPollingWithPromisePredicateFetch(
-    DeferredPromise<boolean>().e1,
-    pollingConfig.retries,
-    pollingConfig.delay,
-    pollingConfig.timeout,
-    decodeFinalStatusResult
-  ),
-  basePath: config.ECOMMERCE_CHECKOUT_API_PATH,
-});
+export const ecommerceCHECKOUTClientWithFinalStatusDecoderPollingV1 =
+  createCHECKOUTClient({
+    baseUrl: config.ECOMMERCE_API_HOST,
+    fetchApi: exponetialPollingWithPromisePredicateFetch(
+      DeferredPromise<boolean>().e1,
+      pollingConfig.retries,
+      pollingConfig.delay,
+      pollingConfig.timeout,
+      decodeFinalStatusResult
+    ),
+    basePath: config.ECOMMERCE_CHECKOUT_API_PATH,
+  });
 
-export const ecommerceCHECKOUTClientClientWithPollingV2 =
+export const ecommerceCHECKOUTClientWithFinalStatusDecoderPollingV2 =
   createCHECKOUTClientV2({
     baseUrl: config.ECOMMERCE_API_HOST,
     fetchApi: constantPollingWithPromisePredicateFetch(
