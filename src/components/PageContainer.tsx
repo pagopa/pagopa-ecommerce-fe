@@ -14,7 +14,7 @@ export default function PageContainer(props: {
   const { title, description, link, children, childrenSx } = props;
 
   return (
-    <Box mt={3} mb={6} aria-live="polite">
+    <Box mb={4} aria-live="polite">
       {!!title && (
         <Typography
           variant="h4"
