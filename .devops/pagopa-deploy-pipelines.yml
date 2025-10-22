@@ -114,7 +114,7 @@ stages:
               azureSubscription: 'DEV-PAGOPA-SERVICE-CONN'
               scriptLocation: inlineScript
               inlineScript: |
-                az storage blob sync --container '$web' --account-name pagopadecommercesa -s '$(Pipeline.Workspace)/Bundle_DEV' 'ecommerce-fe/'
+                az storage blob sync --container '$web' --account-name pagopadecommercesa -s '$(Pipeline.Workspace)/Bundle_DEV'
 
           - task: AzureCLI@1
             displayName: 'Purge CDN endpoint on DEV'
@@ -249,7 +249,7 @@ stages:
               azureSubscription: 'UAT-PAGOPA-SERVICE-CONN'
               scriptLocation: inlineScript
               inlineScript: |
-                az storage blob sync --container '$web' --account-name pagopauecommercesa -s '$(Pipeline.Workspace)/Bundle_UAT' 'ecommerce-fe/'
+                az storage blob sync --container '$web' --account-name pagopauecommercesa -s '$(Pipeline.Workspace)/Bundle_UAT'
 
           - task: AzureCLI@1
             displayName: 'Purge CDN endpoint on UAT'
@@ -345,7 +345,7 @@ stages:
               azureSubscription: 'PROD-PAGOPA-SERVICE-CONN'
               scriptLocation: inlineScript
               inlineScript: |
-                az storage blob sync --container '$web' --account-name pagopapecommercesa -s '$(Pipeline.Workspace)/Bundle_PROD' 'ecommerce-fe/'
+                az storage blob sync --container '$web' --account-name pagopapecommercesa -s '$(Pipeline.Workspace)/Bundle_PROD'
 
           - task: AzureCLI@1
             displayName: 'Purge CDN endpoint on PROD'
