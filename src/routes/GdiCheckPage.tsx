@@ -40,7 +40,7 @@ const GdiCheckPage = () => {
   );
 
   // Outcome Paths
-  const outcomePath = `/${EcommerceRoutes.ROOT}/${EcommerceRoutes.ESITO}#${ROUTE_FRAGMENT.CLIENT_ID}=${clientId}&${ROUTE_FRAGMENT.TRANSACTION_ID}=${transactionId}`;
+  const outcomePath = `/${EcommerceRoutes.ESITO}#${ROUTE_FRAGMENT.CLIENT_ID}=${clientId}&${ROUTE_FRAGMENT.TRANSACTION_ID}=${transactionId}`;
   const navigateToOutcome = () => navigate(outcomePath, { replace: true });
 
   // Sdk Callbacks

@@ -97,7 +97,7 @@ export default function SaveCardPage() {
     )();
 
   const handleNoSaveRedirect = function () {
-    const redirectPath = `/${EcommerceRoutes.ROOT}/${EcommerceRoutes.NOT_ONBOARDED_CARD_PAYMENT}`;
+    const redirectPath = `/${EcommerceRoutes.NOT_ONBOARDED_CARD_PAYMENT}`;
     navigate(redirectPath);
   };
 

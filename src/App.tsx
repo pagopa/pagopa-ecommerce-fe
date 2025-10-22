@@ -56,25 +56,20 @@ export function App() {
         }}
       >
         <Routes>
-          <Route path={EcommerceRoutes.ROOT}>
-            <Route path="" element={<Navigate to={EcommerceRoutes.ESITO} />} />
-            <Route
-              path={EcommerceRoutes.GDI_CHECK}
-              element={<GdiCheckPage />}
-            />
-            <Route
-              path={EcommerceRoutes.ESITO}
-              element={<PaymentResponsePage />}
-            />
-            <Route
-              path={EcommerceRoutes.NOT_ONBOARDED_CARD_PAYMENT}
-              element={<IFrameCardPage />}
-            />
-            <Route
-              path={EcommerceRoutes.SCELTA_SALVATAGGIO_CARTA}
-              element={<SaveCardPage />}
-            />
-          </Route>
+          <Route path="" element={<Navigate to={EcommerceRoutes.ESITO} />} />
+          <Route path={EcommerceRoutes.GDI_CHECK} element={<GdiCheckPage />} />
+          <Route
+            path={EcommerceRoutes.ESITO}
+            element={<PaymentResponsePage />}
+          />
+          <Route
+            path={EcommerceRoutes.NOT_ONBOARDED_CARD_PAYMENT}
+            element={<IFrameCardPage />}
+          />
+          <Route
+            path={EcommerceRoutes.SCELTA_SALVATAGGIO_CARTA}
+            element={<SaveCardPage />}
+          />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>
