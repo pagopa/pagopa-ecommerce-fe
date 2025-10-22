@@ -114,7 +114,7 @@ stages:
               azureSubscription: 'DEV-PAGOPA-SERVICE-CONN'
               scriptLocation: inlineScript
               inlineScript: |
-                az storage blob sync --container '$web' --account-name pagopadcheckoutsa -s '$(Pipeline.Workspace)/Bundle_DEV' -d 'ecommerce-fe/'
+                az storage blob sync --container '$web' --account-name pagopadecommercesa -s '$(Pipeline.Workspace)/Bundle_DEV' 'ecommerce-fe/'
 
           - task: AzureCLI@1
             displayName: 'Purge CDN endpoint on DEV'
@@ -122,7 +122,7 @@ stages:
               azureSubscription: 'DEV-PAGOPA-SERVICE-CONN'
               scriptLocation: inlineScript
               inlineScript: |
-                az cdn endpoint purge -g pagopa-d-checkout-fe-rg -n pagopa-d-checkout-cdn-endpoint --profile-name pagopa-d-checkout-cdn-profile --content-paths "/*"
+                az cdn endpoint purge -g pagopa-d-ecommerce-fe-rg  -n pagopa-d-ecommerce-cdn-endpoint --profile-name pagopa-d-ecommerce-cdn-profile --content-paths "/*"
 
   # - stage: End_to_End_Tests_DEV
   #   dependsOn:
@@ -249,7 +249,7 @@ stages:
               azureSubscription: 'UAT-PAGOPA-SERVICE-CONN'
               scriptLocation: inlineScript
               inlineScript: |
-                az storage blob sync --container '$web' --account-name pagopaucheckoutsa -s '$(Pipeline.Workspace)/Bundle_UAT' -d 'ecommerce-fe/'
+                az storage blob sync --container '$web' --account-name pagopauecommercesa -s '$(Pipeline.Workspace)/Bundle_UAT' 'ecommerce-fe/'
 
           - task: AzureCLI@1
             displayName: 'Purge CDN endpoint on UAT'
@@ -257,7 +257,7 @@ stages:
               azureSubscription: 'UAT-PAGOPA-SERVICE-CONN'
               scriptLocation: inlineScript
               inlineScript: |
-                az cdn endpoint purge -g pagopa-u-checkout-fe-rg -n pagopa-u-checkout-cdn-endpoint --profile-name pagopa-u-checkout-cdn-profile --content-paths "/*"
+                az cdn endpoint purge -g pagopa-u-ecommerce-fe-rg -n pagopa-u-ecommerce-cdn-endpoint --profile-name pagopa-u-ecommerce-cdn-profile --content-paths "/*"
 
 
   # - stage: End_to_End_Tests_UAT
@@ -345,7 +345,7 @@ stages:
               azureSubscription: 'PROD-PAGOPA-SERVICE-CONN'
               scriptLocation: inlineScript
               inlineScript: |
-                az storage blob sync --container '$web' --account-name pagopapcheckoutsa -s '$(Pipeline.Workspace)/Bundle_PROD' -d 'ecommerce-fe/'
+                az storage blob sync --container '$web' --account-name pagopapecommercesa -s '$(Pipeline.Workspace)/Bundle_PROD' 'ecommerce-fe/'
 
           - task: AzureCLI@1
             displayName: 'Purge CDN endpoint on PROD'
@@ -353,4 +353,4 @@ stages:
               azureSubscription: 'PROD-PAGOPA-SERVICE-CONN'
               scriptLocation: inlineScript
               inlineScript: |
-                az cdn endpoint purge -g pagopa-p-checkout-fe-rg -n pagopa-p-checkout-cdn-endpoint --profile-name pagopa-p-checkout-cdn-profile --content-paths "/*"
+                az cdn endpoint purge -g pagopa-p-ecommerce-fe-rg -n pagopa-p-ecommerce-cdn-endpoint --profile-name pagopa-p-ecommerce-cdn-profile --content-paths "/*"
