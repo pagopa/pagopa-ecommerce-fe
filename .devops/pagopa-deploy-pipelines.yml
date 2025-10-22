@@ -114,7 +114,7 @@ stages:
               azureSubscription: 'DEV-PAGOPA-SERVICE-CONN'
               scriptLocation: inlineScript
               inlineScript: |
-                az storage blob sync --container '$web' --account-name pagopadecommercesa -s '$(Pipeline.Workspace)/Bundle_DEV'
+                az storage blob sync --container '$web' --account-name pagopadweuecommercecdnsa -s '$(Pipeline.Workspace)/Bundle_DEV'
 
           - task: AzureCLI@1
             displayName: 'Purge CDN endpoint on DEV'
@@ -122,7 +122,7 @@ stages:
               azureSubscription: 'DEV-PAGOPA-SERVICE-CONN'
               scriptLocation: inlineScript
               inlineScript: |
-                az cdn endpoint purge -g pagopa-d-ecommerce-fe-rg  -n pagopa-d-ecommerce-cdn-endpoint --profile-name pagopa-d-ecommerce-cdn-profile --content-paths "/*"
+                az cdn endpoint purge -g pagopa-d-ecommerce-fe-rg -n pagopa-d-weu-ecommerce-cdn-endpoint --profile-name pagopa-d-weu-ecommerce-cdn-profile --content-paths "/*"
 
   # - stage: End_to_End_Tests_DEV
   #   dependsOn:
