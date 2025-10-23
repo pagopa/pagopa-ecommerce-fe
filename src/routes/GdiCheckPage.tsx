@@ -9,6 +9,7 @@ import { SessionItems, setSessionItem } from "../utils/storage/sessionStorage";
 import {
   getBase64Fragment,
   getFragments,
+  getRootPath,
   redirectToClient,
 } from "../utils/urlUtilities";
 import { getConfigOrThrow } from "../utils/config/config";
@@ -40,7 +41,9 @@ const GdiCheckPage = () => {
   );
 
   // Outcome Paths
-  const outcomePath = `/${EcommerceRoutes.ESITO}#${ROUTE_FRAGMENT.CLIENT_ID}=${clientId}&${ROUTE_FRAGMENT.TRANSACTION_ID}=${transactionId}`;
+  const outcomePath = `${getRootPath()}${EcommerceRoutes.ESITO}#${
+    ROUTE_FRAGMENT.CLIENT_ID
+  }=${clientId}&${ROUTE_FRAGMENT.TRANSACTION_ID}=${transactionId}`;
   const navigateToOutcome = () => navigate(outcomePath, { replace: true });
 
   // Sdk Callbacks

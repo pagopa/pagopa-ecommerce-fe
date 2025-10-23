@@ -31,6 +31,7 @@ jest.mock("../../utils/urlUtilities", () => ({
   getFragments: mockGetFragments,
   getBase64Fragment: mockGetBase64Fragment,
   redirectToClient: jest.fn(),
+  getRootPath: jest.fn().mockReturnValue("/"),
 }));
 
 const mockSetSessionItem = jest.fn();

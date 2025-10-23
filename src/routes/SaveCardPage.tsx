@@ -14,6 +14,7 @@ import { ecommerceIOPostTransaction } from "../utils/api/transactions/newTransac
 import { ecommerceIOPostWallet } from "../utils/api/wallet/newWallet";
 import {
   getFragments,
+  getRootPath,
   WalletContextualOnboardOutcomeParams,
 } from "../utils/urlUtilities";
 import { SessionItems, setSessionItem } from "../utils/storage/sessionStorage";
@@ -97,7 +98,9 @@ export default function SaveCardPage() {
     )();
 
   const handleNoSaveRedirect = function () {
-    const redirectPath = `/${EcommerceRoutes.NOT_ONBOARDED_CARD_PAYMENT}`;
+    const redirectPath = `${getRootPath()}${
+      EcommerceRoutes.NOT_ONBOARDED_CARD_PAYMENT
+    }`;
     navigate(redirectPath);
   };
 
