@@ -5,7 +5,7 @@ describe("Unauthorized npg final status mapping tests", () => {
      * Test input and configuration
   */
 
-  const ECOMMERCE_FE_ESITO_PAGE = "http://localhost:1234/ecommerce-fe/esito#clientId=CHECKOUT&sessionToken=test&transactionId=1234";
+  const ECOMMERCE_FE_ESITO_PAGE = "http://localhost:1234/esito#clientId=CHECKOUT&sessionToken=test&transactionId=1234";
 
   /**
    * Add all mock flow. Reference to the flow defined into the checkout be mock

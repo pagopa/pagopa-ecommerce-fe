@@ -5,7 +5,7 @@ describe("Check final status on IO mapping tests", () => {
      * Test input and configuration
   */
 
-  const ECOMMERCE_FE_ESITO_PAGE = "http://localhost:1234/ecommerce-fe/esito#clientId=IO&sessionToken=test&transactionId=";
+  const ECOMMERCE_FE_ESITO_PAGE = "http://localhost:1234/esito#clientId=IO&sessionToken=test&transactionId=";
 
   /**
    * Add all mock flow. Reference to the flow defined into the checkout be mock

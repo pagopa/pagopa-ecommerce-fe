@@ -119,7 +119,7 @@ describe("SaveCardPage", () => {
   it("navigates to the insert cart route when the noSaveRedirectBtn button is clicked", () => {
     const noSaveRedirectBtn = screen.getByTestId("noSaveRedirectBtn");
     fireEvent.click(noSaveRedirectBtn);
-    const redirectPath = `/${EcommerceRoutes.ROOT}/${EcommerceRoutes.NOT_ONBOARDED_CARD_PAYMENT}`;
+    const redirectPath = `/${EcommerceRoutes.NOT_ONBOARDED_CARD_PAYMENT}`;
     expect(mockNavigate).toHaveBeenCalledWith(redirectPath);
   });
 

@@ -31,6 +31,7 @@ jest.mock("../../utils/urlUtilities", () => ({
   getFragments: mockGetFragments,
   getBase64Fragment: mockGetBase64Fragment,
   redirectToClient: jest.fn(),
+  getRootPath: jest.fn().mockReturnValue("/"),
 }));
 
 const mockSetSessionItem = jest.fn();
@@ -70,7 +71,7 @@ describe("GdiCheckPage", () => {
       jest.advanceTimersByTime(100);
     });
 
-    const expectedPath = `/${EcommerceRoutes.ROOT}/${EcommerceRoutes.ESITO}#${ROUTE_FRAGMENT.CLIENT_ID}=IO&${ROUTE_FRAGMENT.TRANSACTION_ID}=tx123`;
+    const expectedPath = `/${EcommerceRoutes.ESITO}#${ROUTE_FRAGMENT.CLIENT_ID}=IO&${ROUTE_FRAGMENT.TRANSACTION_ID}=tx123`;
     expect(mockNavigate).toHaveBeenCalledWith(expectedPath, { replace: true });
 
     jest.useRealTimers();
