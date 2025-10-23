@@ -51,11 +51,10 @@ parameters:
     type: string
   
   - name: 'use_ecommerce_fe_root_path'
-    type: boolean
-    default: false
+    type: string
     values:
-      - false
-      - true
+      - "false"
+      - "true"
 
 
     
