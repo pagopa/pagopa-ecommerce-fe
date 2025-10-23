@@ -24,7 +24,7 @@ parameters:
       - patch
     default: minor
   - name: 'USE_ECOMMERCE_CDN'
-    displayName: 'Boolean parameter used to indicate if use eCommerce CDN or Checkout one'
+    displayName: 'Boolean parameter used to indicate if use eCommerce CDN (if false Checkout one will be used)'
     type: boolean
     default: true
     values:
