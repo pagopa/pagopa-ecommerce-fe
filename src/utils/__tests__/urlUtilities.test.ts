@@ -170,7 +170,7 @@ describe("getRootPath", () => {
   it.each([
     {
       paramValue: true,
-      expectedRootPath: "/ecommerce-fe",
+      expectedRootPath: "/ecommerce-fe/",
     },
     {
       paramValue: false,
