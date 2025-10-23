@@ -10,6 +10,7 @@ import PaymentResponsePage from "./routes/PaymentResponsePage";
 import GdiCheckPage from "./routes/GdiCheckPage";
 import "./translations/i18n";
 import SaveCardPage from "./routes/SaveCardPage";
+import { getConfigOrThrow } from "./utils/config/config";
 
 const checkoutTheme = createTheme({
   ...theme,
@@ -42,6 +43,8 @@ const checkoutTheme = createTheme({
   },
 });
 
+const useEcommerceRootPath = getConfigOrThrow().USE_ECOMMERCE_FE_ROOT_PATH;
+
 export function App() {
   const { t } = useTranslation();
   // eslint-disable-next-line functional/immutable-data
@@ -56,20 +59,25 @@ export function App() {
         }}
       >
         <Routes>
-          <Route path="" element={<Navigate to={EcommerceRoutes.ESITO} />} />
-          <Route path={EcommerceRoutes.GDI_CHECK} element={<GdiCheckPage />} />
-          <Route
-            path={EcommerceRoutes.ESITO}
-            element={<PaymentResponsePage />}
-          />
-          <Route
-            path={EcommerceRoutes.NOT_ONBOARDED_CARD_PAYMENT}
-            element={<IFrameCardPage />}
-          />
-          <Route
-            path={EcommerceRoutes.SCELTA_SALVATAGGIO_CARTA}
-            element={<SaveCardPage />}
-          />
+          <Route path={useEcommerceRootPath ? EcommerceRoutes.ROOT : "/"}>
+            <Route path="" element={<Navigate to={EcommerceRoutes.ESITO} />} />
+            <Route
+              path={EcommerceRoutes.GDI_CHECK}
+              element={<GdiCheckPage />}
+            />
+            <Route
+              path={EcommerceRoutes.ESITO}
+              element={<PaymentResponsePage />}
+            />
+            <Route
+              path={EcommerceRoutes.NOT_ONBOARDED_CARD_PAYMENT}
+              element={<IFrameCardPage />}
+            />
+            <Route
+              path={EcommerceRoutes.SCELTA_SALVATAGGIO_CARTA}
+              element={<SaveCardPage />}
+            />
+          </Route>
         </Routes>
       </BrowserRouter>
     </ThemeProvider>
