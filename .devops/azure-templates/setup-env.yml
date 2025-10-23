@@ -51,10 +51,11 @@ parameters:
     type: string
   
   - name: 'use_ecommerce_fe_root_path'
-    type: string
+    type: boolean
+    default: false
     values:
-      - "false"
-      - "true"
+      - false
+      - true
 
 
     
@@ -76,7 +77,7 @@ steps:
       ECOMMERCE_SHOW_CONTINUE_IO_BTN_DELAY_MILLIS=${{ parameters.show_continue_io_btn_delay_millis }} \
       ECOMMERCE_IO_CARD_DATA_CLIENT_REDIRECT_OUTCOME_PATH=${{parameters.io_client_redirect_card_data_outcome_path }} \
       ECOMMERCE_IO_SAVE_CARD_FAIL_REDIRECT_PATH=${{parameters.io_client_save_card_fail_redirect}} \
-      USE_ECOMMERCE_FE_ROOT_PATH=${{parameters.use_ecommerce_fe_root_path}} \
+      USE_ECOMMERCE_FE_ROOT_PATH=${{lower(parameters.use_ecommerce_fe_root_path)}} \
       bash env.sh
 
   displayName: 'Populate environment file'
