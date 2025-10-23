@@ -61,15 +61,15 @@ Test use cases:
 - _CHECKOUT_
 
   1. start checkout mock [pagopa-checkout-be-mock](https://github.com/pagopa/pagopa-checkout-be-mock)
-  2. open on browser http://localhost:1234/ecommerce-fe/esito#clientId=CHECKOUT&sessionToken=test&transactionId=1234
+  2. open on browser http://localhost:1234/esito#clientId=CHECKOUT&sessionToken=test&transactionId=1234
 
 - _APP IO_
   1. start script `yarn start-io-mock` on other terminal
-  2. open on browser http://localhost:1234/ecommerce-fe/esito#clientId=IO&sessionToken=test&transactionId=1234
+  2. open on browser http://localhost:1234/esito#clientId=IO&sessionToken=test&transactionId=1234
 
 - _SAVE CARD PAGE_
    1. start the project through `yarn start-io-mock`
-   2. open on browser http://localhost:1234/ecommerce-fe/scelta-salvataggio-carta#clientId=IO&sessionToken=test&transactionId=1234&rptId=302014564564564575&amount=120&paymentMethodId=3fa85f64-5717-4562-b3fc-2c963f66afa6
+   2. open on browser http://localhost:1234/scelta-salvataggio-carta#clientId=IO&sessionToken=test&transactionId=1234&rptId=302014564564564575&amount=120&paymentMethodId=3fa85f64-5717-4562-b3fc-2c963f66afa6
 ## IO Mock outcome result
 
 The ecommerce transaction get transaction endpoint `/checkout/webview/v1/transactions/:transactionId/outcomes` is driven by the following mockFlow values:
