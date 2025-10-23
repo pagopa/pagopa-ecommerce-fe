@@ -249,7 +249,7 @@ stages:
               azureSubscription: 'UAT-PAGOPA-SERVICE-CONN'
               scriptLocation: inlineScript
               inlineScript: |
-                az storage blob sync --container '$web' --account-name pagopauecommercesa -s '$(Pipeline.Workspace)/Bundle_UAT'
+                az storage blob sync --container '$web' --account-name pagopauweuecommercecdnsa -s '$(Pipeline.Workspace)/Bundle_UAT'
 
           - task: AzureCLI@1
             displayName: 'Purge CDN endpoint on UAT'
@@ -257,7 +257,7 @@ stages:
               azureSubscription: 'UAT-PAGOPA-SERVICE-CONN'
               scriptLocation: inlineScript
               inlineScript: |
-                az cdn endpoint purge -g pagopa-u-ecommerce-fe-rg -n pagopa-u-ecommerce-cdn-endpoint --profile-name pagopa-u-ecommerce-cdn-profile --content-paths "/*"
+                az cdn endpoint purge -g pagopa-u-ecommerce-fe-rg -n pagopa-u-weu-ecommerce-cdn-endpoint --profile-name pagopa-u-weu-ecommerce-cdn-profile --content-paths "/*"
 
 
   # - stage: End_to_End_Tests_UAT
@@ -345,7 +345,7 @@ stages:
               azureSubscription: 'PROD-PAGOPA-SERVICE-CONN'
               scriptLocation: inlineScript
               inlineScript: |
-                az storage blob sync --container '$web' --account-name pagopapecommercesa -s '$(Pipeline.Workspace)/Bundle_PROD'
+                az storage blob sync --container '$web' --account-name pagopapweuecommercecdnsa -s '$(Pipeline.Workspace)/Bundle_PROD'
 
           - task: AzureCLI@1
             displayName: 'Purge CDN endpoint on PROD'
@@ -353,4 +353,4 @@ stages:
               azureSubscription: 'PROD-PAGOPA-SERVICE-CONN'
               scriptLocation: inlineScript
               inlineScript: |
-                az cdn endpoint purge -g pagopa-p-ecommerce-fe-rg -n pagopa-p-ecommerce-cdn-endpoint --profile-name pagopa-p-ecommerce-cdn-profile --content-paths "/*"
+                az cdn endpoint purge -g pagopa-p-ecommerce-fe-rg -n pagopa-p-weu-ecommerce-cdn-endpoint --profile-name pagopa-p-weu-ecommerce-cdn-profile --content-paths "/*"
