@@ -13,7 +13,8 @@ import { AmountEuroCents } from "../../../../generated/definitions/payment-ecomm
 
 export const ecommerceIOPostWallet = (
   token: string,
-  transactionId: string
+  transactionId: string,
+  webSessionToken: string
 ): Promise<O.Option<WalletTransactionCreateResponse>> =>
   pipe(
     TE.tryCatch(
@@ -24,6 +25,7 @@ export const ecommerceIOPostWallet = (
         return ecommerceIOClientV1.createWalletForTransactionsForIO({
           pagoPAPlatformSessionToken: token,
           transactionId,
+          webSessionToken,
           body: {
             useDiagnosticTracing: true,
             paymentMethodId,
