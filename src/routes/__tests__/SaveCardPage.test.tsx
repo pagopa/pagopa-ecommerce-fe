@@ -63,6 +63,20 @@ const mockIOPostTransaction = ecommerceIOPostTransaction as jest.MockedFunction<
 const mockIOPostWallet = ecommerceIOPostWallet as jest.MockedFunction<
   typeof ecommerceIOPostWallet
 >;
+const okTransactionResponseBodyNoJwtToken = {
+  transactionId: "577725a90dfe4b89b434b16ccad69247",
+  payments: [
+    {
+      rptId: "77777777777302012387654312384" as RptId,
+      amount: 600 as AmountEuroCents,
+    },
+  ],
+  status: TransactionStatusEnum.ACTIVATED,
+};
+const okTransactionResponseOKTaskEitherNoJwt = TE.of(
+  okTransactionResponseBodyNoJwtToken
+);
+
 const okTransactionResponseBody = {
   transactionId: "577725a90dfe4b89b434b16ccad69247",
   payments: [
@@ -72,6 +86,7 @@ const okTransactionResponseBody = {
     },
   ],
   status: TransactionStatusEnum.ACTIVATED,
+  authToken: "authToken",
 };
 const okTransactionResponseOKTaskEither = TE.of(okTransactionResponseBody);
 
@@ -144,6 +159,30 @@ describe("SaveCardPage", () => {
       )
     );
     expect(mockIOPostWallet).not.toHaveBeenCalled();
+  });
+
+  it("redirects to error URL if transaction succeeds and no jwt token is present", async () => {
+    mockIOPostTransaction.mockImplementation(
+      () => okTransactionResponseOKTaskEitherNoJwt
+    );
+    mockIOPostWallet.mockResolvedValue(
+      O.some({
+        walletId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        redirectUrl: "https://example.com/next",
+      })
+    );
+
+    const saveButton = screen
+      .getByText("saveCardPage.saveTitle")
+      .closest("button")!;
+    fireEvent.click(saveButton);
+
+    await waitFor(() =>
+      expect(window.location.replace).toHaveBeenCalledWith(
+        "/fail?outcome=1&transactionId=" +
+          okTransactionResponseBodyNoJwtToken.transactionId
+      )
+    );
   });
 
   it("redirects to wallet URL if transaction succeeds and wallet returns Some({redirectUrl})", async () => {
