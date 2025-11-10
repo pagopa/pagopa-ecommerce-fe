@@ -1,5 +1,8 @@
 # pagopa-ecommerce-fe
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=pagopa_pagopa-ecommerce-fe&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=pagopa_pagopa-ecommerce-fe)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=pagopa_pagopa-ecommerce-fe&metric=coverage)](https://sonarcloud.io/summary/new_code?id=pagopa_pagopa-ecommerce-fe)
+
 This repository contain webviews used for ecommerce payments flow (checkout-App IO)
 
 ## About The Project

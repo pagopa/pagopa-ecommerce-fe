@@ -23,6 +23,7 @@ describe("ecommerceIOPostWallet", () => {
   const mockToken = "mock-token";
   const mockTransactionId = "mock-transaction-id";
   const mockPaymentMethodId = "mock-payment-method";
+  const mockSessionToken = "mock-session-tokens";
   const mockAmount = 1000;
 
   beforeEach(() => {
@@ -45,7 +46,11 @@ describe("ecommerceIOPostWallet", () => {
       ecommerceIOClientV1.createWalletForTransactionsForIO as jest.Mock
     ).mockResolvedValue(E.right(mockResponse));
 
-    const result = await ecommerceIOPostWallet(mockToken, mockTransactionId);
+    const result = await ecommerceIOPostWallet(
+      mockToken,
+      mockTransactionId,
+      mockSessionToken
+    );
 
     expect(result).toEqual(O.some(mockResponse.value));
   });
@@ -57,7 +62,11 @@ describe("ecommerceIOPostWallet", () => {
       ecommerceIOClientV1.createWalletForTransactionsForIO as jest.Mock
     ).mockResolvedValue(E.right(mockResponse));
 
-    const result = await ecommerceIOPostWallet(mockToken, mockTransactionId);
+    const result = await ecommerceIOPostWallet(
+      mockToken,
+      mockTransactionId,
+      mockSessionToken
+    );
 
     expect(result).toEqual(O.none);
   });
@@ -67,7 +76,11 @@ describe("ecommerceIOPostWallet", () => {
       ecommerceIOClientV1.createWalletForTransactionsForIO as jest.Mock
     ).mockRejectedValue(new Error("Network error"));
 
-    const result = await ecommerceIOPostWallet(mockToken, mockTransactionId);
+    const result = await ecommerceIOPostWallet(
+      mockToken,
+      mockTransactionId,
+      mockSessionToken
+    );
 
     expect(result).toEqual(O.none);
   });
@@ -77,7 +90,11 @@ describe("ecommerceIOPostWallet", () => {
       .mockReturnValueOnce(null)
       .mockReturnValueOnce(null);
 
-    const result = await ecommerceIOPostWallet(mockToken, mockTransactionId);
+    const result = await ecommerceIOPostWallet(
+      mockToken,
+      mockTransactionId,
+      mockSessionToken
+    );
 
     expect(result).toEqual(O.none);
   });
