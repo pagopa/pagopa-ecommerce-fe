@@ -132,4 +132,4 @@ export interface WalletContextualOnboardOutcomeParams {
 }
 
 export const getRootPath = (): string =>
-  useEcommerceRootPath ? `/${EcommerceRoutes.ROOT}/` : "/";
+  useEcommerceRootPath ? `/${EcommerceRoutes.ROOT}/` : `/`;
