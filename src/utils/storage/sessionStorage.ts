@@ -8,6 +8,7 @@ export enum SessionItems {
   clientId = "clientId",
   rptId = "rptId",
   amount = "amount",
+  transactionId = "transactionId",
 }
 
 export const getSessionItem = (item: SessionItems) => {

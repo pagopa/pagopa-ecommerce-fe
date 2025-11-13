@@ -87,7 +87,10 @@ export default function PaymentResponsePage() {
       pollingConfig.counter.getValue() >= pollingConfig.retries - 1;
     const token =
       getSessionItem(SessionItems.sessionToken) ?? fragmentSessionToken;
-    if (!maxRetriesReached && token && clientId && transactionId) {
+    const idTransaction =
+      transactionId ?? getSessionItem(SessionItems.transactionId);
+    const client = clientId ?? getSessionItem(SessionItems.clientId);
+    if (!maxRetriesReached && token && client && idTransaction) {
       return getTransactionOutcome(token);
     }
     redirectWithError();
