@@ -39,15 +39,21 @@ afterAll(() => {
   });
 });
 
+import { getSessionItem } from "../../utils/storage/sessionStorage";
 import {
   getUrlParameter,
   getBase64Fragment,
   getFragmentParameter,
   getFragments,
   redirectToClient,
+  getFragmentsOrSessionStorageValue,
 } from "../urlUtilities";
 import { ViewOutcomeEnum } from "../api/transactions/types";
 import { AmountEuroCents } from "../../../generated/definitions/payment-ecommerce-webview-v1/AmountEuroCents";
+
+jest.mock("../../utils/storage/sessionStorage", () => ({
+  getSessionItem: jest.fn(),
+}));
 
 describe("getUrlParameter", () => {
   it("returns empty string when parameter not present", () => {
@@ -98,6 +104,46 @@ describe("getBase64Fragment", () => {
   it("decodes base64 fragment", () => {
     const uri = `http://example.com#data=${encoded}`;
     expect(getBase64Fragment(uri, "data")).toBe("hello");
+  });
+});
+
+describe("getFragmentsOrSessionStorage", () => {
+  it("returns an object mapping fragments", () => {
+    // eslint-disable-next-line functional/immutable-data
+    mockLocation.href = "http://example.com#param1=one&param2=two";
+    (getSessionItem as jest.Mock).mockImplementation((key) => {
+      if (key === "item1") {
+        return "itemValue1";
+      }
+      if (key === "item2") {
+        return "itemValue2";
+      }
+      return null;
+    });
+    const fragments = getFragmentsOrSessionStorageValue(
+      { route: "param1", sessionItem: "item1" } as any,
+      { route: "param2", sessionItem: "item2" } as any
+    );
+    expect(fragments).toEqual({ param1: "one", param2: "two" });
+  });
+
+  it("returns an object mapping session item", () => {
+    (getSessionItem as jest.Mock).mockImplementation((key) => {
+      if (key === "item1") {
+        return "value1";
+      }
+      if (key === "item2") {
+        return "value2";
+      }
+      return null;
+    });
+    // eslint-disable-next-line functional/immutable-data
+    mockLocation.href = "http://example.com";
+    const fragments = getFragmentsOrSessionStorageValue(
+      { route: "param1", sessionItem: "item1" } as any,
+      { route: "param2", sessionItem: "item2" } as any
+    );
+    expect(fragments).toEqual({ param1: "value1", param2: "value2" });
   });
 });
 
