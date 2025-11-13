@@ -11,7 +11,10 @@ import {
 import { ViewOutcomeEnum } from "../utils/api/transactions/types";
 import PageContainer from "../components/PageContainer";
 import { SessionItems, getSessionItem } from "../utils/storage/sessionStorage";
-import { getFragments, redirectToClient } from "../utils/urlUtilities";
+import {
+  getFragmentsOrSessionStorageValue,
+  redirectToClient,
+} from "../utils/urlUtilities";
 import { getConfigOrThrow } from "../utils/config/config";
 import { TransactionOutcomeInfo } from "../../generated/definitions/payment-ecommerce-webview-v1/TransactionOutcomeInfo";
 import { AmountEuroCents } from "../../generated/definitions/payment-ecommerce-webview-v1/AmountEuroCents";
@@ -22,11 +25,18 @@ export default function PaymentResponsePage() {
     clientId,
     transactionId,
     sessionToken: fragmentSessionToken,
-  } = getFragments(
-    ROUTE_FRAGMENT.SESSION_TOKEN,
-    ROUTE_FRAGMENT.CLIENT_ID,
-    ROUTE_FRAGMENT.TRANSACTION_ID
+  } = getFragmentsOrSessionStorageValue(
+    {
+      route: ROUTE_FRAGMENT.SESSION_TOKEN,
+      sessionItem: SessionItems.sessionToken,
+    },
+    { route: ROUTE_FRAGMENT.CLIENT_ID, sessionItem: SessionItems.clientId },
+    {
+      route: ROUTE_FRAGMENT.TRANSACTION_ID,
+      sessionItem: SessionItems.transactionId,
+    }
   );
+
   const [outcomeState, setOutcomeState] =
     React.useState<ViewOutcomeEnum | null>(null);
   const config = getConfigOrThrow();
@@ -87,13 +97,7 @@ export default function PaymentResponsePage() {
       pollingConfig.counter.getValue() >= pollingConfig.retries - 1;
     const token =
       getSessionItem(SessionItems.sessionToken) ?? fragmentSessionToken;
-    const idTransaction =
-      transactionId.length > 0
-        ? transactionId
-        : getSessionItem(SessionItems.transactionId);
-    const client =
-      clientId.length > 0 ? clientId : getSessionItem(SessionItems.clientId);
-    if (!maxRetriesReached && token && client && idTransaction) {
+    if (!maxRetriesReached && token && clientId && transactionId) {
       return getTransactionOutcome(token);
     }
     redirectWithError();
