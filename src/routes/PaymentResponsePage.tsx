@@ -88,8 +88,11 @@ export default function PaymentResponsePage() {
     const token =
       getSessionItem(SessionItems.sessionToken) ?? fragmentSessionToken;
     const idTransaction =
-      transactionId ?? getSessionItem(SessionItems.transactionId);
-    const client = clientId ?? getSessionItem(SessionItems.clientId);
+      transactionId.length > 0
+        ? transactionId
+        : getSessionItem(SessionItems.transactionId);
+    const client =
+      clientId.length > 0 ? clientId : getSessionItem(SessionItems.clientId);
     if (!maxRetriesReached && token && client && idTransaction) {
       return getTransactionOutcome(token);
     }
