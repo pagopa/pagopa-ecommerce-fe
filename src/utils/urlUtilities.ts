@@ -10,6 +10,7 @@ import {
 } from "../routes/models/routeModel";
 import { ViewOutcomeEnum } from "./api/transactions/types";
 import { getConfigOrThrow } from "./config/config";
+import { getSessionItem, SessionItems } from "./storage/sessionStorage";
 
 export const useEcommerceRootPath =
   getConfigOrThrow().USE_ECOMMERCE_FE_ROOT_PATH;
@@ -57,6 +58,22 @@ export function getFragmentParameter(uri: string, name: string): string {
     return "";
   }
 }
+/**
+ * This function requires a valid URI with a query strings as the fragment URI
+ * example: http://dev.checkout.it/gdi-check#param1=value1&param2=value2.
+ * If function return an empty values, session storage is used as fallback according to the key passes as parameter.
+ * The function return an empty string if the uri parameter is not valid or the parameter can't be found
+ * and if no session item can't be found
+ */
+export function getFragmentParameterOrSessionStorageValue(
+  uri: string,
+  name: string,
+  sessionItem: SessionItems
+): string {
+  const fragment = getFragmentParameter(uri, name);
+  const sessionItemVal = getSessionItem(sessionItem);
+  return fragment && fragment.length > 0 ? fragment : sessionItemVal || "";
+}
 
 /**
  * returns all requested fragments in an object using the fragments as keys
@@ -72,6 +89,23 @@ export function getFragments(
     (acc, fragment) => ({
       ...acc,
       [fragment]: getFragmentParameter(uri, fragment),
+    }),
+    {}
+  );
+}
+
+export function getFragmentsOrSessionStorageValue(
+  ...keys: Array<{ route: ROUTE_FRAGMENT; sessionItem: SessionItems }>
+): Record<ROUTE_FRAGMENT, string> {
+  const uri = window.location.href;
+  return keys.reduce<Record<string, string>>(
+    (acc, key) => ({
+      ...acc,
+      [key.route]: getFragmentParameterOrSessionStorageValue(
+        uri,
+        key.route,
+        key.sessionItem
+      ),
     }),
     {}
   );
@@ -132,4 +166,4 @@ export interface WalletContextualOnboardOutcomeParams {
 }
 
 export const getRootPath = (): string =>
-  useEcommerceRootPath ? `/${EcommerceRoutes.ROOT}/` : "/";
+  useEcommerceRootPath ? `/${EcommerceRoutes.ROOT}/` : `/`;

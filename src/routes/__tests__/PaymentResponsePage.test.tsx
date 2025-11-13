@@ -26,9 +26,11 @@ jest.mock("react-router-dom", () => ({
 jest.mock;
 
 const mockGetFragments = jest.fn();
+const mockGetFragmentsOrSessionStorageValue = jest.fn();
 const mockRedirect = jest.fn();
 jest.mock("../../utils/urlUtilities", () => ({
   getFragments: mockGetFragments,
+  getFragmentsOrSessionStorageValue: mockGetFragmentsOrSessionStorageValue,
   redirectToClient: mockRedirect,
 }));
 
@@ -74,8 +76,8 @@ describe("PaymentResponsePage", () => {
     };
   });
 
-  it("redirects immediately to GENERIC_ERROR if no fragments", () => {
-    mockGetFragments.mockReturnValue({
+  it("redirects immediately to GENERIC_ERROR if no fragments and no sessionStorage", () => {
+    mockGetFragmentsOrSessionStorageValue.mockReturnValue({
       clientId: "",
       transactionId: "",
       sessionToken: "",
@@ -93,7 +95,7 @@ describe("PaymentResponsePage", () => {
   });
 
   it("calls IO-get + redirects to GENERIC_ERROR when API yields none", async () => {
-    mockGetFragments.mockReturnValue({
+    mockGetFragmentsOrSessionStorageValue.mockReturnValue({
       clientId: "IO",
       transactionId: "tx1",
       sessionToken: "tok1",
@@ -118,7 +120,7 @@ describe("PaymentResponsePage", () => {
   it("on SUCCESS shows continue button only after the delay (IO)", async () => {
     jest.useFakeTimers();
 
-    mockGetFragments.mockReturnValue({
+    mockGetFragmentsOrSessionStorageValue.mockReturnValue({
       clientId: "IO",
       transactionId: "tx42",
       sessionToken: "",
@@ -150,7 +152,7 @@ describe("PaymentResponsePage", () => {
   });
 
   it("calls CHECKOUT-get + redirects to GENERIC_ERROR when API yields none (CHECKOUT)", async () => {
-    mockGetFragments.mockReturnValue({
+    mockGetFragmentsOrSessionStorageValue.mockReturnValue({
       clientId: "CHECKOUT",
       transactionId: "txC1",
       sessionToken: "ftok",
@@ -175,7 +177,7 @@ describe("PaymentResponsePage", () => {
   it("calls CHECKOUT-get + redirects to SUCCESS when API yields some (CHECKOUT)", async () => {
     jest.useFakeTimers();
 
-    mockGetFragments.mockReturnValue({
+    mockGetFragmentsOrSessionStorageValue.mockReturnValue({
       clientId: "CHECKOUT",
       transactionId: "txC2",
       sessionToken: "ftok2",

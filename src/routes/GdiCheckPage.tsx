@@ -75,6 +75,8 @@ const GdiCheckPage = () => {
       sessionToken
     ) {
       setSessionItem(SessionItems.sessionToken, sessionToken);
+      setSessionItem(SessionItems.transactionId, transactionId);
+      setSessionItem(SessionItems.clientId, clientId);
       buildSdk();
     }
   }, [clientId, sdkReady, decodedGdiIframeUrl, transactionId, sessionToken]);
