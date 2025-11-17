@@ -138,6 +138,7 @@ export default function SaveCardPage() {
           {t("saveCardPage.moreInfo")}
         </Button>
         <Button
+          data-testid="saveRedirectBtn"
           sx={{
             display: "flex",
             justifyContent: "space-between",

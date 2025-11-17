@@ -148,9 +148,7 @@ describe("SaveCardPage", () => {
       } as NodeFaultCode)
     );
 
-    const saveButton = screen
-      .getByText("saveCardPage.saveTitle")
-      .closest("button")!;
+    const saveButton = screen.getByTestId("saveRedirectBtn");
     fireEvent.click(saveButton);
 
     await waitFor(() =>
@@ -172,9 +170,7 @@ describe("SaveCardPage", () => {
       })
     );
 
-    const saveButton = screen
-      .getByText("saveCardPage.saveTitle")
-      .closest("button")!;
+    const saveButton = screen.getByTestId("saveRedirectBtn");
     fireEvent.click(saveButton);
 
     await waitFor(() =>
@@ -196,9 +192,7 @@ describe("SaveCardPage", () => {
       })
     );
 
-    const saveButton = screen
-      .getByText("saveCardPage.saveTitle")
-      .closest("button")!;
+    const saveButton = screen.getByTestId("saveRedirectBtn");
     fireEvent.click(saveButton);
 
     await waitFor(() =>
@@ -214,9 +208,7 @@ describe("SaveCardPage", () => {
     );
     mockIOPostWallet.mockResolvedValue(O.none);
 
-    const saveButton = screen
-      .getByText("saveCardPage.saveTitle")
-      .closest("button")!;
+    const saveButton = screen.getByTestId("saveRedirectBtn");
     fireEvent.click(saveButton);
 
     await waitFor(() =>
@@ -239,9 +231,7 @@ describe("SaveCardPage", () => {
       })
     );
 
-    const saveButton = screen
-      .getByText("saveCardPage.saveTitle")
-      .closest("button")!;
+    const saveButton = screen.getByTestId("saveRedirectBtn");
     fireEvent.click(saveButton);
 
     await waitFor(() =>
