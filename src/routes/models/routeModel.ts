@@ -16,6 +16,7 @@ export enum ROUTE_FRAGMENT {
   PAYMENT_METHOD_ID = "paymentMethodId",
   RPT_ID = "rptId",
   AMOUNT = "amount",
+  IS_CHECKOUT_WALLET_PAYMENT = "isCheckoutWalletPayment",
 }
 
 export enum CLIENT_TYPE {

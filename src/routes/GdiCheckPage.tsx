@@ -29,11 +29,13 @@ const GdiCheckPage = () => {
   const navigate = useNavigate();
 
   // Fragment Parameters
-  const { sessionToken, clientId, transactionId } = getFragments(
-    ROUTE_FRAGMENT.SESSION_TOKEN,
-    ROUTE_FRAGMENT.CLIENT_ID,
-    ROUTE_FRAGMENT.TRANSACTION_ID
-  );
+  const { sessionToken, clientId, transactionId, isCheckoutWalletPayment } =
+    getFragments(
+      ROUTE_FRAGMENT.SESSION_TOKEN,
+      ROUTE_FRAGMENT.CLIENT_ID,
+      ROUTE_FRAGMENT.TRANSACTION_ID,
+      ROUTE_FRAGMENT.IS_CHECKOUT_WALLET_PAYMENT
+    );
 
   const decodedGdiIframeUrl = getBase64Fragment(
     window.location.href,
@@ -68,7 +70,7 @@ const GdiCheckPage = () => {
 
   useEffect(() => {
     if (
-      clientId === CLIENT_TYPE.IO &&
+      (clientId === CLIENT_TYPE.IO || isCheckoutWalletPayment === "true") &&
       sdkReady &&
       decodedGdiIframeUrl &&
       transactionId &&
