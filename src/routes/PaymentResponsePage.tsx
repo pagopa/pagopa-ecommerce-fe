@@ -10,7 +10,7 @@ import {
 } from "../utils/api/transactions/getTransactionInfo";
 import { ViewOutcomeEnum } from "../utils/api/transactions/types";
 import PageContainer from "../components/PageContainer";
-import { SessionItems, getSessionItem } from "../utils/storage/sessionStorage";
+import { SessionItems } from "../utils/storage/sessionStorage";
 import {
   getFragmentsOrSessionStorageValue,
   redirectToClient,
