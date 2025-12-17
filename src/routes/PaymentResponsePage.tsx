@@ -21,21 +21,18 @@ import { AmountEuroCents } from "../../generated/definitions/payment-ecommerce-w
 import { CLIENT_TYPE, ROUTE_FRAGMENT } from "./models/routeModel";
 
 export default function PaymentResponsePage() {
-  const {
-    clientId,
-    transactionId,
-    sessionToken,
-  } = getFragmentsOrSessionStorageValue(
-    {
-      route: ROUTE_FRAGMENT.SESSION_TOKEN,
-      sessionItem: SessionItems.sessionToken,
-    },
-    { route: ROUTE_FRAGMENT.CLIENT_ID, sessionItem: SessionItems.clientId },
-    {
-      route: ROUTE_FRAGMENT.TRANSACTION_ID,
-      sessionItem: SessionItems.transactionId,
-    }
-  );
+  const { clientId, transactionId, sessionToken } =
+    getFragmentsOrSessionStorageValue(
+      {
+        route: ROUTE_FRAGMENT.SESSION_TOKEN,
+        sessionItem: SessionItems.sessionToken,
+      },
+      { route: ROUTE_FRAGMENT.CLIENT_ID, sessionItem: SessionItems.clientId },
+      {
+        route: ROUTE_FRAGMENT.TRANSACTION_ID,
+        sessionItem: SessionItems.transactionId,
+      }
+    );
 
   const [outcomeState, setOutcomeState] =
     React.useState<ViewOutcomeEnum | null>(null);
@@ -95,8 +92,7 @@ export default function PaymentResponsePage() {
   useEffect(() => {
     const maxRetriesReached =
       pollingConfig.counter.getValue() >= pollingConfig.retries - 1;
-    const token =
-      sessionToken;
+    const token = sessionToken;
     if (!maxRetriesReached && token && clientId && transactionId) {
       return getTransactionOutcome(token);
     }
