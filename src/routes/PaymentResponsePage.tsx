@@ -24,7 +24,7 @@ export default function PaymentResponsePage() {
   const {
     clientId,
     transactionId,
-    sessionToken: fragmentSessionToken,
+    sessionToken,
   } = getFragmentsOrSessionStorageValue(
     {
       route: ROUTE_FRAGMENT.SESSION_TOKEN,
@@ -96,12 +96,12 @@ export default function PaymentResponsePage() {
     const maxRetriesReached =
       pollingConfig.counter.getValue() >= pollingConfig.retries - 1;
     const token =
-      getSessionItem(SessionItems.sessionToken) ?? fragmentSessionToken;
+      sessionToken;
     if (!maxRetriesReached && token && clientId && transactionId) {
       return getTransactionOutcome(token);
     }
     redirectWithError();
-  }, [clientId, transactionId, fragmentSessionToken]);
+  }, [clientId, transactionId, sessionToken]);
 
   return (
     <PageContainer>
