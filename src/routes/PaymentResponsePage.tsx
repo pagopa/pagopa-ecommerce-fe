@@ -10,7 +10,7 @@ import {
 } from "../utils/api/transactions/getTransactionInfo";
 import { ViewOutcomeEnum } from "../utils/api/transactions/types";
 import PageContainer from "../components/PageContainer";
-import { SessionItems, getSessionItem } from "../utils/storage/sessionStorage";
+import { SessionItems } from "../utils/storage/sessionStorage";
 import {
   getFragmentsOrSessionStorageValue,
   redirectToClient,
@@ -21,21 +21,18 @@ import { AmountEuroCents } from "../../generated/definitions/payment-ecommerce-w
 import { CLIENT_TYPE, ROUTE_FRAGMENT } from "./models/routeModel";
 
 export default function PaymentResponsePage() {
-  const {
-    clientId,
-    transactionId,
-    sessionToken: fragmentSessionToken,
-  } = getFragmentsOrSessionStorageValue(
-    {
-      route: ROUTE_FRAGMENT.SESSION_TOKEN,
-      sessionItem: SessionItems.sessionToken,
-    },
-    { route: ROUTE_FRAGMENT.CLIENT_ID, sessionItem: SessionItems.clientId },
-    {
-      route: ROUTE_FRAGMENT.TRANSACTION_ID,
-      sessionItem: SessionItems.transactionId,
-    }
-  );
+  const { clientId, transactionId, sessionToken } =
+    getFragmentsOrSessionStorageValue(
+      {
+        route: ROUTE_FRAGMENT.SESSION_TOKEN,
+        sessionItem: SessionItems.sessionToken,
+      },
+      { route: ROUTE_FRAGMENT.CLIENT_ID, sessionItem: SessionItems.clientId },
+      {
+        route: ROUTE_FRAGMENT.TRANSACTION_ID,
+        sessionItem: SessionItems.transactionId,
+      }
+    );
 
   const [outcomeState, setOutcomeState] =
     React.useState<ViewOutcomeEnum | null>(null);
@@ -95,13 +92,12 @@ export default function PaymentResponsePage() {
   useEffect(() => {
     const maxRetriesReached =
       pollingConfig.counter.getValue() >= pollingConfig.retries - 1;
-    const token =
-      getSessionItem(SessionItems.sessionToken) ?? fragmentSessionToken;
+    const token = sessionToken;
     if (!maxRetriesReached && token && clientId && transactionId) {
       return getTransactionOutcome(token);
     }
     redirectWithError();
-  }, [clientId, transactionId, fragmentSessionToken]);
+  }, [clientId, transactionId, sessionToken]);
 
   return (
     <PageContainer>
