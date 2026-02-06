@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { pipe } from "fp-ts/function";
 import * as O from "fp-ts/Option";
 import * as TE from "fp-ts/TaskEither";
-import { Box, Button, Divider, Typography } from "@mui/material";
+import { Box, Button, Container, Divider, Typography } from "@mui/material";
 import { Trans, useTranslation } from "react-i18next";
 import { ChevronRight, CreditCard, CreditCardOff } from "@mui/icons-material";
 import PageContainer from "../components/PageContainer";
@@ -20,6 +20,7 @@ import {
 import { SessionItems, setSessionItem } from "../utils/storage/sessionStorage";
 import { getConfigOrThrow } from "../utils/config/config";
 import { EcommerceRoutes, ROUTE_FRAGMENT } from "./models/routeModel";
+import { theme } from "@pagopa/mui-italia";
 
 export default function SaveCardPage() {
   const moreInfoModalRef = React.useRef<InformationModalRef>(null);
@@ -115,15 +116,25 @@ export default function SaveCardPage() {
   return (
     <Box
       sx={{
-        position: "fixed",
-        width: "100vw",
         display: "flex",
-        p: 4,
         flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
+        justifyContent: "space-between",
+        height: "100vh",
+        bgcolor: theme.palette.background.default,
       }}
     >
+      <Container
+        id="main_content"
+        component="main"
+        tabIndex={-1}
+        sx={{
+          p: { xs: 0 },
+          pl: { xs: 3, sm: 6, md: 0 },
+          pr: { xs: 3, sm: 6, md: 0 },
+          flexGrow: 1,
+        }}
+        maxWidth={"sm"}
+      >
       <PageContainer
         title={t("saveCardPage.title")}
         description={t("saveCardPage.description")}
@@ -212,6 +223,7 @@ export default function SaveCardPage() {
           </Box>
         </InformationModal>
       </PageContainer>
+      </Container>
     </Box>
   );
 }
