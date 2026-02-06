@@ -11,7 +11,7 @@
     "continueToIO": "Continua sull'app IO"
   },
   "saveCardPage":{
-    "title": "Vuoi salvare la carta per pagamenti in futuro?",
+    "title": "Vuoi salvare la carta per pagare in futuro?",
     "description": "Facendolo, la prossima volta potrai pagare più velocemente",
     "moreInfo": "Ulteriori informazioni",
     "saveTitle": "Sì, salva la carta",

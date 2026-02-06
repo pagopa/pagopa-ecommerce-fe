@@ -42,11 +42,11 @@ export default function IFrameCardPage() {
             id={"helpLink"}
             variant="text"
             onClick={() => setCvvModalOpen(true)}
-            sx={{ p: 0 }}
+            sx={{ p: 0, height: "auto", minHeight: "auto" }}
           >
             {t("iframeCardPage.helpLink")}
           </Button>
-          <Box sx={{ mt: 6 }}>
+          <Box sx={{ mt: 4 }}>
             <IframeCardForm onCancel={onCancel} loading={loading} />
           </Box>
           <InformationModal
