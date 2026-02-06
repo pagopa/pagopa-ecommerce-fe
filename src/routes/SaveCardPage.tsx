@@ -120,7 +120,7 @@ export default function SaveCardPage() {
         display: "flex",
         paddingLeft: 4,
         paddingRight: 4,
-        paddingTop: 0,
+        paddingTop: 8,
         paddingBottom: 4,
         flexDirection: "column",
         alignItems: "center",
