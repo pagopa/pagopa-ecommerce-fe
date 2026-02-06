@@ -118,7 +118,7 @@ export default function SaveCardPage() {
         position: "fixed",
         width: "100vw",
         display: "flex",
-        p: 0,
+        p: 6,
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
