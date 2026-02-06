@@ -46,7 +46,7 @@ export default function IFrameCardPage() {
           >
             {t("iframeCardPage.helpLink")}
           </Button>
-          <Box sx={{ mt: 6 }}>
+          <Box sx={{ mt: 5 }}>
             <IframeCardForm onCancel={onCancel} loading={loading} />
           </Box>
           <InformationModal
