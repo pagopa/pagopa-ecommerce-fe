@@ -42,7 +42,7 @@ export default function IFrameCardPage() {
             id={"helpLink"}
             variant="text"
             onClick={() => setCvvModalOpen(true)}
-            sx={{ p: 0, height: "auto", minHeight: "auto", mt: 2 }}
+            sx={{ p: 0, height: "auto", minHeight: "auto"}}
           >
             {t("iframeCardPage.helpLink")}
           </Button>
