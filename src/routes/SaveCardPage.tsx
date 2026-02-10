@@ -22,6 +22,7 @@ import { getConfigOrThrow } from "../utils/config/config";
 import { EcommerceRoutes, ROUTE_FRAGMENT } from "./models/routeModel";
 
 export default function SaveCardPage() {
+  const [enableHanlders, setEnableHandler] = React.useState(true);
   const moreInfoModalRef = React.useRef<InformationModalRef>(null);
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -105,6 +106,20 @@ export default function SaveCardPage() {
       )
     )();
 
+  const saveCard = async () => {
+    if (enableHanlders) {
+      setEnableHandler(false);
+      await handleSaveRedirect();
+    }
+  };
+
+  const noSaveCard = async () => {
+    if (enableHanlders) {
+      setEnableHandler(false);
+      handleNoSaveRedirect();
+    }
+  };
+
   const handleNoSaveRedirect = function () {
     const redirectPath = `${getRootPath()}${
       EcommerceRoutes.NOT_ONBOARDED_CARD_PAYMENT
@@ -141,6 +156,7 @@ export default function SaveCardPage() {
         </Button>
         <Button
           data-testid="saveRedirectBtn"
+          disabled={!enableHanlders}
           sx={{
             display: "flex",
             justifyContent: "space-between",
@@ -150,7 +166,7 @@ export default function SaveCardPage() {
             my: 2,
             p: 1,
           }}
-          onClick={() => handleSaveRedirect()}
+          onClick={() => saveCard()}
         >
           <CreditCard color="action" sx={{ fontSize: 28, mr: 2 }} />
           <Box sx={{ flex: 1, textAlign: "left" }}>
@@ -168,6 +184,7 @@ export default function SaveCardPage() {
 
         <Button
           data-testid="noSaveRedirectBtn"
+          disabled={!enableHanlders}
           sx={{
             display: "flex",
             justifyContent: "space-between",
@@ -177,7 +194,7 @@ export default function SaveCardPage() {
             my: 2,
             p: 1,
           }}
-          onClick={() => handleNoSaveRedirect()}
+          onClick={() => noSaveCard()}
         >
           <CreditCardOff color="action" sx={{ fontSize: 28, mr: 2 }} />
           <Box sx={{ flex: 1, textAlign: "left" }}>
