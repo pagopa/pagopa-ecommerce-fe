@@ -22,7 +22,8 @@ import { getConfigOrThrow } from "../utils/config/config";
 import { EcommerceRoutes, ROUTE_FRAGMENT } from "./models/routeModel";
 
 export default function SaveCardPage() {
-  const [enableHanlders, setEnableHandler] = React.useState(true);
+  const [isRedirectionButtonsEnabled, setIsRedirectionButtonsEnabled] =
+    React.useState(true);
   const moreInfoModalRef = React.useRef<InformationModalRef>(null);
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -55,13 +56,15 @@ export default function SaveCardPage() {
     window.location.replace(`${url}`);
   };
 
-  const handleSaveRedirect = async () =>
+  const handleSaveRedirect = async () => {
+    setIsRedirectionButtonsEnabled(false);
     await pipe(
       ecommerceIOPostTransaction(sessionToken),
       TE.match(
         // POST transaction in error, propagate Nodo error code to app IO for proper error message handling
         (nodeFaultCode) =>
           redirectOutcomeKO({
+            // no enable buttons save card
             outcome: "1",
             faultCodeCategory: nodeFaultCode.faultCodeCategory,
             faultCodeDetail: nodeFaultCode.faultCodeDetail,
@@ -69,6 +72,7 @@ export default function SaveCardPage() {
         async ({ transactionId, authToken }) => {
           if (authToken == null) {
             redirectOutcomeKO({
+              // no enable buttons save card
               outcome: "1",
               transactionId,
             });
@@ -84,6 +88,7 @@ export default function SaveCardPage() {
                 // error creating wallet -> outcome KO to app io
                 () =>
                   redirectOutcomeKO({
+                    // no enable buttons save card
                     outcome: "1",
                     transactionId,
                   }),
@@ -93,6 +98,7 @@ export default function SaveCardPage() {
                   } else {
                     // wallet created but no redirect url returned by b.e., return error to app IO
                     redirectOutcomeKO({
+                      // no enable buttons save card
                       outcome: "1",
                       walletId,
                       transactionId,
@@ -105,22 +111,10 @@ export default function SaveCardPage() {
         }
       )
     )();
-
-  const saveCard = async () => {
-    if (enableHanlders) {
-      setEnableHandler(false);
-      await handleSaveRedirect();
-    }
-  };
-
-  const noSaveCard = async () => {
-    if (enableHanlders) {
-      setEnableHandler(false);
-      handleNoSaveRedirect();
-    }
   };
 
   const handleNoSaveRedirect = function () {
+    setIsRedirectionButtonsEnabled(false);
     const redirectPath = `${getRootPath()}${
       EcommerceRoutes.NOT_ONBOARDED_CARD_PAYMENT
     }`;
@@ -156,7 +150,7 @@ export default function SaveCardPage() {
         </Button>
         <Button
           data-testid="saveRedirectBtn"
-          disabled={!enableHanlders}
+          disabled={!isRedirectionButtonsEnabled}
           sx={{
             display: "flex",
             justifyContent: "space-between",
@@ -166,7 +160,7 @@ export default function SaveCardPage() {
             my: 2,
             p: 1,
           }}
-          onClick={() => saveCard()}
+          onClick={() => handleSaveRedirect()}
         >
           <CreditCard color="action" sx={{ fontSize: 28, mr: 2 }} />
           <Box sx={{ flex: 1, textAlign: "left" }}>
@@ -184,7 +178,7 @@ export default function SaveCardPage() {
 
         <Button
           data-testid="noSaveRedirectBtn"
-          disabled={!enableHanlders}
+          disabled={!isRedirectionButtonsEnabled}
           sx={{
             display: "flex",
             justifyContent: "space-between",
@@ -194,7 +188,7 @@ export default function SaveCardPage() {
             my: 2,
             p: 1,
           }}
-          onClick={() => noSaveCard()}
+          onClick={() => handleNoSaveRedirect()}
         >
           <CreditCardOff color="action" sx={{ fontSize: 28, mr: 2 }} />
           <Box sx={{ flex: 1, textAlign: "left" }}>

@@ -240,4 +240,80 @@ describe("SaveCardPage", () => {
       )
     );
   });
+
+  it("disables buttons after clicking save", async () => {
+    mockIOPostTransaction.mockImplementation(
+      () => okTransactionResponseOKTaskEitherNoJwt
+    );
+    mockIOPostWallet.mockResolvedValue(O.none);
+
+    const saveButton = screen.getByTestId("saveRedirectBtn");
+    const noSaveRedirectBtn = screen.getByTestId("noSaveRedirectBtn");
+
+    expect(saveButton).toBeEnabled();
+    expect(noSaveRedirectBtn).toBeEnabled();
+
+    // Click "save" button
+    fireEvent.click(saveButton);
+
+    // Wait for async handleSaveRedirect to update state
+    await waitFor(() => {
+      expect(saveButton).toBeDisabled();
+      expect(noSaveRedirectBtn).toBeDisabled();
+    });
+
+    jest.clearAllMocks();
+  });
+
+  it("disables buttons after clicking no-save", async () => {
+    mockIOPostTransaction.mockImplementation(
+      () => okTransactionResponseOKTaskEitherNoJwt
+    );
+    mockIOPostWallet.mockResolvedValue(O.none);
+
+    const saveButton = screen.getByTestId("saveRedirectBtn");
+    const noSaveRedirectBtn = screen.getByTestId("noSaveRedirectBtn");
+
+    expect(saveButton).toBeEnabled();
+    expect(noSaveRedirectBtn).toBeEnabled();
+
+    // Click "save" button
+    fireEvent.click(noSaveRedirectBtn);
+
+    // Wait for async handleSaveRedirect to update state
+    await waitFor(() => {
+      expect(saveButton).toBeDisabled();
+      expect(noSaveRedirectBtn).toBeDisabled();
+    });
+
+    jest.clearAllMocks();
+  });
+
+  it("not call handlers after buttons are disabled", async () => {
+    mockIOPostTransaction.mockImplementation(
+      () => okTransactionResponseOKTaskEitherNoJwt
+    );
+    mockIOPostWallet.mockResolvedValue(O.none);
+
+    const saveButton = screen.getByTestId("saveRedirectBtn");
+    const noSaveRedirectBtn = screen.getByTestId("noSaveRedirectBtn");
+
+    expect(saveButton).toBeEnabled();
+    expect(noSaveRedirectBtn).toBeEnabled();
+
+    fireEvent.click(saveButton);
+
+    await waitFor(() => {
+      expect(saveButton).toBeDisabled();
+      expect(noSaveRedirectBtn).toBeDisabled();
+    });
+
+    const saveCallsBefore = mockIOPostTransaction.mock.calls.length;
+
+    fireEvent.click(saveButton);
+
+    expect(mockIOPostTransaction.mock.calls.length).toBe(saveCallsBefore);
+    expect(mockNavigate).not.toHaveBeenCalled();
+    jest.clearAllMocks();
+  });
 });
