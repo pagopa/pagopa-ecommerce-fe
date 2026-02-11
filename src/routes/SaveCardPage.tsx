@@ -64,7 +64,6 @@ export default function SaveCardPage() {
         // POST transaction in error, propagate Nodo error code to app IO for proper error message handling
         (nodeFaultCode) =>
           redirectOutcomeKO({
-            // no enable buttons save card
             outcome: "1",
             faultCodeCategory: nodeFaultCode.faultCodeCategory,
             faultCodeDetail: nodeFaultCode.faultCodeDetail,
@@ -72,7 +71,6 @@ export default function SaveCardPage() {
         async ({ transactionId, authToken }) => {
           if (authToken == null) {
             redirectOutcomeKO({
-              // no enable buttons save card
               outcome: "1",
               transactionId,
             });
@@ -88,7 +86,6 @@ export default function SaveCardPage() {
                 // error creating wallet -> outcome KO to app io
                 () =>
                   redirectOutcomeKO({
-                    // no enable buttons save card
                     outcome: "1",
                     transactionId,
                   }),
@@ -98,7 +95,6 @@ export default function SaveCardPage() {
                   } else {
                     // wallet created but no redirect url returned by b.e., return error to app IO
                     redirectOutcomeKO({
-                      // no enable buttons save card
                       outcome: "1",
                       walletId,
                       transactionId,
