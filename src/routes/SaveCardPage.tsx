@@ -22,6 +22,8 @@ import { getConfigOrThrow } from "../utils/config/config";
 import { EcommerceRoutes, ROUTE_FRAGMENT } from "./models/routeModel";
 
 export default function SaveCardPage() {
+  const [isRedirectionButtonsEnabled, setIsRedirectionButtonsEnabled] =
+    React.useState(true);
   const moreInfoModalRef = React.useRef<InformationModalRef>(null);
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -54,7 +56,8 @@ export default function SaveCardPage() {
     window.location.replace(`${url}`);
   };
 
-  const handleSaveRedirect = async () =>
+  const handleSaveRedirect = async () => {
+    setIsRedirectionButtonsEnabled(false);
     await pipe(
       ecommerceIOPostTransaction(sessionToken),
       TE.match(
@@ -104,8 +107,10 @@ export default function SaveCardPage() {
         }
       )
     )();
+  };
 
   const handleNoSaveRedirect = function () {
+    setIsRedirectionButtonsEnabled(false);
     const redirectPath = `${getRootPath()}${
       EcommerceRoutes.NOT_ONBOARDED_CARD_PAYMENT
     }`;
@@ -141,6 +146,7 @@ export default function SaveCardPage() {
         </Button>
         <Button
           data-testid="saveRedirectBtn"
+          disabled={!isRedirectionButtonsEnabled}
           sx={{
             display: "flex",
             justifyContent: "space-between",
@@ -168,6 +174,7 @@ export default function SaveCardPage() {
 
         <Button
           data-testid="noSaveRedirectBtn"
+          disabled={!isRedirectionButtonsEnabled}
           sx={{
             display: "flex",
             justifyContent: "space-between",
