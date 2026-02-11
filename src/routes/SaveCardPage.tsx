@@ -6,6 +6,7 @@ import * as TE from "fp-ts/TaskEither";
 import { Box, Button, Divider, Typography } from "@mui/material";
 import { Trans, useTranslation } from "react-i18next";
 import { ChevronRight, CreditCard, CreditCardOff } from "@mui/icons-material";
+import { flushSync } from "react-dom";
 import PageContainer from "../components/PageContainer";
 import InformationModal, {
   InformationModalRef,
@@ -25,6 +26,7 @@ export default function SaveCardPage() {
   const [isRedirectionButtonsEnabled, setIsRedirectionButtonsEnabled] =
     React.useState(true);
   const moreInfoModalRef = React.useRef<InformationModalRef>(null);
+  const clickInProgressRef = React.useRef(false);
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -57,6 +59,11 @@ export default function SaveCardPage() {
   };
 
   const handleSaveRedirect = async () => {
+    if (clickInProgressRef.current) {
+      return;
+    }
+    // eslint-disable-next-line functional/immutable-data
+    clickInProgressRef.current = true;
     setIsRedirectionButtonsEnabled(false);
     await pipe(
       ecommerceIOPostTransaction(sessionToken),
@@ -110,7 +117,14 @@ export default function SaveCardPage() {
   };
 
   const handleNoSaveRedirect = function () {
-    setIsRedirectionButtonsEnabled(false);
+    if (clickInProgressRef.current) {
+      return;
+    }
+    // eslint-disable-next-line functional/immutable-data
+    clickInProgressRef.current = true;
+    flushSync(() => {
+      setIsRedirectionButtonsEnabled(false);
+    });
     const redirectPath = `${getRootPath()}${
       EcommerceRoutes.NOT_ONBOARDED_CARD_PAYMENT
     }`;
