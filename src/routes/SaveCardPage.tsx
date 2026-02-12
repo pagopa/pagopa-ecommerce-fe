@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { pipe } from "fp-ts/function";
 import * as O from "fp-ts/Option";
 import * as TE from "fp-ts/TaskEither";
+import * as E from "fp-ts/Either";
 import { Box, Button, Divider, Typography } from "@mui/material";
 import { Trans, useTranslation } from "react-i18next";
 import { ChevronRight, CreditCard, CreditCardOff } from "@mui/icons-material";
@@ -65,32 +66,30 @@ export default function SaveCardPage() {
   };
 
   const handleSaveRedirect = async () => {
-    if (clickInProgressRef.current) {
-      return;
-    }
-    // eslint-disable-next-line functional/immutable-data
-    clickInProgressRef.current = true;
     setIsRedirectionButtonsEnabled(false);
-
-    const token = getSessionItem(SessionItems.sessionToken);
-    if (!token) {
-      redirectOutcomeKO({
-        outcome: "1",
-        faultCodeDetail: "Missing session token",
-      });
-      return;
-    }
     await pipe(
-      ecommerceIOPostTransaction(token),
+      getSessionItem(SessionItems.sessionToken),
+      E.fromNullable({ outcome: "1" } as WalletContextualOnboardOutcomeParams),
+      TE.fromEither,
+
+      TE.chainW((token) =>
+        pipe(
+          ecommerceIOPostTransaction(token),
+          TE.map((res) => ({ ...res, token })),
+          TE.mapLeft(
+            (error): WalletContextualOnboardOutcomeParams => ({
+              outcome: "1",
+              faultCodeCategory: error.faultCodeCategory,
+              faultCodeDetail: error.faultCodeDetail,
+            })
+          )
+        )
+      ),
+
       TE.match(
-        // POST transaction in error, propagate Nodo error code to app IO for proper error message handling
-        (nodeFaultCode) =>
-          redirectOutcomeKO({
-            outcome: "1",
-            faultCodeCategory: nodeFaultCode.faultCodeCategory,
-            faultCodeDetail: nodeFaultCode.faultCodeDetail,
-          }),
-        async ({ transactionId, authToken }) => {
+        (error: WalletContextualOnboardOutcomeParams) =>
+          redirectOutcomeKO(error),
+        async ({ transactionId, authToken, token }) => {
           if (authToken == null) {
             redirectOutcomeKO({
               outcome: "1",
@@ -102,20 +101,15 @@ export default function SaveCardPage() {
               transactionId,
               authToken
             );
+
             pipe(
               postWalletResponse,
               O.match(
-                // error creating wallet -> outcome KO to app io
-                () =>
-                  redirectOutcomeKO({
-                    outcome: "1",
-                    transactionId,
-                  }),
+                () => redirectOutcomeKO({ outcome: "1", transactionId }),
                 ({ walletId, redirectUrl }) => {
                   if (redirectUrl) {
                     window.location.replace(redirectUrl);
                   } else {
-                    // wallet created but no redirect url returned by b.e., return error to app IO
                     redirectOutcomeKO({
                       outcome: "1",
                       walletId,
