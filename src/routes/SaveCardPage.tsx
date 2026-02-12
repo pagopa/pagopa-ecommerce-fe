@@ -71,66 +71,64 @@ export default function SaveCardPage() {
     // eslint-disable-next-line functional/immutable-data
     clickInProgressRef.current = true;
     setIsRedirectionButtonsEnabled(false);
+
+    const token = getSessionItem(SessionItems.sessionToken);
+    if (!token) {
+      redirectOutcomeKO({
+        outcome: "1",
+        faultCodeDetail: "Missing session token",
+      });
+      return;
+    }
     await pipe(
-      O.fromNullable(getSessionItem(SessionItems.sessionToken)),
-      O.match(
-        () =>
+      ecommerceIOPostTransaction(token),
+      TE.match(
+        // POST transaction in error, propagate Nodo error code to app IO for proper error message handling
+        (nodeFaultCode) =>
           redirectOutcomeKO({
             outcome: "1",
-            faultCodeDetail: "Missing session token",
+            faultCodeCategory: nodeFaultCode.faultCodeCategory,
+            faultCodeDetail: nodeFaultCode.faultCodeDetail,
           }),
-        (token) =>
-          pipe(
-            ecommerceIOPostTransaction(token),
-            TE.match(
-              // POST transaction in error, propagate Nodo error code to app IO for proper error message handling
-              (nodeFaultCode) =>
-                redirectOutcomeKO({
-                  outcome: "1",
-                  faultCodeCategory: nodeFaultCode.faultCodeCategory,
-                  faultCodeDetail: nodeFaultCode.faultCodeDetail,
-                }),
-              async ({ transactionId, authToken }) => {
-                if (authToken == null) {
+        async ({ transactionId, authToken }) => {
+          if (authToken == null) {
+            redirectOutcomeKO({
+              outcome: "1",
+              transactionId,
+            });
+          } else {
+            const postWalletResponse = await ecommerceIOPostWallet(
+              token,
+              transactionId,
+              authToken
+            );
+            pipe(
+              postWalletResponse,
+              O.match(
+                // error creating wallet -> outcome KO to app io
+                () =>
                   redirectOutcomeKO({
                     outcome: "1",
                     transactionId,
-                  });
-                } else {
-                  const postWalletResponse = await ecommerceIOPostWallet(
-                    token,
-                    transactionId,
-                    authToken
-                  );
-                  pipe(
-                    postWalletResponse,
-                    O.match(
-                      // error creating wallet -> outcome KO to app io
-                      () =>
-                        redirectOutcomeKO({
-                          outcome: "1",
-                          transactionId,
-                        }),
-                      ({ walletId, redirectUrl }) => {
-                        if (redirectUrl) {
-                          window.location.replace(redirectUrl);
-                        } else {
-                          // wallet created but no redirect url returned by b.e., return error to app IO
-                          redirectOutcomeKO({
-                            outcome: "1",
-                            walletId,
-                            transactionId,
-                          });
-                        }
-                      }
-                    )
-                  );
+                  }),
+                ({ walletId, redirectUrl }) => {
+                  if (redirectUrl) {
+                    window.location.replace(redirectUrl);
+                  } else {
+                    // wallet created but no redirect url returned by b.e., return error to app IO
+                    redirectOutcomeKO({
+                      outcome: "1",
+                      walletId,
+                      transactionId,
+                    });
+                  }
                 }
-              }
-            )
-          )()
+              )
+            );
+          }
+        }
       )
-    );
+    )();
   };
 
   const handleNoSaveRedirect = function () {
