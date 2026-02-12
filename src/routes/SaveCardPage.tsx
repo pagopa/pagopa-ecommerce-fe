@@ -6,7 +6,6 @@ import * as TE from "fp-ts/TaskEither";
 import { Box, Button, Divider, Typography } from "@mui/material";
 import { Trans, useTranslation } from "react-i18next";
 import { ChevronRight, CreditCard, CreditCardOff } from "@mui/icons-material";
-import { flushSync } from "react-dom";
 import PageContainer from "../components/PageContainer";
 import InformationModal, {
   InformationModalRef,
@@ -39,11 +38,17 @@ export default function SaveCardPage() {
       ROUTE_FRAGMENT.AMOUNT
     );
 
-  setSessionItem(SessionItems.sessionToken, sessionToken);
-  setSessionItem(SessionItems.clientId, clientId);
-  setSessionItem(SessionItems.paymentMethodId, paymentMethodId);
-  setSessionItem(SessionItems.rptId, rptId);
-  setSessionItem(SessionItems.amount, amount);
+  React.useEffect(() => {
+    if (!sessionToken) {
+      return;
+    }
+
+    setSessionItem(SessionItems.sessionToken, sessionToken);
+    setSessionItem(SessionItems.clientId, clientId);
+    setSessionItem(SessionItems.paymentMethodId, paymentMethodId);
+    setSessionItem(SessionItems.rptId, rptId);
+    setSessionItem(SessionItems.amount, amount);
+  }, [sessionToken, clientId, paymentMethodId, rptId, amount]);
 
   const { ECOMMERCE_IO_SAVE_CARD_FAIL_REDIRECT_PATH } = getConfigOrThrow();
 
@@ -122,9 +127,7 @@ export default function SaveCardPage() {
     }
     // eslint-disable-next-line functional/immutable-data
     clickInProgressRef.current = true;
-    flushSync(() => {
-      setIsRedirectionButtonsEnabled(false);
-    });
+    setIsRedirectionButtonsEnabled(false);
     const redirectPath = `${getRootPath()}${
       EcommerceRoutes.NOT_ONBOARDED_CARD_PAYMENT
     }`;
