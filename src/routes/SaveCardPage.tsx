@@ -3,9 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { pipe } from "fp-ts/function";
 import * as O from "fp-ts/Option";
 import * as TE from "fp-ts/TaskEither";
+import * as E from "fp-ts/Either";
 import { Box, Button, Divider, Typography } from "@mui/material";
 import { Trans, useTranslation } from "react-i18next";
 import { ChevronRight, CreditCard, CreditCardOff } from "@mui/icons-material";
+import { flushSync } from "react-dom";
 import PageContainer from "../components/PageContainer";
 import InformationModal, {
   InformationModalRef,
@@ -17,7 +19,11 @@ import {
   getRootPath,
   WalletContextualOnboardOutcomeParams,
 } from "../utils/urlUtilities";
-import { SessionItems, setSessionItem } from "../utils/storage/sessionStorage";
+import {
+  getSessionItem,
+  SessionItems,
+  setSessionItem,
+} from "../utils/storage/sessionStorage";
 import { getConfigOrThrow } from "../utils/config/config";
 import { EcommerceRoutes, ROUTE_FRAGMENT } from "./models/routeModel";
 
@@ -25,23 +31,26 @@ export default function SaveCardPage() {
   const [isRedirectionButtonsEnabled, setIsRedirectionButtonsEnabled] =
     React.useState(true);
   const moreInfoModalRef = React.useRef<InformationModalRef>(null);
+  const clickInProgressRef = React.useRef(false);
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const { sessionToken, clientId, paymentMethodId, rptId, amount } =
-    getFragments(
-      ROUTE_FRAGMENT.SESSION_TOKEN,
-      ROUTE_FRAGMENT.CLIENT_ID,
-      ROUTE_FRAGMENT.PAYMENT_METHOD_ID,
-      ROUTE_FRAGMENT.RPT_ID,
-      ROUTE_FRAGMENT.AMOUNT
-    );
+  React.useEffect(() => {
+    const { sessionToken, clientId, paymentMethodId, rptId, amount } =
+      getFragments(
+        ROUTE_FRAGMENT.SESSION_TOKEN,
+        ROUTE_FRAGMENT.CLIENT_ID,
+        ROUTE_FRAGMENT.PAYMENT_METHOD_ID,
+        ROUTE_FRAGMENT.RPT_ID,
+        ROUTE_FRAGMENT.AMOUNT
+      );
 
-  setSessionItem(SessionItems.sessionToken, sessionToken);
-  setSessionItem(SessionItems.clientId, clientId);
-  setSessionItem(SessionItems.paymentMethodId, paymentMethodId);
-  setSessionItem(SessionItems.rptId, rptId);
-  setSessionItem(SessionItems.amount, amount);
+    setSessionItem(SessionItems.sessionToken, sessionToken);
+    setSessionItem(SessionItems.clientId, clientId);
+    setSessionItem(SessionItems.paymentMethodId, paymentMethodId);
+    setSessionItem(SessionItems.rptId, rptId);
+    setSessionItem(SessionItems.amount, amount);
+  }, []);
 
   const { ECOMMERCE_IO_SAVE_CARD_FAIL_REDIRECT_PATH } = getConfigOrThrow();
 
@@ -59,16 +68,28 @@ export default function SaveCardPage() {
   const handleSaveRedirect = async () => {
     setIsRedirectionButtonsEnabled(false);
     await pipe(
-      ecommerceIOPostTransaction(sessionToken),
+      getSessionItem(SessionItems.sessionToken),
+      E.fromNullable({ outcome: "1" } as WalletContextualOnboardOutcomeParams),
+      TE.fromEither,
+
+      TE.chainW((token) =>
+        pipe(
+          ecommerceIOPostTransaction(token),
+          TE.map((res) => ({ ...res, token })),
+          TE.mapLeft(
+            (error): WalletContextualOnboardOutcomeParams => ({
+              outcome: "1",
+              faultCodeCategory: error.faultCodeCategory,
+              faultCodeDetail: error.faultCodeDetail,
+            })
+          )
+        )
+      ),
+
       TE.match(
-        // POST transaction in error, propagate Nodo error code to app IO for proper error message handling
-        (nodeFaultCode) =>
-          redirectOutcomeKO({
-            outcome: "1",
-            faultCodeCategory: nodeFaultCode.faultCodeCategory,
-            faultCodeDetail: nodeFaultCode.faultCodeDetail,
-          }),
-        async ({ transactionId, authToken }) => {
+        (error: WalletContextualOnboardOutcomeParams) =>
+          redirectOutcomeKO(error),
+        async ({ transactionId, authToken, token }) => {
           if (authToken == null) {
             redirectOutcomeKO({
               outcome: "1",
@@ -76,7 +97,7 @@ export default function SaveCardPage() {
             });
           } else {
             const postWalletResponse = await ecommerceIOPostWallet(
-              sessionToken,
+              token,
               transactionId,
               authToken
             );
@@ -110,7 +131,14 @@ export default function SaveCardPage() {
   };
 
   const handleNoSaveRedirect = function () {
-    setIsRedirectionButtonsEnabled(false);
+    if (clickInProgressRef.current) {
+      return;
+    }
+    // eslint-disable-next-line functional/immutable-data
+    clickInProgressRef.current = true;
+    flushSync(() => {
+      setIsRedirectionButtonsEnabled(false);
+    });
     const redirectPath = `${getRootPath()}${
       EcommerceRoutes.NOT_ONBOARDED_CARD_PAYMENT
     }`;

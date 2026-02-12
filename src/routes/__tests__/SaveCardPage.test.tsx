@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/no-identical-functions */
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
@@ -11,6 +12,7 @@ import { RptId } from "../../../generated/definitions/payment-ecommerce-webview-
 import { AmountEuroCents } from "../../../generated/definitions/payment-ecommerce-webview-v1/AmountEuroCents";
 import { TransactionStatusEnum } from "../../../generated/definitions/payment-ecommerce-webview-v1/TransactionStatus";
 import { NodeFaultCode } from "../../utils/api/transactions/nodeFaultCode";
+import { getSessionItem } from "../../utils/storage/sessionStorage";
 
 // Mock useTranslation
 jest.mock("react-i18next", () => ({
@@ -18,6 +20,12 @@ jest.mock("react-i18next", () => ({
     t: (key: string) => key,
   }),
   Trans: ({ children }: any) => <span>{children}</span>,
+}));
+
+jest.mock("../../utils/storage/sessionStorage", () => ({
+  SessionItems: { sessionToken: "sessionToken" },
+  getSessionItem: jest.fn(),
+  setSessionItem: jest.fn(),
 }));
 
 const mockNavigate = jest.fn();
@@ -139,6 +147,14 @@ describe("SaveCardPage", () => {
   });
 
   it("redirects to outcome path if transaction fails (None)", async () => {
+    (getSessionItem as jest.Mock).mockImplementation((item) => {
+      switch (item) {
+        case "sessionToken":
+          return "sesstionToken";
+        default:
+          return undefined;
+      }
+    });
     const faultCodeCategory = "faultCodeCategory";
     const faultCodeDetail = "faultCodeDetail";
     mockIOPostTransaction.mockImplementation(() =>
@@ -160,6 +176,14 @@ describe("SaveCardPage", () => {
   });
 
   it("redirects to error URL if transaction succeeds and no jwt token is present", async () => {
+    (getSessionItem as jest.Mock).mockImplementation((item) => {
+      switch (item) {
+        case "sessionToken":
+          return "sesstionToken";
+        default:
+          return undefined;
+      }
+    });
     mockIOPostTransaction.mockImplementation(
       () => okTransactionResponseOKTaskEitherNoJwt
     );
@@ -182,6 +206,14 @@ describe("SaveCardPage", () => {
   });
 
   it("redirects to wallet URL if transaction succeeds and wallet returns Some({redirectUrl})", async () => {
+    (getSessionItem as jest.Mock).mockImplementation((item) => {
+      switch (item) {
+        case "sessionToken":
+          return "sesstionToken";
+        default:
+          return undefined;
+      }
+    });
     mockIOPostTransaction.mockImplementation(
       () => okTransactionResponseOKTaskEither
     );
@@ -203,6 +235,14 @@ describe("SaveCardPage", () => {
   });
 
   it("redirects to outcome path if wallet returns None", async () => {
+    (getSessionItem as jest.Mock).mockImplementation((item) => {
+      switch (item) {
+        case "sessionToken":
+          return "sesstionToken";
+        default:
+          return undefined;
+      }
+    });
     mockIOPostTransaction.mockImplementation(
       () => okTransactionResponseOKTaskEither
     );
@@ -219,6 +259,14 @@ describe("SaveCardPage", () => {
   });
 
   it("redirects to outcome path if wallet returns Some(undefined)", async () => {
+    (getSessionItem as jest.Mock).mockImplementation((item) => {
+      switch (item) {
+        case "sessionToken":
+          return "sesstionToken";
+        default:
+          return undefined;
+      }
+    });
     mockIOPostTransaction.mockImplementation(
       () => okTransactionResponseOKTaskEither
     );
