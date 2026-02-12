@@ -101,15 +101,20 @@ export default function SaveCardPage() {
               transactionId,
               authToken
             );
-
             pipe(
               postWalletResponse,
               O.match(
-                () => redirectOutcomeKO({ outcome: "1", transactionId }),
+                // error creating wallet -> outcome KO to app io
+                () =>
+                  redirectOutcomeKO({
+                    outcome: "1",
+                    transactionId,
+                  }),
                 ({ walletId, redirectUrl }) => {
                   if (redirectUrl) {
                     window.location.replace(redirectUrl);
                   } else {
+                    // wallet created but no redirect url returned by b.e., return error to app IO
                     redirectOutcomeKO({
                       outcome: "1",
                       walletId,
