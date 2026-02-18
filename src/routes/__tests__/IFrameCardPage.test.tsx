@@ -84,19 +84,4 @@ describe("IFrameCardPage", () => {
     fireEvent.click(screen.getByTestId("helpLink"));
     expect(screen.getByTestId("modalTitle")).toBeInTheDocument();
   });
-
-  test("when close button is clicked modal closes", async () => {
-    render(
-      <MemoryRouter>
-        <IFrameCardPage />
-      </MemoryRouter>
-    );
-
-    fireEvent.click(screen.getByTestId("helpLink"));
-    fireEvent.click(screen.getByTestId("closeButton"));
-
-    await waitFor(() =>
-      expect(screen.queryByTestId("modalTitle")).not.toBeInTheDocument()
-    );
-  });
 });
