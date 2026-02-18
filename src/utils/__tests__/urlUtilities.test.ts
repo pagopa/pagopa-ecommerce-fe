@@ -8,14 +8,6 @@ jest.mock("../../routes/models/routeModel", () => ({
   },
 }));
 
-const mockConfig = {
-  USE_ECOMMERCE_FE_ROOT_PATH: true,
-};
-
-jest.mock("../../utils/config/config", () => ({
-  getConfigOrThrow: () => mockConfig,
-}));
-
 const originalLocation = window.location;
 const mockLocation: Partial<Location> = {
   search: "",
@@ -210,29 +202,4 @@ describe("redirectToClient", () => {
       "/co?t=9999#outcome=" + ViewOutcomeEnum.TIMEOUT
     );
   });
-});
-
-describe("getRootPath", () => {
-  it.each([
-    {
-      paramValue: true,
-      expectedRootPath: "/ecommerce-fe/",
-    },
-    {
-      paramValue: false,
-      expectedRootPath: "/",
-    },
-  ])(
-    "should return root path valued accordingly to parameter: [%s]",
-    ({ paramValue, expectedRootPath }) => {
-      // reset modules to change parameter value
-      jest.resetModules();
-      // eslint-disable-next-line functional/immutable-data
-      mockConfig.USE_ECOMMERCE_FE_ROOT_PATH = paramValue;
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const reloadedUrlUtilities = require("../urlUtilities");
-      // and then perform test against the reloaded module with updated parameter value
-      expect(reloadedUrlUtilities.getRootPath()).toEqual(expectedRootPath);
-    }
-  );
 });

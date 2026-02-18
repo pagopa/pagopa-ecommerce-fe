@@ -29,7 +29,6 @@ export const IConfig = t.interface({
   ECOMMERCE_API_RETRY_NUMBERS_LINEAR: t.number,
   ECOMMERCE_IO_CARD_DATA_CLIENT_REDIRECT_OUTCOME_PATH: NonEmptyString,
   ECOMMERCE_IO_SAVE_CARD_FAIL_REDIRECT_PATH: NonEmptyString,
-  USE_ECOMMERCE_FE_ROOT_PATH: t.boolean,
 });
 
 // No need to re-evaluate this object for each call
@@ -95,12 +94,6 @@ const errorOrConfig: t.Validation<IConfig> = IConfig.decode({
     ? // eslint-disable-next-line no-underscore-dangle
       (window as any)._env_.ECOMMERCE_IO_SAVE_CARD_FAIL_REDIRECT_PATH
     : null,
-  // eslint-disable-next-line no-underscore-dangle
-  USE_ECOMMERCE_FE_ROOT_PATH: (window as any)._env_
-    .ECOMMERCE_IO_SAVE_CARD_FAIL_REDIRECT_PATH
-    ? // eslint-disable-next-line no-underscore-dangle
-      (window as any)._env_.USE_ECOMMERCE_FE_ROOT_PATH === "true"
-    : false,
 });
 
 /**

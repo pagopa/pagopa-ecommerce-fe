@@ -23,34 +23,17 @@ parameters:
       - minor
       - patch
     default: minor
-  - name: 'USE_ECOMMERCE_CDN'
-    displayName: 'Boolean parameter used to indicate if use eCommerce CDN (if false Checkout one will be used)'
-    type: boolean
-    default: true
-    values:
-      - false
-      - true
 
 
 variables:
   NODE_VERSION: 18.17.1
   YARN_CACHE_FOLDER: $(Pipeline.Workspace)/.yarn
-  ${{ if eq(parameters['USE_ECOMMERCE_CDN'], true) }}:
-      DEV_STORAGE_BLOB_SYNC: az storage blob sync --container '$web' --account-name pagopadweuecommercecdnsa -s '$(Pipeline.Workspace)/Bundle_DEV'
-      DEV_PURGE_CDN_COMMAND: az cdn endpoint purge -g pagopa-d-ecommerce-fe-rg -n pagopa-d-weu-ecommerce-cdn-endpoint --profile-name pagopa-d-weu-ecommerce-cdn-profile --content-paths "/*"
-      UAT_STORAGE_BLOB_SYNC: az storage blob sync --container '$web' --account-name pagopauweuecommercecdnsa -s '$(Pipeline.Workspace)/Bundle_UAT'
-      UAT_PURGE_CDN_COMMAND: az cdn endpoint purge -g pagopa-u-ecommerce-fe-rg -n pagopa-u-weu-ecommerce-cdn-endpoint --profile-name pagopa-u-weu-ecommerce-cdn-profile --content-paths "/*"
-      PROD_STORAGE_BLOB_SYNC: az storage blob sync --container '$web' --account-name pagopapweuecommercecdnsa -s '$(Pipeline.Workspace)/Bundle_PROD'
-      PROD_PURGE_CDN_COMMAND: az cdn endpoint purge -g pagopa-p-ecommerce-fe-rg -n pagopa-p-weu-ecommerce-cdn-endpoint --profile-name pagopa-p-weu-ecommerce-cdn-profile --content-paths "/*"
-      USE_ECOMMERCE_FE_ROOT_PATH: "false"
-  ${{ else }}:
-      DEV_STORAGE_BLOB_SYNC: az storage blob sync --container '$web' --account-name pagopadcheckoutsa -s '$(Pipeline.Workspace)/Bundle_DEV' -d 'ecommerce-fe/'
-      DEV_PURGE_CDN_COMMAND: az cdn endpoint purge -g pagopa-d-checkout-fe-rg -n pagopa-d-checkout-cdn-endpoint --profile-name pagopa-d-checkout-cdn-profile --content-paths "/*"
-      UAT_STORAGE_BLOB_SYNC: az storage blob sync --container '$web' --account-name pagopaucheckoutsa -s '$(Pipeline.Workspace)/Bundle_UAT' -d 'ecommerce-fe/'
-      UAT_PURGE_CDN_COMMAND: az cdn endpoint purge -g pagopa-u-checkout-fe-rg -n pagopa-u-checkout-cdn-endpoint --profile-name pagopa-u-checkout-cdn-profile --content-paths "/*"
-      PROD_STORAGE_BLOB_SYNC: az storage blob sync --container '$web' --account-name pagopapcheckoutsa -s '$(Pipeline.Workspace)/Bundle_PROD' -d 'ecommerce-fe/'
-      PROD_PURGE_CDN_COMMAND: az cdn endpoint purge -g pagopa-p-checkout-fe-rg -n pagopa-p-checkout-cdn-endpoint --profile-name pagopa-p-checkout-cdn-profile --content-paths "/*"
-      USE_ECOMMERCE_FE_ROOT_PATH: "true"
+  DEV_STORAGE_BLOB_SYNC: az storage blob sync --container '$web' --account-name pagopadweuecommercecdnsa -s '$(Pipeline.Workspace)/Bundle_DEV'
+  DEV_PURGE_CDN_COMMAND: az afd endpoint purge -g pagopa-d-ecommerce-fe-rg --endpoint-name pagopa-d-weu-ecommerce-cdn-endpoint --profile-name pagopa-d-weu-ecommerce-cdn-profile --domains dev.ecommerce.pagopa.it --content-paths '/*'
+  UAT_STORAGE_BLOB_SYNC: az storage blob sync --container '$web' --account-name pagopauweuecommercecdnsa -s '$(Pipeline.Workspace)/Bundle_UAT'
+  UAT_PURGE_CDN_COMMAND: az afd endpoint purge -g pagopa-u-ecommerce-fe-rg --endpoint-name pagopa-u-weu-ecommerce-cdn-endpoint --profile-name pagopa-u-weu-ecommerce-cdn-profile --domains uat.ecommerce.pagopa.it --content-paths '/*'
+  PROD_STORAGE_BLOB_SYNC: az storage blob sync --container '$web' --account-name pagopapweuecommercecdnsa -s '$(Pipeline.Workspace)/Bundle_PROD'
+  PROD_PURGE_CDN_COMMAND: az afd endpoint purge -g pagopa-p-ecommerce-fe-rg --endpoint-name pagopa-p-weu-ecommerce-cdn-endpoint --profile-name pagopa-p-weu-ecommerce-cdn-profile --domains ecommerce.pagopa.it --content-paths '/*'
 
 # Only manual activations are intended
 trigger: none
@@ -111,17 +94,10 @@ stages:
               show_continue_io_btn_delay_millis: 2000
               io_client_redirect_card_data_outcome_path: 'https://api.dev.platform.pagopa.it/ecommerce/io-outcomes/v1/payments/cards/outcomes'
               io_client_save_card_fail_redirect: 'https://api.dev.platform.pagopa.it/payment-wallet-outcomes/v1/wallets/contextual-onboard/outcomes'
-              use_ecommerce_fe_root_path: ${{variables.USE_ECOMMERCE_FE_ROOT_PATH}}
 
           - script: |
               yarn build
             displayName: 'Build with `/` root path'
-            condition: eq(${{parameters.USE_ECOMMERCE_CDN}}, true)
-
-          - script: |
-              yarn build:ecommerce-fe-root
-            displayName: 'Build with `/ecommerce-fe` root path'
-            condition: eq(${{parameters.USE_ECOMMERCE_CDN}}, false)
             
           - publish: $(System.DefaultWorkingDirectory)/dist
             artifact: Bundle_DEV
@@ -239,17 +215,10 @@ stages:
               show_continue_io_btn_delay_millis: 2000
               io_client_redirect_card_data_outcome_path: 'https://api.uat.platform.pagopa.it/ecommerce/io-outcomes/v1/payments/cards/outcomes'
               io_client_save_card_fail_redirect: 'https://api.uat.platform.pagopa.it/payment-wallet-outcomes/v1/wallets/contextual-onboard/outcomes'
-              use_ecommerce_fe_root_path: ${{variables.USE_ECOMMERCE_FE_ROOT_PATH}}
 
           - script: |
               yarn build
             displayName: 'Build with `/` root path'
-            condition: eq(${{parameters.USE_ECOMMERCE_CDN}}, true)
-
-          - script: |
-              yarn build:ecommerce-fe-root
-            displayName: 'Build with `/ecommerce-fe` root path'
-            condition: eq(${{parameters.USE_ECOMMERCE_CDN}}, false)
 
           - publish: $(System.DefaultWorkingDirectory)/dist
             artifact: Bundle_UAT
@@ -342,17 +311,10 @@ stages:
               show_continue_io_btn_delay_millis: 2000
               io_client_redirect_card_data_outcome_path: 'https://api.platform.pagopa.it/ecommerce/io-outcomes/v1/payments/cards/outcomes'
               io_client_save_card_fail_redirect: 'https://api.platform.pagopa.it/payment-wallet-outcomes/v1/wallets/contextual-onboard/outcomes'
-              use_ecommerce_fe_root_path: ${{variables.USE_ECOMMERCE_FE_ROOT_PATH}}
 
           - script: |
               yarn build
             displayName: 'Build with `/` root path'
-            condition: eq(${{parameters.USE_ECOMMERCE_CDN}}, true)
-
-          - script: |
-              yarn build:ecommerce-fe-root
-            displayName: 'Build with `/ecommerce-fe` root path'
-            condition: eq(${{parameters.USE_ECOMMERCE_CDN}}, false)
 
           - publish: $(System.DefaultWorkingDirectory)/dist
             artifact: Bundle_PROD

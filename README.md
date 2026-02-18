@@ -99,7 +99,6 @@ The ecommerce transaction get transaction endpoint `/checkout/webview/v1/transac
 | Variable name                       | Description                                                   | type   | default |
 |-------------------------------------|---------------------------------------------------------------|--------|---------|
 | ECOMMERCE_API_RETRY_NUMBERS_LINEAR  | number of calls at regular intervals                          | number | 5       |
-| USE_ECOMMERCE_FE_ROOT_PATH.         | boolean parameter to include ecommerce-fe as root path or no  | boolean | false  |
 
 ## Polling
 
