@@ -6,7 +6,6 @@ import {
   act,
   fireEvent,
   screen,
-  waitFor,
 } from "@testing-library/react";
 import IFrameCardPage from "../../routes/IframeCardPage";
 
