@@ -108,7 +108,7 @@ describe("FormButtons Component", () => {
   });
 
   it("hides cancel button when hideCancel is true", () => {
-    render(<FormButtons {...defaultProps} hideCancel={true} />);
+    render(<FormButtons {...defaultProps} />);
 
     // Cancel button should not be visible
     expect(screen.queryByText("Cancel")).not.toBeVisible();

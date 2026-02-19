@@ -18,12 +18,6 @@ import type { FieldId, FieldStatus, FormStatus } from "./types";
 import { IdFields } from "./types";
 import { IframeCardField } from "./IframeCardField";
 
-interface Props {
-  loading?: boolean;
-  onSubmit?: (bin: string) => void;
-  hideCancel?: boolean;
-}
-
 const initialFieldStatus: FieldStatus = {
   isValid: undefined,
   errorCode: null,
@@ -38,7 +32,7 @@ const initialFieldsState: FormStatus = Object.values(
 );
 
 // eslint-disable-next-line sonarjs/cognitive-complexity
-export default function IframeCardForm(props: Props) {
+export default function IframeCardForm() {
   const [loading, setLoading] = React.useState(false);
   const [form, setForm] = React.useState<CreateSessionResponse>();
   const [activeField, setActiveField] = React.useState<FieldId | undefined>(
