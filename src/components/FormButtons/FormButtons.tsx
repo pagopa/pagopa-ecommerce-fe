@@ -56,7 +56,7 @@ export function FormButtons(props: SubmitButton | CancellableButtons) {
             style={{
               width: "100%",
               height: "100%",
-              minHeight: 45
+              minHeight: 45,
             }}
             aria-live="polite"
             aria-label={
@@ -80,7 +80,7 @@ export function FormButtons(props: SubmitButton | CancellableButtons) {
               style={{
                 width: "100%",
                 height: "100%",
-                minHeight: 45
+                minHeight: 45,
               }}
               aria-live="polite"
               aria-label={
