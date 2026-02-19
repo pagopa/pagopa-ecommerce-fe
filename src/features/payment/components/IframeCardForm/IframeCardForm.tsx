@@ -259,6 +259,7 @@ export default function IframeCardForm(props: Props) {
           handleSubmit={handleSubmit}
           handleCancel={onCancel}
           hideCancel={hideCancel}
+          disabledCancel
         />
       </form>
     </>

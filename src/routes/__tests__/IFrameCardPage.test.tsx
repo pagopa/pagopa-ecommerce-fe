@@ -1,7 +1,7 @@
 import React from "react";
 import "@testing-library/jest-dom";
 import { MemoryRouter } from "react-router-dom";
-import { render, act, fireEvent, screen } from "@testing-library/react";
+import { render, act, fireEvent, screen, waitFor } from "@testing-library/react";
 import IFrameCardPage from "../../routes/IframeCardPage";
 
 // Spy navigate
@@ -77,5 +77,19 @@ describe("IFrameCardPage", () => {
 
     fireEvent.click(screen.getByTestId("helpLink"));
     expect(screen.getByTestId("modalTitle")).toBeInTheDocument();
+  });
+  test("when close button is clicked modal closes", async () => {
+    render(
+      <MemoryRouter>
+        <IFrameCardPage />
+      </MemoryRouter>
+    );
+
+    fireEvent.click(screen.getByTestId("helpLink"));
+    fireEvent.click(screen.getByTestId("closeButton"));
+
+    await waitFor(() =>
+      expect(screen.queryByTestId("modalTitle")).not.toBeInTheDocument()
+    );
   });
 });

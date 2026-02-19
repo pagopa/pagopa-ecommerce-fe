@@ -93,6 +93,15 @@ export default function IFrameCardPage() {
                   Default text <br /> Fallback
                 </Trans>
               </Typography>
+              <Box display="flex" justifyContent="flex-end" sx={{ mt: 3 }}>
+                <Button
+                  data-testid="closeButton"
+                  variant="contained"
+                  onClick={handleClose}
+                >
+                  {t("iframeCardPage.buttonClose")}
+                </Button>
+              </Box>
             </Box>
           </InformationModal>
         </PageContainer>
