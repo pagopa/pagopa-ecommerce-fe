@@ -1,91 +1,62 @@
-/* eslint-disable functional/immutable-data */
 import { LoadingButton } from "@mui/lab";
 import { Grid } from "@mui/material";
 import { default as React } from "react";
 import { useTranslation } from "react-i18next";
-import { useSmallDevice } from "../../hooks/useSmallDevice";
 
-type FormButtonsProps = {
-  handleSubmit: (e: React.FormEvent) => void;
-  handleCancel: () => void;
+type SubmitButton = {
+  handleSubmit?: (e: React.FormEvent) => void;
+  idSubmit?: string;
   type?: "submit" | "button";
   disabledSubmit: boolean;
-  disabledCancel?: boolean;
   loadingSubmit?: boolean;
-  loadingCancel?: boolean;
-  idCancel?: string;
-  idSubmit?: string;
   submitTitle: string;
-  cancelTitle: string;
-  hideCancel?: boolean;
+  disabledCancel: true;
 };
 
-export function FormButtons(formButtonsProps: FormButtonsProps) {
-  const props = {
-    ...formButtonsProps,
-    type: formButtonsProps.type ?? "button",
-  };
+type CancellableButtons = {
+  handleSubmit?: (e: React.FormEvent) => void;
+  handleCancel: () => void;
+  type?: "submit" | "button";
+  idSubmit?: string;
+  idCancel?: string;
+  disabledSubmit: boolean;
+  disabledCancel?: false;
+  loadingSubmit?: boolean;
+  loadingCancel?: boolean;
+  submitTitle: string;
+  cancelTitle: string;
+};
+
+export function FormButtons(props: SubmitButton | CancellableButtons) {
   const { t } = useTranslation();
 
   return (
     <React.Fragment>
       <Grid
-        sx={{
-          position: { xs: "fixed", sm: "relative" },
-          zIndex: { xs: 1000, sm: 0 },
-          bottom: { xs: 0 },
-          left: { xs: 0 },
-          p: { xs: "1rem", sm: 0 },
-          boxShadow: { xs: "0 0.5rem 1rem rgb(0 0 0 / 15%)", sm: "none" },
-          bgcolor: { xs: "background.default" },
-          my: { sm: 6 },
-        }}
         justifyContent="center"
+        flexDirection="row-reverse"
         alignItems="center"
         container
         spacing={2}
+        my={{ xs: 2, sm: 6 }}
+        position={{ xs: "relative" }}
+        bottom={0}
+        left={0}
+        px={{ xs: 0 }}
       >
-        <Grid xs={4} style={useSmallDevice() ? { paddingTop: 0 } : {}} item>
+        <Grid xs={props.disabledCancel ? 12 : 8} item>
           <LoadingButton
-            variant="outlined"
-            onClick={props.handleCancel}
-            loading={props.loadingCancel || false}
-            disabled={props.disabledCancel || props.loadingSubmit || false}
-            style={{
-              width: "100%",
-              height: "100%",
-              minHeight: 45,
-              ...(props.hideCancel ? { display: "none" } : {}),
-            }}
-            aria-live="polite"
-            aria-label={
-              props.loadingCancel
-                ? t("ariaLabels.loading")
-                : t(props.cancelTitle)
-            }
-            id={props.idCancel}
-            aria-hidden={props.loadingSubmit}
-          >
-            {props.loadingCancel ? "" : t(props.cancelTitle)}
-          </LoadingButton>
-        </Grid>
-        <Grid
-          xs={props.hideCancel ? 12 : 8}
-          style={useSmallDevice() ? { paddingTop: 0 } : {}}
-          item
-        >
-          <LoadingButton
+            id={props.idSubmit}
             type={props.type}
             onSubmit={props.handleSubmit}
             loading={props.loadingSubmit || false}
             variant="contained"
-            id={props.idSubmit}
             onClick={props.type === "button" ? props.handleSubmit : undefined}
             disabled={props.disabledSubmit}
             style={{
               width: "100%",
               height: "100%",
-              minHeight: 45,
+              minHeight: 45
             }}
             aria-live="polite"
             aria-label={
@@ -93,11 +64,36 @@ export function FormButtons(formButtonsProps: FormButtonsProps) {
                 ? t("ariaLabels.loading")
                 : t(props.submitTitle)
             }
-            aria-hidden={props.loadingCancel}
+            aria-hidden={props.loadingSubmit}
           >
             {props.loadingSubmit ? "" : t(props.submitTitle)}
           </LoadingButton>
         </Grid>
+        {!props?.disabledCancel && (
+          <Grid xs={4} item>
+            <LoadingButton
+              variant="outlined"
+              id={props.idCancel}
+              onClick={props.handleCancel}
+              loading={props.loadingCancel || false}
+              disabled={props.disabledCancel || props.loadingSubmit || false}
+              style={{
+                width: "100%",
+                height: "100%",
+                minHeight: 45
+              }}
+              aria-live="polite"
+              aria-label={
+                props.loadingCancel
+                  ? t("ariaLabels.loading")
+                  : t(props.cancelTitle)
+              }
+              aria-hidden={props.loadingCancel}
+            >
+              {props.loadingCancel ? "" : t(props.cancelTitle)}
+            </LoadingButton>
+          </Grid>
+        )}
       </Grid>
     </React.Fragment>
   );

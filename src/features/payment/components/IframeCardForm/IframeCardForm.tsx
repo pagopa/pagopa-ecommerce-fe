@@ -20,7 +20,6 @@ import { IframeCardField } from "./IframeCardField";
 
 interface Props {
   loading?: boolean;
-  onCancel: () => void;
   onSubmit?: (bin: string) => void;
   hideCancel?: boolean;
 }
@@ -40,7 +39,6 @@ const initialFieldsState: FormStatus = Object.values(
 
 // eslint-disable-next-line sonarjs/cognitive-complexity
 export default function IframeCardForm(props: Props) {
-  const { onCancel } = props;
   const [loading, setLoading] = React.useState(false);
   const [form, setForm] = React.useState<CreateSessionResponse>();
   const [activeField, setActiveField] = React.useState<FieldId | undefined>(
@@ -251,11 +249,10 @@ export default function IframeCardForm(props: Props) {
         <FormButtons
           loadingSubmit={loading}
           type="submit"
+          idSubmit="submit"
           submitTitle="paymentNoticePage.formButtons.submit"
-          cancelTitle="paymentNoticePage.formButtons.cancel"
           disabledSubmit={loading || !formIsValid(formStatus)}
           handleSubmit={handleSubmit}
-          handleCancel={onCancel}
           disabledCancel
         />
       </form>
