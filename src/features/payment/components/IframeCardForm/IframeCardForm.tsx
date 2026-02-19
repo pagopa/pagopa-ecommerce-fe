@@ -24,6 +24,12 @@ const initialFieldStatus: FieldStatus = {
   errorMessage: null,
 };
 
+interface Props {
+  loading?: boolean;
+  onSubmit?: (bin: string) => void;
+  hideCancel?: boolean;
+}
+
 const initialFieldsState: FormStatus = Object.values(
   IdFields
 ).reduce<FormStatus>(
@@ -32,8 +38,8 @@ const initialFieldsState: FormStatus = Object.values(
 );
 
 // eslint-disable-next-line sonarjs/cognitive-complexity
-export default function IframeCardForm() {
-  const [loading, setLoading] = React.useState(false);
+export default function IframeCardForm(props: Props) {
+  const [loading, setLoading] = React.useState(props.loading || false);
   const [form, setForm] = React.useState<CreateSessionResponse>();
   const [activeField, setActiveField] = React.useState<FieldId | undefined>(
     undefined

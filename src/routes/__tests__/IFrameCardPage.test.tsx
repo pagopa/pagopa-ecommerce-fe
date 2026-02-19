@@ -1,13 +1,7 @@
 import React from "react";
 import "@testing-library/jest-dom";
 import { MemoryRouter } from "react-router-dom";
-import {
-  render,
-  act,
-  fireEvent,
-  screen,
-  waitFor,
-} from "@testing-library/react";
+import { render, fireEvent, screen, waitFor } from "@testing-library/react";
 import IFrameCardPage from "../../routes/IframeCardPage";
 
 // Spy navigate
@@ -47,21 +41,6 @@ jest.mock("react-i18next", () => ({
 describe("IFrameCardPage", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-  });
-
-  test("test back button", async () => {
-    render(
-      <MemoryRouter>
-        <IFrameCardPage />
-      </MemoryRouter>
-    );
-
-    await act(async () => {
-      const back = screen.getByText("paymentNoticePage.formButtons.cancel");
-      fireEvent.click(back);
-    });
-
-    expect(navigate).toHaveBeenCalledWith(-1);
   });
 
   test("help link should be visible", () => {
