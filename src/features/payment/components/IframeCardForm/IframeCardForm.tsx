@@ -249,8 +249,6 @@ export default function IframeCardForm(props: Props) {
           </Box>
         </Box>
         <FormButtons
-          idCancel="cancel"
-          idSubmit="submit"
           loadingSubmit={loading}
           type="submit"
           submitTitle="paymentNoticePage.formButtons.submit"
@@ -258,7 +256,6 @@ export default function IframeCardForm(props: Props) {
           disabledSubmit={loading || !formIsValid(formStatus)}
           handleSubmit={handleSubmit}
           handleCancel={onCancel}
-          hideCancel={hideCancel}
           disabledCancel
         />
       </form>
