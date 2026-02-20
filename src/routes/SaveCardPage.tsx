@@ -50,6 +50,10 @@ export default function SaveCardPage() {
     setSessionItem(SessionItems.paymentMethodId, paymentMethodId);
     setSessionItem(SessionItems.rptId, rptId);
     setSessionItem(SessionItems.amount, amount);
+    const redirectPath = `${getRootPath()}${
+      EcommerceRoutes.NOT_ONBOARDED_CARD_PAYMENT
+    }`;
+    navigate(redirectPath);
   }, []);
 
   const { ECOMMERCE_IO_SAVE_CARD_FAIL_REDIRECT_PATH } = getConfigOrThrow();
@@ -146,7 +150,7 @@ export default function SaveCardPage() {
   };
 
   return (
-    <Box
+    false && <Box
       sx={{
         position: "fixed",
         width: "100vw",
