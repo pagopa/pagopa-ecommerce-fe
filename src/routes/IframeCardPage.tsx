@@ -28,19 +28,19 @@ export default function IFrameCardPage() {
         ROUTE_FRAGMENT.AMOUNT
       );
 
-    if(sessionToken != "") {
+    if (sessionToken !== "") {
       setSessionItem(SessionItems.sessionToken, sessionToken);
     }
-    if(clientId != "") {
+    if (clientId !== "") {
       setSessionItem(SessionItems.clientId, clientId);
     }
-    if(paymentMethodId != "") {
+    if (paymentMethodId !== "") {
       setSessionItem(SessionItems.paymentMethodId, paymentMethodId);
     }
-    if(rptId != "") {
+    if (rptId !== "") {
       setSessionItem(SessionItems.rptId, rptId);
     }
-    if(amount != "") {
+    if (amount !== "") {
       setSessionItem(SessionItems.amount, amount);
     }
   }, []);
