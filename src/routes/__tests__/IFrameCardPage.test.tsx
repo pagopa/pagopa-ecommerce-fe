@@ -31,6 +31,20 @@ jest.mock(
   })
 );
 
+jest.mock("../../utils/storage/sessionStorage", () => ({
+  SessionItems: { sessionToken: "sessionToken" },
+  getSessionItem: jest.fn(),
+  setSessionItem: jest.fn(),
+}));
+
+jest.mock("../../utils/config/config", () => ({
+  getConfigOrThrow: () => ({
+    ECOMMERCE_API_RETRY_NUMBERS_LINEAR: 5,
+    ECOMMERCE_IO_CARD_DATA_CLIENT_REDIRECT_OUTCOME_PATH: "/done",
+    ECOMMERCE_IO_SAVE_CARD_FAIL_REDIRECT_PATH: "/fail",
+  }),
+}));
+
 // Mock i18n
 jest.mock("react-i18next", () => ({
   useTranslation: () => ({ t: (key: string) => key }),
