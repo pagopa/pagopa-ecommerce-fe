@@ -3,9 +3,12 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { t } from "i18next";
 import { Trans } from "react-i18next";
+import { SessionItems, setSessionItem } from "../utils/storage/sessionStorage";
+import { getFragments } from "../utils/urlUtilities";
 import PageContainer from "../components/PageContainer";
 import IframeCardForm from "../features/payment/components/IframeCardForm/IframeCardForm";
 import InformationModal from "../components/modals/InformationModal";
+import { ROUTE_FRAGMENT } from "./models/routeModel";
 
 export default function IFrameCardPage() {
   const navigate = useNavigate();
@@ -14,6 +17,24 @@ export default function IFrameCardPage() {
   const handleClose = () => setCvvModalOpen(false);
   const theme = useTheme();
   const onCancel = () => navigate(-1);
+
+  React.useEffect(() => {
+    const { sessionToken, clientId, paymentMethodId, rptId, amount } =
+      getFragments(
+        ROUTE_FRAGMENT.SESSION_TOKEN,
+        ROUTE_FRAGMENT.CLIENT_ID,
+        ROUTE_FRAGMENT.PAYMENT_METHOD_ID,
+        ROUTE_FRAGMENT.RPT_ID,
+        ROUTE_FRAGMENT.AMOUNT
+      );
+
+    setSessionItem(SessionItems.sessionToken, sessionToken);
+    setSessionItem(SessionItems.clientId, clientId);
+    setSessionItem(SessionItems.paymentMethodId, paymentMethodId);
+    setSessionItem(SessionItems.rptId, rptId);
+    setSessionItem(SessionItems.amount, amount);
+  }, []);
+
   return (
     <Box
       sx={{
