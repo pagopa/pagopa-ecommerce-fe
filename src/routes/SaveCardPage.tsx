@@ -35,7 +35,6 @@ export default function SaveCardPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-
   const { ECOMMERCE_IO_SAVE_CARD_FAIL_REDIRECT_PATH } = getConfigOrThrow();
 
   const redirectOutcomeKO = (
@@ -151,7 +150,8 @@ export default function SaveCardPage() {
   }, []);
 
   return (
-    false && <Box
+    <Box
+      visibility={"hidden"}
       sx={{
         position: "fixed",
         width: "100vw",
