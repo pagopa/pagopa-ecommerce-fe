@@ -35,26 +35,6 @@ export default function SaveCardPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  React.useEffect(() => {
-    const { sessionToken, clientId, paymentMethodId, rptId, amount } =
-      getFragments(
-        ROUTE_FRAGMENT.SESSION_TOKEN,
-        ROUTE_FRAGMENT.CLIENT_ID,
-        ROUTE_FRAGMENT.PAYMENT_METHOD_ID,
-        ROUTE_FRAGMENT.RPT_ID,
-        ROUTE_FRAGMENT.AMOUNT
-      );
-
-    setSessionItem(SessionItems.sessionToken, sessionToken);
-    setSessionItem(SessionItems.clientId, clientId);
-    setSessionItem(SessionItems.paymentMethodId, paymentMethodId);
-    setSessionItem(SessionItems.rptId, rptId);
-    setSessionItem(SessionItems.amount, amount);
-    const redirectPath = `${getRootPath()}${
-      EcommerceRoutes.NOT_ONBOARDED_CARD_PAYMENT
-    }`;
-    navigate(redirectPath);
-  }, []);
 
   const { ECOMMERCE_IO_SAVE_CARD_FAIL_REDIRECT_PATH } = getConfigOrThrow();
 
@@ -148,6 +128,27 @@ export default function SaveCardPage() {
     }`;
     navigate(redirectPath);
   };
+
+  React.useEffect(() => {
+    const { sessionToken, clientId, paymentMethodId, rptId, amount } =
+      getFragments(
+        ROUTE_FRAGMENT.SESSION_TOKEN,
+        ROUTE_FRAGMENT.CLIENT_ID,
+        ROUTE_FRAGMENT.PAYMENT_METHOD_ID,
+        ROUTE_FRAGMENT.RPT_ID,
+        ROUTE_FRAGMENT.AMOUNT
+      );
+
+    setSessionItem(SessionItems.sessionToken, sessionToken);
+    setSessionItem(SessionItems.clientId, clientId);
+    setSessionItem(SessionItems.paymentMethodId, paymentMethodId);
+    setSessionItem(SessionItems.rptId, rptId);
+    setSessionItem(SessionItems.amount, amount);
+    const redirectPath = `${getRootPath()}${
+      EcommerceRoutes.NOT_ONBOARDED_CARD_PAYMENT
+    }`;
+    navigate(redirectPath);
+  }, []);
 
   return (
     false && <Box
