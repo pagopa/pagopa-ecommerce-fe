@@ -28,11 +28,21 @@ export default function IFrameCardPage() {
         ROUTE_FRAGMENT.AMOUNT
       );
 
-    setSessionItem(SessionItems.sessionToken, sessionToken);
-    setSessionItem(SessionItems.clientId, clientId);
-    setSessionItem(SessionItems.paymentMethodId, paymentMethodId);
-    setSessionItem(SessionItems.rptId, rptId);
-    setSessionItem(SessionItems.amount, amount);
+    if(sessionToken != "") {
+      setSessionItem(SessionItems.sessionToken, sessionToken);
+    }
+    if(clientId != "") {
+      setSessionItem(SessionItems.clientId, clientId);
+    }
+    if(paymentMethodId != "") {
+      setSessionItem(SessionItems.paymentMethodId, paymentMethodId);
+    }
+    if(rptId != "") {
+      setSessionItem(SessionItems.rptId, rptId);
+    }
+    if(amount != "") {
+      setSessionItem(SessionItems.amount, amount);
+    }
   }, []);
 
   return (
