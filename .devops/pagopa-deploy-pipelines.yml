@@ -176,14 +176,7 @@ stages:
     condition:
       and(
         succeeded(),
-        eq(${{parameters.UAT_PROD_DEPLOY}}, true),
-        or(
-          eq(variables['Build.SourceBranch'], 'refs/heads/main'),
-          and(
-            startsWith(variables['Build.SourceBranch'], 'refs/tags'),
-            endsWith(variables['Build.SourceBranch'], '-RELEASE')
-          )
-        )
+        eq(${{parameters.UAT_PROD_DEPLOY}}, true)
       )
     pool:
       vmImage: 'ubuntu-22.04'
@@ -310,68 +303,6 @@ stages:
   #             CHECKOUT_RESOURCE_REPO_NAME: checkoutTests
 
     # Prepare Artifact
-  - stage: Prepare_artifact_prod
-    dependsOn:
-      - Deploy_UAT_pagoPA
-    jobs:
-      - job: make_build
-        pool:
-          vmImage: 'ubuntu-22.04'
-        steps:
-          - template: templates/node-job-setup/template.yaml@pagopaCommons
-            parameters:
-              # On the assumption that this stage is executed only when Relase stage is,
-              #  with this parameter we set the reference the deploy script must pull changes from.
-              # The branch/tag name is calculated from the source branch
-              #  ex: Build.SourceBranch=refs/heads/main --> main
-              #  ex: Build.SourceBranch=refs/tags/v1.2.3-RELEASE --> v1.2.3-RELEASE
-              gitReference: ${{ replace(replace(variables['Build.SourceBranch'], 'refs/tags/', ''), 'refs/heads/', '') }}
-
-          - template: azure-templates/setup-env.yml
-            parameters:
-              env: 'PROD'
-              api_timeout: 10000
-              api_host: 'https://api.platform.pagopa.it'
-              checkout_api_path: "/ecommerce/checkout/v1"
-              checkout_api_v2_path: "/ecommerce/checkout/v2"
-              io_api_v1_path: "/ecommerce/webview/v1"
-              npg_sdk_url: 'https://xpay.nexigroup.com/monetaweb/resources/hfsdk.js'
-              gdi_check_timeout: 20000
-              io_client_redirect_outcome_path: 'https://api.platform.pagopa.it/ecommerce/io-outcomes/v1/transactions'
-              checkout_client_redirect_outcome_path: 'https://checkout.pagopa.it/v2/esito'
-              show_continue_io_btn_delay_millis: 2000
-              io_client_redirect_card_data_outcome_path: 'https://api.platform.pagopa.it/ecommerce/io-outcomes/v1/payments/cards/outcomes'
-              io_client_save_card_fail_redirect: 'https://api.platform.pagopa.it/payment-wallet-outcomes/v1/wallets/contextual-onboard/outcomes'
-              use_ecommerce_fe_root_path: ${{variables.USE_ECOMMERCE_FE_ROOT_PATH}}
-
-          - script: |
-              yarn build
-            displayName: 'Build with `/` root path'
-            condition: eq(${{parameters.USE_ECOMMERCE_CDN}}, true)
-
-          - script: |
-              yarn build:ecommerce-fe-root
-            displayName: 'Build with `/ecommerce-fe` root path'
-            condition: eq(${{parameters.USE_ECOMMERCE_CDN}}, false)
-
-          - publish: $(System.DefaultWorkingDirectory)/dist
-            artifact: Bundle_PROD
-
-  - stage: UAT_to_PROD_promotion
-    dependsOn:
-      - Prepare_artifact_prod
-    jobs:
-      - job: Deploy_Prod_WaitForApproval
-        displayName: Wait for PROD approval
-        pool: server
-        timeoutInMinutes: 4320 # 3 days
-        steps:
-        - task: ManualValidation@0
-          timeoutInMinutes: 4320 # 3 days
-          inputs:
-            onTimeout: 'skip'
-
-  - stage: Deploy_PROD_pagoPA
     dependsOn:
       - UAT_to_PROD_promotion
     jobs:
