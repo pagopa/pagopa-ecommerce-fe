@@ -2,15 +2,46 @@ import { Box, Button, Container, Typography, useTheme } from "@mui/material";
 import React from "react";
 import { t } from "i18next";
 import { Trans } from "react-i18next";
+import { SessionItems, setSessionItem } from "../utils/storage/sessionStorage";
+import { getFragments } from "../utils/urlUtilities";
 import PageContainer from "../components/PageContainer";
 import IframeCardForm from "../features/payment/components/IframeCardForm/IframeCardForm";
 import InformationModal from "../components/modals/InformationModal";
+import { ROUTE_FRAGMENT } from "./models/routeModel";
 
 export default function IFrameCardPage() {
   const [loading] = React.useState(false);
   const [cvvModalOpen, setCvvModalOpen] = React.useState(false);
   const handleClose = () => setCvvModalOpen(false);
   const theme = useTheme();
+
+  React.useEffect(() => {
+    const { sessionToken, clientId, paymentMethodId, rptId, amount } =
+      getFragments(
+        ROUTE_FRAGMENT.SESSION_TOKEN,
+        ROUTE_FRAGMENT.CLIENT_ID,
+        ROUTE_FRAGMENT.PAYMENT_METHOD_ID,
+        ROUTE_FRAGMENT.RPT_ID,
+        ROUTE_FRAGMENT.AMOUNT
+      );
+
+    if (sessionToken !== "") {
+      setSessionItem(SessionItems.sessionToken, sessionToken);
+    }
+    if (clientId !== "") {
+      setSessionItem(SessionItems.clientId, clientId);
+    }
+    if (paymentMethodId !== "") {
+      setSessionItem(SessionItems.paymentMethodId, paymentMethodId);
+    }
+    if (rptId !== "") {
+      setSessionItem(SessionItems.rptId, rptId);
+    }
+    if (amount !== "") {
+      setSessionItem(SessionItems.amount, amount);
+    }
+  }, []);
+
   return (
     <Box
       sx={{
