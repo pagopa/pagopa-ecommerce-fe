@@ -302,10 +302,6 @@ stages:
   #             ENVIRONMENT: UAT
   #             CHECKOUT_RESOURCE_REPO_NAME: checkoutTests
 
-    # Prepare Artifact
-    dependsOn:
-      - UAT_to_PROD_promotion
-    jobs:
       - job: 'deploy'
         steps:
           - checkout: none
