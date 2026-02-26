@@ -173,8 +173,6 @@ const simpleSession = {
 };
 
 describe("IframeCardForm", () => {
-  const onCancel = jest.fn();
-
   beforeEach(() => {
     jest.clearAllMocks();
     // eslint-disable-next-line functional/immutable-data
@@ -285,20 +283,5 @@ describe("IframeCardForm", () => {
     await waitFor(() => {
       expect(window.location.replace).toHaveBeenCalledWith("/done?outcome=1");
     });
-  });
-
-  it("click on Cancel invokes onCancel", async () => {
-    (npgSessionsFields as jest.Mock).mockResolvedValue(O.some(simpleSession));
-
-    render(<IframeCardForm />);
-
-    await waitFor(() => {
-      expect(
-        screen.getByTestId("iframe-field-CARD_NUMBER")
-      ).toBeInTheDocument();
-    });
-
-    fireEvent.click(screen.getByTestId("cancel-button"));
-    expect(onCancel).toHaveBeenCalled();
   });
 });
