@@ -184,7 +184,7 @@ describe("IframeCardForm", () => {
   it("renders the fields and the buttons after npgSessionsFields = Some", async () => {
     (npgSessionsFields as jest.Mock).mockResolvedValue(O.some(fullSession));
 
-    render(<IframeCardForm />);
+    render(<IframeCardForm onCancel={onCancel} />);
 
     await waitFor(() => {
       expect(
@@ -207,7 +207,7 @@ describe("IframeCardForm", () => {
   it("sets orderId/correlationId in session and on submit redirects outcome=0", async () => {
     (npgSessionsFields as jest.Mock).mockResolvedValue(O.some(simpleSession));
 
-    render(<IframeCardForm />);
+    render(<IframeCardForm onCancel={onCancel} />);
 
     await waitFor(() => {
       expect(
@@ -246,7 +246,7 @@ describe("IframeCardForm", () => {
   it("if npgSessionsFields = None ⇒ onError ⇒ redirect outcome=1", async () => {
     (npgSessionsFields as jest.Mock).mockResolvedValue(O.none);
 
-    render(<IframeCardForm />);
+    render(<IframeCardForm onCancel={onCancel} />);
 
     await waitFor(() => {
       expect(window.location.replace).toHaveBeenCalledWith("/done?outcome=1");
@@ -256,7 +256,7 @@ describe("IframeCardForm", () => {
   it("onPaymentRedirect of the SDK leads to an error and redirects with outcome=1", async () => {
     (npgSessionsFields as jest.Mock).mockResolvedValue(O.some(simpleSession));
 
-    render(<IframeCardForm />);
+    render(<IframeCardForm onCancel={onCancel} />);
 
     await waitFor(() => {
       expect(
@@ -280,7 +280,7 @@ describe("IframeCardForm", () => {
       throw new Error("build failed");
     });
 
-    render(<IframeCardForm />);
+    render(<IframeCardForm onCancel={onCancel} />);
 
     await waitFor(() => {
       expect(window.location.replace).toHaveBeenCalledWith("/done?outcome=1");
@@ -290,7 +290,7 @@ describe("IframeCardForm", () => {
   it("click on Cancel invokes onCancel", async () => {
     (npgSessionsFields as jest.Mock).mockResolvedValue(O.some(simpleSession));
 
-    render(<IframeCardForm />);
+    render(<IframeCardForm onCancel={onCancel} />);
 
     await waitFor(() => {
       expect(
