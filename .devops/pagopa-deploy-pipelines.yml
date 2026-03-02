@@ -37,11 +37,11 @@ variables:
   YARN_CACHE_FOLDER: $(Pipeline.Workspace)/.yarn
   ${{ if eq(parameters['USE_ECOMMERCE_CDN'], true) }}:
       DEV_STORAGE_BLOB_SYNC: az storage blob sync --container '$web' --account-name pagopadweuecommercecdnsa -s '$(Pipeline.Workspace)/Bundle_DEV'
-      DEV_PURGE_CDN_COMMAND: az cdn endpoint purge -g pagopa-d-ecommerce-fe-rg -n pagopa-d-weu-ecommerce-cdn-endpoint --profile-name pagopa-d-weu-ecommerce-cdn-profile --content-paths "/*"
+      DEV_PURGE_CDN_COMMAND: az afd endpoint purge -g pagopa-d-ecommerce-fe-rg --endpoint-name pagopa-d-weu-ecommerce-cdn-endpoint --profile-name pagopa-d-weu-ecommerce-cdn-profile --domains dev.ecommerce.pagopa.it --content-paths "/*"
       UAT_STORAGE_BLOB_SYNC: az storage blob sync --container '$web' --account-name pagopauweuecommercecdnsa -s '$(Pipeline.Workspace)/Bundle_UAT'
-      UAT_PURGE_CDN_COMMAND: az cdn endpoint purge -g pagopa-u-ecommerce-fe-rg -n pagopa-u-weu-ecommerce-cdn-endpoint --profile-name pagopa-u-weu-ecommerce-cdn-profile --content-paths "/*"
+      UAT_PURGE_CDN_COMMAND: az afd endpoint purge -g pagopa-u-ecommerce-fe-rg --endpoint-name pagopa-u-weu-ecommerce-cdn-endpoint --profile-name pagopa-u-weu-ecommerce-cdn-profile --domains uat.ecommerce.pagopa.it --content-paths "/*"
       PROD_STORAGE_BLOB_SYNC: az storage blob sync --container '$web' --account-name pagopapweuecommercecdnsa -s '$(Pipeline.Workspace)/Bundle_PROD'
-      PROD_PURGE_CDN_COMMAND: az cdn endpoint purge -g pagopa-p-ecommerce-fe-rg -n pagopa-p-weu-ecommerce-cdn-endpoint --profile-name pagopa-p-weu-ecommerce-cdn-profile --content-paths "/*"
+      PROD_PURGE_CDN_COMMAND: az afd endpoint purge -g pagopa-p-ecommerce-fe-rg --endpoint-name pagopa-p-weu-ecommerce-cdn-endpoint --profile-name pagopa-p-weu-ecommerce-cdn-profile --domains ecommerce.pagopa.it --content-paths "/*"
       USE_ECOMMERCE_FE_ROOT_PATH: "false"
   ${{ else }}:
       DEV_STORAGE_BLOB_SYNC: az storage blob sync --container '$web' --account-name pagopadcheckoutsa -s '$(Pipeline.Workspace)/Bundle_DEV' -d 'ecommerce-fe/'
