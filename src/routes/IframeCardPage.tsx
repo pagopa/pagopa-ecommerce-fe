@@ -1,6 +1,5 @@
 import { Box, Button, Container, Typography, useTheme } from "@mui/material";
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import { t } from "i18next";
 import { Trans } from "react-i18next";
 import { SessionItems, setSessionItem } from "../utils/storage/sessionStorage";
@@ -11,12 +10,9 @@ import InformationModal from "../components/modals/InformationModal";
 import { ROUTE_FRAGMENT } from "./models/routeModel";
 
 export default function IFrameCardPage() {
-  const navigate = useNavigate();
-  const [loading] = React.useState(false);
   const [cvvModalOpen, setCvvModalOpen] = React.useState(false);
   const handleClose = () => setCvvModalOpen(false);
   const theme = useTheme();
-  const onCancel = () => navigate(-1);
 
   React.useEffect(() => {
     const { sessionToken, clientId, paymentMethodId, rptId, amount } =
@@ -78,7 +74,7 @@ export default function IFrameCardPage() {
             {t("iframeCardPage.helpLink")}
           </Button>
           <Box sx={{ mt: 4 }}>
-            <IframeCardForm onCancel={onCancel} loading={loading} />
+            <IframeCardForm />
           </Box>
           <InformationModal
             open={cvvModalOpen}
