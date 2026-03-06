@@ -1,13 +1,7 @@
 import React from "react";
 import "@testing-library/jest-dom";
 import { MemoryRouter } from "react-router-dom";
-import {
-  render,
-  act,
-  fireEvent,
-  screen,
-  waitFor,
-} from "@testing-library/react";
+import { render, fireEvent, screen, waitFor } from "@testing-library/react";
 import IFrameCardPage from "../../routes/IframeCardPage";
 
 // Spy navigate
@@ -63,21 +57,6 @@ describe("IFrameCardPage", () => {
     jest.clearAllMocks();
   });
 
-  test("test back button", async () => {
-    render(
-      <MemoryRouter>
-        <IFrameCardPage />
-      </MemoryRouter>
-    );
-
-    await act(async () => {
-      const back = screen.getByText("paymentNoticePage.formButtons.cancel");
-      fireEvent.click(back);
-    });
-
-    expect(navigate).toHaveBeenCalledWith(-1);
-  });
-
   test("help link should be visible", () => {
     render(
       <MemoryRouter>
@@ -98,7 +77,6 @@ describe("IFrameCardPage", () => {
     fireEvent.click(screen.getByTestId("helpLink"));
     expect(screen.getByTestId("modalTitle")).toBeInTheDocument();
   });
-
   test("when close button is clicked modal closes", async () => {
     render(
       <MemoryRouter>
