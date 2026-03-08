@@ -1,7 +1,6 @@
 import { getConfigOrThrow } from "../../utils/config/config";
 
 export enum EcommerceRoutes {
-  ROOT = "ecommerce-fe",
   GDI_CHECK = "gdi-check",
   ESITO = "esito",
   NOT_ONBOARDED_CARD_PAYMENT = "inserimento-carta",
