@@ -47,6 +47,7 @@ export default function PaymentResponsePage() {
     totalAmount?: AmountEuroCents,
     fees?: AmountEuroCents
   ) => {
+    pollingConfig.counter.reset();
     // if not present new outcome use old one
     const outcome = newOutcome || outcomeState || ViewOutcomeEnum.GENERIC_ERROR;
     redirectToClient({ transactionId, outcome, clientId, totalAmount, fees });
