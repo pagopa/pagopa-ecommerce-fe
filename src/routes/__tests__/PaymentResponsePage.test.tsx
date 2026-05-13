@@ -115,6 +115,7 @@ describe("PaymentResponsePage", () => {
       transactionId: "tx1",
       outcome: ViewOutcomeEnum.GENERIC_ERROR,
     });
+    expect(pollingConfig.counter.reset).toHaveBeenCalled();
   });
 
   it("on SUCCESS shows continue button only after the delay (IO)", async () => {
@@ -149,6 +150,7 @@ describe("PaymentResponsePage", () => {
     expect(document.getElementById("continueToIOBtn")).toBeInTheDocument();
 
     jest.useRealTimers();
+    expect(pollingConfig.counter.reset).toHaveBeenCalled();
   });
 
   it("calls CHECKOUT-get + redirects to GENERIC_ERROR when API yields none (CHECKOUT)", async () => {
@@ -172,6 +174,7 @@ describe("PaymentResponsePage", () => {
       transactionId: "txC1",
       outcome: ViewOutcomeEnum.GENERIC_ERROR,
     });
+    expect(pollingConfig.counter.reset).toHaveBeenCalled();
   });
 
   it("calls CHECKOUT-get + redirects to SUCCESS when API yields some (CHECKOUT)", async () => {
@@ -208,5 +211,6 @@ describe("PaymentResponsePage", () => {
     expect(document.getElementById("continueToIOBtn")).toBeNull();
 
     jest.useRealTimers();
+    expect(pollingConfig.counter.reset).toHaveBeenCalled();
   });
 });
