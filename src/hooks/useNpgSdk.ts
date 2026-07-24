@@ -44,13 +44,61 @@ export const useNpgSdk = ({
   };
 
   useEffect(() => {
-    const npgScriptEl = document.createElement("script");
-    const npgDomainScript = getConfigOrThrow().ECOMMERCE_NPG_SDK_URL;
-    npgScriptEl.setAttribute("src", npgDomainScript);
-    npgScriptEl.setAttribute("type", "text/javascript");
-    npgScriptEl.setAttribute("charset", "UTF-8");
-    document.head.appendChild(npgScriptEl);
-    npgScriptEl.addEventListener("load", () => setSdkReady(true));
+    /**
+     * NPG SDK loader with Subresource Integrity (SRI) check.
+     *
+     * The SDK is served from a pagoPA-controlled CDN (the platform CDN) together
+     * with its integrity hash, published atomically by a scheduled job. We fetch
+     * the published hash and load the SDK with the `integrity` attribute set, for
+     * PCI SAQ-A compliance. The SDK is served cross-origin (platform CDN vs the
+     * frontend host), so the script is loaded with `crossorigin="anonymous"`:
+     * the browser cannot validate SRI on a cross-origin resource fetched
+     * without CORS.
+     *
+     * No permissive fallback: if the hash cannot be fetched or SRI validation
+     * fails, the SDK is intentionally NOT loaded, so no payment can use an
+     * unvalidated SDK.
+     */
+    const loadNpgSdk = async () => {
+      const config = getConfigOrThrow();
+      const sdkUrl = config.ECOMMERCE_NPG_SDK_URL;
+      const integrityUrl = config.ECOMMERCE_NPG_SDK_INTEGRITY_URL;
+
+      try {
+        const response = await fetch(integrityUrl);
+        if (!response.ok) {
+          throw new Error(`Integrity endpoint returned HTTP ${response.status}`);
+        }
+        const { integrityHash } = (await response.json()) as {
+          integrityHash?: string;
+        };
+        if (!integrityHash) {
+          throw new Error("Integrity hash missing from response");
+        }
+
+        const npgScriptEl = document.createElement("script");
+        npgScriptEl.setAttribute("src", sdkUrl);
+        npgScriptEl.setAttribute("type", "text/javascript");
+        npgScriptEl.setAttribute("charset", "UTF-8");
+        npgScriptEl.setAttribute("integrity", integrityHash);
+        // Cross-origin load from the platform CDN: SRI can only be validated with CORS.
+        npgScriptEl.setAttribute("crossorigin", "anonymous");
+        npgScriptEl.addEventListener("load", () => setSdkReady(true));
+        // SRI failure or load error: the SDK stays unloaded so no payment can use it.
+        npgScriptEl.onerror = () => {
+          // eslint-disable-next-line no-console
+          console.error(
+            "NPG SDK failed to load or failed SRI validation; SDK not loaded"
+          );
+        };
+        document.head.appendChild(npgScriptEl);
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error("Failed to load NPG SDK with integrity:", error);
+      }
+    };
+
+    void loadNpgSdk();
   }, []);
 
   return { sdkReady, buildSdk: sdkReady ? createBuild : noop };
