@@ -10,6 +10,7 @@ Object.defineProperty(global, "window", {
       ECOMMERCE_IO_API_V1_PATH: "/ecommerce/webview/v1",
       ECOMMERCE_GDI_CHECK_TIMEOUT: "12000",
       ECOMMERCE_NPG_SDK_URL: "https://example.com/sdk.js",
+      ECOMMERCE_NPG_SDK_INTEGRITY_URL: "https://example.com/sdk.integrity.json",
       ECOMMERCE_IO_CLIENT_REDIRECT_OUTCOME_PATH:
         "http://localhost:1234/io-outcome",
       ECOMMERCE_CHECKOUT_CLIENT_REDIRECT_OUTCOME_PATH:

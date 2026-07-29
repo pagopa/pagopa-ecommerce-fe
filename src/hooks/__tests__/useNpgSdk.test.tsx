@@ -1,10 +1,21 @@
 /* eslint-disable
     no-console,
+    functional/no-let,
+    functional/immutable-data,
     @typescript-eslint/no-explicit-any,
     @typescript-eslint/no-unsafe-member-access,
     @typescript-eslint/no-unsafe-assignment
 */
 
+/**
+ * Tests for the NPG SDK SRI loader in useNpgSdk.
+ *
+ * The hook fetches the published integrity hash and loads the SDK with
+ * `integrity` + `crossorigin="anonymous"`. Fail-closed: if the hash cannot be
+ * fetched or is missing, the script is never appended, so no payment can use an
+ * unvalidated SDK. `functional/*` is disabled because the suite stubs the global
+ * `fetch` and spies on `console`, which are inherently mutations.
+ */
 import { renderHook, waitFor } from "@testing-library/react";
 import { useNpgSdk } from "../useNpgSdk";
 
