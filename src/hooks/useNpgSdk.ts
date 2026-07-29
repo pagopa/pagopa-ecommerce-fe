@@ -65,9 +65,14 @@ export const useNpgSdk = ({
       const integrityUrl = config.ECOMMERCE_NPG_SDK_INTEGRITY_URL;
 
       try {
+        // This is why the loader became async: `integrity` has to be on the tag
+        // before it is appended, so the hash must be fetched first. It cannot be
+        // added once the browser has started fetching the script.
         const response = await fetch(integrityUrl);
         if (!response.ok) {
-          throw new Error(`Integrity endpoint returned HTTP ${response.status}`);
+          throw new Error(
+            `Integrity endpoint returned HTTP ${response.status}`
+          );
         }
         const { integrityHash } = (await response.json()) as {
           integrityHash?: string;
@@ -85,12 +90,12 @@ export const useNpgSdk = ({
         npgScriptEl.setAttribute("crossorigin", "anonymous");
         npgScriptEl.addEventListener("load", () => setSdkReady(true));
         // SRI failure or load error: the SDK stays unloaded so no payment can use it.
-        npgScriptEl.onerror = () => {
+        npgScriptEl.addEventListener("error", () => {
           // eslint-disable-next-line no-console
           console.error(
             "NPG SDK failed to load or failed SRI validation; SDK not loaded"
           );
-        };
+        });
         document.head.appendChild(npgScriptEl);
       } catch (error) {
         // eslint-disable-next-line no-console
@@ -98,6 +103,8 @@ export const useNpgSdk = ({
       }
     };
 
+    // A useEffect callback cannot itself be async, so the loader is defined above
+    // and fired here; `void` marks the floating promise as deliberate.
     void loadNpgSdk();
   }, []);
 
