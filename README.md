@@ -99,6 +99,8 @@ The ecommerce transaction get transaction endpoint `/checkout/webview/v1/transac
 | Variable name                       | Description                                                   | type   | default |
 |-------------------------------------|---------------------------------------------------------------|--------|---------|
 | ECOMMERCE_API_RETRY_NUMBERS_LINEAR  | number of calls at regular intervals                          | number | 5       |
+| ECOMMERCE_NPG_SDK_URL               | URL of the NPG SDK on the platform CDN                        | string |         |
+| ECOMMERCE_NPG_SDK_INTEGRITY_URL     | URL of the NPG SDK integrity hash JSON                        | string |         |
 
 ## Polling
 
