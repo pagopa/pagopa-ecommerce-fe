@@ -9,7 +9,6 @@ import { EcommerceRoutes } from "./routes/models/routeModel";
 import PaymentResponsePage from "./routes/PaymentResponsePage";
 import GdiCheckPage from "./routes/GdiCheckPage";
 import "./translations/i18n";
-import { getConfigOrThrow } from "./utils/config/config";
 import SaveCardPage from "./routes/SaveCardPage";
 
 const checkoutTheme = createTheme({
