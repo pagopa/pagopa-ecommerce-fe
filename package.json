@@ -1,6 +1,6 @@
 {
   "name": "pagopa-ecommerce-fe",
-  "version": "0.21.0",
+  "version": "0.21.2",
   "scripts": {
     "type-check": "tsc",
     "generate": "npm-run-all generate:*",
@@ -10,8 +10,6 @@
     "lint": "eslint . -c .eslintrc.js --ext .ts,.tsx",
     "lint-autofix": "eslint . -c .eslintrc.js --ext .ts,.tsx --fix",
     "prebuild": "npm-run-all generate type-check lint",
-    "prebuild:ecommerce-fe-root": "npm-run-all generate type-check lint",
-    "build:ecommerce-fe-root": "rimraf .cache && rimraf dist && parcel build src/index.html --public-url /ecommerce-fe && cp -R static/* dist/",
     "build": "rimraf .cache && rimraf dist && parcel build src/index.html && cp -R static/* dist/",
     "dev": "rimraf .cache && rimraf dist && npm-run-all generate type-check dev:env dev:server",
     "proxy": "npm-run-all generate type-check dev:env dev:proxy",

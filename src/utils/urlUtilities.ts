@@ -6,14 +6,9 @@ import {
   CHECKOUT_CLIENT_REDIRECT_OUTCOME_PATH,
   ROUTE_FRAGMENT,
   CLIENT_TYPE,
-  EcommerceRoutes,
 } from "../routes/models/routeModel";
 import { ViewOutcomeEnum } from "./api/transactions/types";
-import { getConfigOrThrow } from "./config/config";
 import { getSessionItem, SessionItems } from "./storage/sessionStorage";
-
-export const useEcommerceRootPath =
-  getConfigOrThrow().USE_ECOMMERCE_FE_ROOT_PATH;
 
 export function getUrlParameter(name: string) {
   const myname = name.replace(/[[]/, "\\[").replace(/[\]]/, "\\]");
@@ -165,5 +160,4 @@ export interface WalletContextualOnboardOutcomeParams {
   faultCodeDetail?: string;
 }
 
-export const getRootPath = (): string =>
-  useEcommerceRootPath ? `/${EcommerceRoutes.ROOT}/` : `/`;
+export const getRootPath = (): string => `/`;
