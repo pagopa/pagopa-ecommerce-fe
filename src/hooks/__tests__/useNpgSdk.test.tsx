@@ -8,13 +8,13 @@
 */
 
 /**
- * Tests for the NPG SDK SRI loader in useNpgSdk.
+ * Tests for the two-mode NPG SDK loader in useNpgSdk.
  *
- * The hook fetches the published integrity hash and loads the SDK with
- * `integrity` + `crossorigin="anonymous"`. Fail-closed: if the hash cannot be
- * fetched or is missing, the script is never appended, so no payment can use an
- * unvalidated SDK. `functional/*` is disabled because the suite stubs the global
- * `fetch` and spies on `console`, which are inherently mutations.
+ * SRI mode (integrity URL set): fetch the hash, load with `integrity` +
+ * `crossorigin="anonymous"`, fail closed on any error. Legacy mode (integrity
+ * URL empty or absent): load the SDK without integrity and never fetch.
+ * `functional/*` is disabled because the suite stubs the global `fetch`, spies
+ * on `console` and switches the mocked config, which are inherently mutations.
  */
 import { renderHook, waitFor } from "@testing-library/react";
 import { useNpgSdk } from "../useNpgSdk";
@@ -28,10 +28,12 @@ jest.mock("../../utils/buildConfig", () => ({
   default: jest.fn(),
 }));
 
+let mockIntegrityUrl: string | undefined = INTEGRITY_URL;
+
 jest.mock("../../utils/config/config", () => ({
   getConfigOrThrow: () => ({
     ECOMMERCE_NPG_SDK_URL: SDK_URL,
-    ECOMMERCE_NPG_SDK_INTEGRITY_URL: INTEGRITY_URL,
+    ECOMMERCE_NPG_SDK_INTEGRITY_URL: mockIntegrityUrl,
   }),
 }));
 
@@ -50,6 +52,7 @@ describe("useNpgSdk loader (SRI)", () => {
   });
 
   afterEach(() => {
+    mockIntegrityUrl = INTEGRITY_URL;
     document.head.querySelectorAll("script").forEach((s) => s.remove());
     jest.restoreAllMocks();
     delete (global as any).fetch;
@@ -104,4 +107,23 @@ describe("useNpgSdk loader (SRI)", () => {
     await waitFor(() => expect(errorSpy).toHaveBeenCalled());
     expect(getNpgScript()).toBeNull();
   });
+
+  it.each([
+    ["an empty string", ""],
+    ["not configured at all", undefined],
+  ])(
+    "loads the SDK without integrity when the integrity URL is %s",
+    async (_label, integrityUrl) => {
+      mockIntegrityUrl = integrityUrl;
+      (global as any).fetch = jest.fn();
+
+      renderHook(() => useNpgSdk(hookArgs));
+
+      await waitFor(() => expect(getNpgScript()).not.toBeNull());
+      const script = getNpgScript();
+      expect(script?.hasAttribute("integrity")).toBe(false);
+      expect(script?.hasAttribute("crossorigin")).toBe(false);
+      expect((global as any).fetch).not.toHaveBeenCalled();
+    }
+  );
 });

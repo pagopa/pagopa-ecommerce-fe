@@ -58,6 +58,15 @@ describe("config module", () => {
     expect(result._tag).toBe("Left");
   });
 
+  it("getConfig() should accept an empty NPG SDK integrity URL (SRI disabled)", () => {
+    (window as any)._env_ = {
+      ...validEnv,
+      ECOMMERCE_NPG_SDK_INTEGRITY_URL: "",
+    };
+    const { getConfig } = require("../config");
+    expect(getConfig()._tag).toBe("Right");
+  });
+
   it("getConfigOrThrow() should throw on invalid config", () => {
     (window as any)._env_ = {};
     const { getConfigOrThrow } = require("../config");

@@ -26,14 +26,4 @@ module.exports = function (app) {
         target: apiHostIO,
     }));
 
-    // NPG SDK integrity endpoint (payment-methods-handler). /npg/sdk/integrity is
-    // an API-key-secured path: in deployed envs APIM injects the key, so locally
-    // we inject it here so the SRI loader's integrity fetch resolves same-origin.
-    app.use(createProxyMiddleware("/npg/sdk/integrity", {
-        target: apiHostIO,
-        headers: {
-            "x-api-key": "PRIMARY-KEY",
-        },
-    }));
-
 }

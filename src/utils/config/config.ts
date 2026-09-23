@@ -21,7 +21,8 @@ export const IConfig = t.interface({
   ECOMMERCE_IO_API_V1_PATH: NonEmptyString,
   ECOMMERCE_GDI_CHECK_TIMEOUT: t.number,
   ECOMMERCE_NPG_SDK_URL: NonEmptyString,
-  ECOMMERCE_NPG_SDK_INTEGRITY_URL: NonEmptyString,
+  // Empty or absent disables SRI (legacy SDK load), see useNpgSdk.
+  ECOMMERCE_NPG_SDK_INTEGRITY_URL: t.union([t.string, t.undefined]),
   ECOMMERCE_IO_CLIENT_REDIRECT_OUTCOME_PATH: NonEmptyString,
   ECOMMERCE_CHECKOUT_CLIENT_REDIRECT_OUTCOME_PATH: NonEmptyString,
   ECOMMERCE_GET_TRANSACTION_POLLING_RETRIES: t.number,
