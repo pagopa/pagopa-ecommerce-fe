@@ -27,6 +27,10 @@ parameters:
   - name: 'npg_sdk_url'
     type: string
     default: ''
+
+  - name: 'npg_sdk_integrity_url'
+    type: string
+    default: ''
   
   - name: 'gdi_check_timeout'
     type: number
@@ -65,6 +69,7 @@ steps:
       ECOMMERCE_IO_API_V1_PATH=${{ parameters.io_api_v1_path }} \
       ECOMMERCE_GDI_CHECK_TIMEOUT=${{ parameters.gdi_check_timeout }} \
       ECOMMERCE_NPG_SDK_URL=${{ parameters.npg_sdk_url }} \
+      ECOMMERCE_NPG_SDK_INTEGRITY_URL=${{ parameters.npg_sdk_integrity_url }} \
       ECOMMERCE_IO_CLIENT_REDIRECT_OUTCOME_PATH=${{ parameters.io_client_redirect_outcome_path }} \
       ECOMMERCE_CHECKOUT_CLIENT_REDIRECT_OUTCOME_PATH=${{ parameters.checkout_client_redirect_outcome_path }} \
       ECOMMERCE_SHOW_CONTINUE_IO_BTN_DELAY_MILLIS=${{ parameters.show_continue_io_btn_delay_millis }} \
