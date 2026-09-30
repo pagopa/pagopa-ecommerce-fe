@@ -75,15 +75,6 @@ resources:
 
 
 stages:
-  - stage: 'test_fake_buil_and_deploy'
-    displayName: 'Fake build and deploy for DEV deployment'
-    condition: and(succeeded(), eq(${{parameters.DEV_DEPLOY}}, true))
-    jobs:
-      - job: test_fake_buil_and_deploy
-        displayName: 'Fake build and deploy for DEV deployment'
-        steps:
-          - task: Bash@3
-
   - stage: Prepare_artifact_dev
     condition: false
     #condition: and(succeeded(), eq(${{parameters.DEV_DEPLOY}}, true))
@@ -172,7 +163,6 @@ stages:
   # - is a tag in the form v{version}-RELEASE
 
   - stage: TAS_tests_DEV
-    dependsOn: test_fake_buil_and_deploy
     pool:
       vmImage: 'ubuntu-latest'
     jobs:
