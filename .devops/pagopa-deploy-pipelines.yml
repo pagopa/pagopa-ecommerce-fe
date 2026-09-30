@@ -24,7 +24,7 @@ parameters:
       - patch
     default: minor
     # Required for TAS tests
-  - name: ref
+  - name: tas_ref
     displayName: "TAS repo branch/tag"
     type: string
     default: main
@@ -126,6 +126,7 @@ stages:
             artifact: Bundle_DEV
 
   - stage: Deploy_DEV_pagoPA
+    condition: false
     dependsOn:
       - Prepare_artifact_dev
     jobs:
@@ -183,7 +184,7 @@ stages:
               suite: tas_pass
               environment: dev
               mode: async
-              ref: ${{ parameters.ref }}
+              ref: ${{ parameters.tas_ref }}
               verifyOrchestrator: true
               publishTests: true
               stepName: TAS_INTEGRATION_dev
@@ -354,7 +355,7 @@ stages:
               suite: tas_pass
               environment: uat
               mode: async
-              ref: ${{ parameters.ref }}
+              ref: ${{ parameters.tas_ref }}
               verifyOrchestrator: true
               publishTests: true
               stepName: TAS_INTEGRATION_uat
