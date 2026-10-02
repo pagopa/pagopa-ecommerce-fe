@@ -15,6 +15,7 @@ describe("config module", () => {
     ECOMMERCE_IO_API_V1_PATH: "/ecommerce/webview/v1",
     ECOMMERCE_GDI_CHECK_TIMEOUT: "12000",
     ECOMMERCE_NPG_SDK_URL: "https://example.com/sdk.js",
+    ECOMMERCE_NPG_SDK_INTEGRITY_URL: "https://example.com/sdk.integrity.json",
     ECOMMERCE_IO_CLIENT_REDIRECT_OUTCOME_PATH:
       "http://localhost:1234/io-outcome",
     ECOMMERCE_CHECKOUT_CLIENT_REDIRECT_OUTCOME_PATH:
@@ -55,6 +56,15 @@ describe("config module", () => {
     const { getConfig } = require("../config");
     const result = getConfig();
     expect(result._tag).toBe("Left");
+  });
+
+  it("getConfig() should accept an empty NPG SDK integrity URL (SRI disabled)", () => {
+    (window as any)._env_ = {
+      ...validEnv,
+      ECOMMERCE_NPG_SDK_INTEGRITY_URL: "",
+    };
+    const { getConfig } = require("../config");
+    expect(getConfig()._tag).toBe("Right");
   });
 
   it("getConfigOrThrow() should throw on invalid config", () => {

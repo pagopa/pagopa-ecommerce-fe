@@ -111,7 +111,7 @@ export default function IframeCardForm() {
     setIsAllFieldsLoaded(true);
   }, []);
 
-  const { sdkReady, buildSdk } = useNpgSdk({
+  const { sdkReady, sdkError, buildSdk } = useNpgSdk({
     onChange,
     onReadyForPayment,
     onPaymentRedirect,
@@ -165,6 +165,14 @@ export default function IframeCardForm() {
       onBuildError();
     }
   }, [sdkReady, form, buildSdk, onBuildError]);
+
+  // Without the SDK no Build exists to call onBuildError: otherwise the form
+  // would wait for `sdkReady` forever.
+  React.useEffect(() => {
+    if (sdkError) {
+      onBuildError();
+    }
+  }, [sdkError, onBuildError]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
