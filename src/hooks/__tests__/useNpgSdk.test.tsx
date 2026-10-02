@@ -11,12 +11,13 @@
  * Tests for the two-mode NPG SDK loader in useNpgSdk.
  *
  * SRI mode (integrity URL set): fetch the hash, load with `integrity` +
- * `crossorigin="anonymous"`, fail closed on any error. Legacy mode (integrity
- * URL empty or absent): load the SDK without integrity and never fetch.
+ * `crossorigin="anonymous"`, fail closed on any error (`sdkError` set). Legacy
+ * mode (integrity URL empty or absent): load the SDK without integrity and
+ * never fetch.
  * `functional/*` is disabled because the suite stubs the global `fetch`, spies
  * on `console` and switches the mocked config, which are inherently mutations.
  */
-import { renderHook, waitFor } from "@testing-library/react";
+import { act, renderHook, waitFor } from "@testing-library/react";
 import { useNpgSdk } from "../useNpgSdk";
 
 const SDK_URL = "https://assets.cdn.platform.pagopa.it/npg-uat/hfsdk.js";
@@ -74,6 +75,23 @@ describe("useNpgSdk loader (SRI)", () => {
     expect(script?.getAttribute("crossorigin")).toBe("anonymous");
   });
 
+  it("flags sdkError when the SDK script fails to load or fails SRI validation", async () => {
+    (global as any).fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ integrityHash: "sha384-abc123" }),
+    });
+
+    const { result } = renderHook(() => useNpgSdk(hookArgs));
+
+    await waitFor(() => expect(getNpgScript()).not.toBeNull());
+    act(() => {
+      getNpgScript()?.dispatchEvent(new Event("error"));
+    });
+
+    expect(result.current.sdkReady).toBe(false);
+    expect(result.current.sdkError).toBe(true);
+  });
+
   it("does not load the SDK when the integrity endpoint returns a non-OK response", async () => {
     (global as any).fetch = jest.fn().mockResolvedValue({
       ok: false,
@@ -81,19 +99,21 @@ describe("useNpgSdk loader (SRI)", () => {
       json: async () => ({}),
     });
 
-    renderHook(() => useNpgSdk(hookArgs));
+    const { result } = renderHook(() => useNpgSdk(hookArgs));
 
     await waitFor(() => expect(errorSpy).toHaveBeenCalled());
     expect(getNpgScript()).toBeNull();
+    expect(result.current.sdkError).toBe(true);
   });
 
   it("does not load the SDK when the integrity fetch rejects", async () => {
     (global as any).fetch = jest.fn().mockRejectedValue(new Error("network"));
 
-    renderHook(() => useNpgSdk(hookArgs));
+    const { result } = renderHook(() => useNpgSdk(hookArgs));
 
     await waitFor(() => expect(errorSpy).toHaveBeenCalled());
     expect(getNpgScript()).toBeNull();
+    expect(result.current.sdkError).toBe(true);
   });
 
   it("does not load the SDK when the integrity hash is missing from the response", async () => {
@@ -102,10 +122,11 @@ describe("useNpgSdk loader (SRI)", () => {
       json: async () => ({}),
     });
 
-    renderHook(() => useNpgSdk(hookArgs));
+    const { result } = renderHook(() => useNpgSdk(hookArgs));
 
     await waitFor(() => expect(errorSpy).toHaveBeenCalled());
     expect(getNpgScript()).toBeNull();
+    expect(result.current.sdkError).toBe(true);
   });
 
   it.each([
@@ -126,4 +147,18 @@ describe("useNpgSdk loader (SRI)", () => {
       expect((global as any).fetch).not.toHaveBeenCalled();
     }
   );
+
+  it("flags sdkError when the legacy SDK script fails to load", async () => {
+    mockIntegrityUrl = "";
+
+    const { result } = renderHook(() => useNpgSdk(hookArgs));
+
+    await waitFor(() => expect(getNpgScript()).not.toBeNull());
+    act(() => {
+      getNpgScript()?.dispatchEvent(new Event("error"));
+    });
+
+    expect(result.current.sdkReady).toBe(false);
+    expect(result.current.sdkError).toBe(true);
+  });
 });
