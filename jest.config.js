@@ -42,7 +42,6 @@ module.exports = {
     "global\\.d\\.ts$",
     "<rootDir>/src/models/",
     "<rootDir>/src/routes/models/",
-    "<rootDir>/src/hooks/",
     "<rootDir>/src/App.tsx"
   ],
   coverageDirectory: "<rootDir>/coverage/",
