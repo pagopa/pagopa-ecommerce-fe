@@ -34,7 +34,7 @@ describe("Check NPG SDK SRI hash handling", () => {
     });
 
     // the browser blocks the script on SRI mismatch and the app logs a custom error
-    const consoleErrors: Array<string> = [];
+    const consoleErrors= [""];
     page.on("console", (msg) => {
       if (msg.type() === "error") {
         consoleErrors.push(msg.text());
