@@ -17,6 +17,7 @@
  * `functional/*` is disabled because the suite stubs the global `fetch`, spies
  * on `console` and switches the mocked config, which are inherently mutations.
  */
+import React from "react";
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { useNpgSdk } from "../useNpgSdk";
 
@@ -42,6 +43,15 @@ const getNpgScript = () =>
   Array.from(document.head.querySelectorAll("script")).find(
     (s) => s.getAttribute("src") === SDK_URL
   ) ?? null;
+
+const getNpgScripts = () =>
+  Array.from(document.head.querySelectorAll("script")).filter(
+    (s) => s.getAttribute("src") === SDK_URL
+  );
+
+const StrictModeWrapper = ({ children }: { children: React.ReactNode }) => (
+  <React.StrictMode>{children}</React.StrictMode>
+);
 
 const hookArgs = { onBuildError: jest.fn() };
 
@@ -145,6 +155,29 @@ describe("useNpgSdk loader (SRI)", () => {
       expect(script?.hasAttribute("integrity")).toBe(false);
       expect(script?.hasAttribute("crossorigin")).toBe(false);
       expect((global as any).fetch).not.toHaveBeenCalled();
+    }
+  );
+
+  it.each([
+    ["SRI", INTEGRITY_URL],
+    ["legacy", ""],
+  ])(
+    "injects the SDK once under StrictMode in %s mode",
+    async (_label, integrityUrl) => {
+      mockIntegrityUrl = integrityUrl;
+      (global as any).fetch = jest.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({ integrityHash: "sha384-abc123" }),
+      });
+
+      renderHook(() => useNpgSdk(hookArgs), { wrapper: StrictModeWrapper });
+
+      await waitFor(() => expect(getNpgScripts()).toHaveLength(1));
+      // let the cancelled run settle: it must not append a second script
+      await act(async () => {
+        await new Promise((resolve) => setTimeout(resolve, 0));
+      });
+      expect(getNpgScripts()).toHaveLength(1);
     }
   );
 
