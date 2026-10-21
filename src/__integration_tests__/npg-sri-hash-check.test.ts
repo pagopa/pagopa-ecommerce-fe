@@ -52,7 +52,8 @@ describe("Check NPG SDK SRI hash handling", () => {
       )
     ).toBe(true);
 
-    // the SDK has not been executed, so no card field iframe is rendered
-    expect(await page.$("#frame_CARD_NUMBER")).toBeNull();
+    // the SDK script has been blocked, so its global `Build` is not defined
+    // (the card field iframes are rendered by the app itself, so they are always in the DOM)
+    expect(await page.evaluate(() => typeof Build)).toBe("undefined");
   }, 30000);
 });
