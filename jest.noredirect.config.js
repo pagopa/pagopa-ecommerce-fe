@@ -1,6 +1,6 @@
 module.exports = {
   preset: "jest-puppeteer",
-  testRegex: "./no-redirect.test\\.ts$",
+  testRegex: String.raw`./no-redirect.test\.ts$`,
   reporters: [
       'default',
       [ 'jest-junit', {
