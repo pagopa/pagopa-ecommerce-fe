@@ -9,6 +9,7 @@
 variables:
   NODE_VERSION: '18.17.1'
   YARN_CACHE_FOLDER: $(Pipeline.Workspace)/.yarn
+  PUPPETEER_SKIP_DOWNLOAD: 'true'
 
 # Automatically triggered on PR
 # https://docs.microsoft.com/en-us/azure/devops/pipelines/yaml-schema?view=azure-devops&tabs=schema%2Cparameter-schema#pr-trigger
@@ -42,8 +43,6 @@ stages:
     dependsOn: []
     jobs:
       - job: make_build
-        variables:
-          PUPPETEER_SKIP_DOWNLOAD: 'true'
         steps:
         - template: templates/node-job-setup/template.yaml@pagopaCommons
 
@@ -71,15 +70,11 @@ stages:
     dependsOn: []
     jobs:
       - job: lint
-        variables:
-          PUPPETEER_SKIP_DOWNLOAD: 'true'
         steps:
         - template: templates/node-job-setup/template.yaml@pagopaCommons
         - script: yarn lint
           displayName: 'Lint'
       - job: danger
-        variables:
-          PUPPETEER_SKIP_DOWNLOAD: 'true'
         condition:
           and(
             succeeded(),
@@ -98,8 +93,6 @@ stages:
     dependsOn: []
     jobs:
       - job: run_unit_tests
-        variables:
-          PUPPETEER_SKIP_DOWNLOAD: 'true'
         steps:
         - template: templates/node-job-setup/template.yaml@pagopaCommons
 
@@ -159,6 +152,8 @@ stages:
     jobs:
       - job: run_integration_tests
         timeoutInMinutes: 30
+        variables:
+          PUPPETEER_SKIP_DOWNLOAD: false
         steps:
 
         - checkout: checkout-be-mock
