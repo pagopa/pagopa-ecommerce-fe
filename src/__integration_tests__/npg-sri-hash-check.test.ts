@@ -25,9 +25,6 @@ describe("Check NPG SDK SRI hash handling", () => {
         void request.continue({
           headers: { ...request.headers(), Cookie: "tamperSriHash=true" },
         });
-      } else if (request.url().startsWith("iowallet://")) {
-        // the app redirects to the IO deep link when the SDK cannot be loaded
-        void request.abort();
       } else {
         void request.continue();
       }
