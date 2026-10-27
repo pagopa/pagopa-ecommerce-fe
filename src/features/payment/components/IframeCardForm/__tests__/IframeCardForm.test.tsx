@@ -117,6 +117,9 @@ jest.mock("../../../../../utils/api/methods/paymentMethodHelper", () => ({
 
 // eslint-disable-next-line functional/no-let
 let capturedCfg: any = {};
+// Hook state returned by the useNpgSdk mock, reset before each test.
+// eslint-disable-next-line functional/no-let
+let mockSdkState = { sdkReady: true, sdkError: false };
 const buildSdkMock = jest.fn(() => ({
   confirmData: jest.fn((cb?: () => void) => {
     if (cb) {
@@ -132,7 +135,7 @@ jest.mock("../../../../../hooks/useNpgSdk", () => ({
   useNpgSdk: (cfg: any) => {
     capturedCfg = cfg;
     setTimeout(() => cfg.onAllFieldsLoaded && cfg.onAllFieldsLoaded(), 0);
-    return { sdkReady: true, buildSdk: buildSdkMock };
+    return { ...mockSdkState, buildSdk: buildSdkMock };
   },
 }));
 
@@ -175,6 +178,7 @@ const simpleSession = {
 describe("IframeCardForm", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockSdkState = { sdkReady: true, sdkError: false };
     // eslint-disable-next-line functional/immutable-data
     Object.keys(memoryStore).forEach((k) => delete memoryStore[k]);
   });
@@ -283,5 +287,17 @@ describe("IframeCardForm", () => {
     await waitFor(() => {
       expect(window.location.replace).toHaveBeenCalledWith("/done?outcome=1");
     });
+  });
+
+  it("if the SDK fails to load or fails SRI ⇒ onBuildError ⇒ onError ⇒ redirect outcome=1", async () => {
+    (npgSessionsFields as jest.Mock).mockResolvedValue(O.some(simpleSession));
+    mockSdkState = { sdkReady: false, sdkError: true };
+
+    render(<IframeCardForm />);
+
+    await waitFor(() => {
+      expect(window.location.replace).toHaveBeenCalledWith("/done?outcome=1");
+    });
+    expect(buildSdkMock).not.toHaveBeenCalled();
   });
 });

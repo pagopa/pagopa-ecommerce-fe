@@ -1,6 +1,6 @@
 {
   "name": "pagopa-ecommerce-fe",
-  "version": "0.21.2",
+  "version": "0.23.0",
   "scripts": {
     "type-check": "tsc",
     "generate": "npm-run-all generate:*",
@@ -21,6 +21,7 @@
     "test": "jest --config=jest.config.js",
     "test:integration": "jest --config=jest.integration.config.js",
     "test:noredirect": "jest --config=jest.noredirect.config.js",
+    "test:npg-sri-hash-check-integration": "jest --config=jest.npg-sri-hash-check.integration.config.js",
     "test:coverage": "jest --coverage --passWithNoTests --config=jest.config.js",
     "test:components:coverage": "jest src/components --coverage --passWithNoTests --config=jest.config.js --collectCoverageFrom='src/components/**/*.{ts,tsx}'",
     "test:routes:coverage": "jest src/routes --coverage --passWithNoTests --config=jest.config.js --collectCoverageFrom='src/routes/**/*.{ts,tsx}'",
