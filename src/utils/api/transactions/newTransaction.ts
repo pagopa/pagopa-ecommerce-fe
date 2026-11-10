@@ -10,7 +10,7 @@ import { ecommerceIOClientV1 } from "../client";
 import { NewTransactionResponse } from "../../../../generated/definitions/payment-ecommerce-webview-v1/NewTransactionResponse";
 import { RptId } from "../../../../generated/definitions/payment-ecommerce-webview-v1/RptId";
 import { AmountEuroCents } from "../../../../generated/definitions/payment-ecommerce-webview-v1/AmountEuroCents";
-import { FaultCategoryEnum } from "../../../../generated/definitions/payment-ecommerce-v1/FaultCategory";
+import { FaultCategoryEnum } from "./faultCategory";
 import { NodeFaultCode } from "./nodeFaultCode";
 
 const genericErrorCode = TE.left({
